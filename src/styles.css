@@ -1,0 +1,162 @@
+:root {
+  --dark: #1F3864;
+  --accent: #2E75B6;
+  --green: #375623;
+  --green-bg: #E2EFDA;
+  --red: #C00000;
+  --red-bg: #FCE4E4;
+  --grey-bg: #F2F2F2;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--grey-bg);
+  color: #222;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #fff;
+}
+
+.topbar {
+  background: var(--dark);
+  color: #fff;
+  padding: 14px 16px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.topbar h1 { font-size: 18px; margin: 0 0 8px; text-align: center; }
+
+.month-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 15px;
+}
+.month-switch button {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+}
+
+.content {
+  flex: 1;
+  padding: 12px;
+  padding-bottom: 80px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.card h2 { font-size: 15px; margin: 0 0 10px; color: var(--dark); }
+
+.form label { display: block; font-size: 12px; color: #666; margin: 10px 0 4px; }
+.form input, .form select {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.type-toggle { display: flex; gap: 8px; margin-top: 4px; }
+.type-toggle button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-weight: bold;
+}
+.type-toggle .expense.active { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+.type-toggle .income.active { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+
+.submit-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+}
+.submit-btn:disabled { opacity: 0.6; }
+
+.error { color: var(--red); font-size: 13px; margin-top: 8px; }
+.muted { color: #888; font-size: 14px; }
+
+.day-group { margin-bottom: 10px; }
+.day-group-title { font-size: 12px; color: #888; text-transform: capitalize; margin: 10px 0 4px; }
+.tx-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+.tx-main { flex: 1; display: flex; flex-direction: column; }
+.tx-cat { font-size: 14px; font-weight: bold; }
+.tx-comment { font-size: 12px; color: #888; }
+.tx-amount { font-weight: bold; font-size: 14px; }
+.tx-row.expense .tx-amount { color: var(--red); }
+.tx-row.income .tx-amount { color: var(--green); }
+.tx-delete { background: none; border: none; color: #bbb; font-size: 16px; padding: 0 4px; }
+
+.inline-form { display: flex; gap: 8px; }
+.inline-form input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
+.inline-form button { padding: 10px 14px; background: var(--accent); color: #fff; border: none; border-radius: 8px; }
+
+.category-list { list-style: none; padding: 0; margin: 12px 0 0; }
+.category-list li { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+
+.kpi-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.kpi { flex: 1; border-radius: 10px; padding: 10px; text-align: center; }
+.kpi-label { font-size: 11px; color: #666; }
+.kpi-value { font-size: 15px; font-weight: bold; margin-top: 2px; }
+.kpi.income { background: var(--green-bg); }
+.kpi.income .kpi-value { color: var(--green); }
+.kpi.expense { background: var(--red-bg); }
+.kpi.expense .kpi-value { color: var(--red); }
+.kpi.balance { background: #DCE6F1; }
+.kpi.balance .kpi-value { color: var(--dark); }
+
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  background: #fff;
+  border-top: 1px solid #e2e2e2;
+}
+.tabbar button {
+  flex: 1;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #888;
+}
+.tabbar button.active { color: var(--accent); font-weight: bold; border-top: 2px solid var(--accent); }
