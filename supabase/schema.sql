@@ -1,4 +1,4 @@
--- Выполнить в Supabase: SQL Editor -> New query -> вставить целиком -> Run
+-- чисто для супабейс
 
 create extension if not exists "pgcrypto";
 
@@ -20,13 +20,10 @@ create table if not exists transactions (
 
 create index if not exists idx_transactions_date on transactions(date);
 
--- Пара примеров категорий для старта (можно удалить/дополнить прямо в приложении)
 insert into categories (name) values
   ('Еда'), ('Транспорт'), ('Спортзал / абонементы'), ('Зарплата')
 on conflict (name) do nothing;
 
--- Личное использование без входа: разрешаем anon-ключу читать и писать.
--- Не публикуй этот сайт широко — ссылка = полный доступ к твоим данным.
 alter table categories enable row level security;
 alter table transactions enable row level security;
 
