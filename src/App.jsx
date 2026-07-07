@@ -1,17 +1,19 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from './supabaseClient'
-import TransactionForm from './components/TransactionForm'
-import TransactionList from './components/TransactionList'
-import CategoriesManager from './components/CategoriesManager'
+import Nav from './components/Nav'
+import Home from './components/Home'
 import Dashboard from './components/Dashboard'
+import CategoriesManager from './components/CategoriesManager'
+import AddTransactionModal from './components/AddTransactionModal'
 import { currentMonthKey, monthLabel, shiftMonth } from './utils'
 
 export default function App() {
-  const [tab, setTab] = useState('add')
+  const [tab, setTab] = useState('home')
   const [monthKey, setMonthKey] = useState(currentMonthKey())
   const [categories, setCategories] = useState([])
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showAdd, setShowAdd] = useState(false)
 
   const loadCategories = useCallback(async () => {
     const { data } = await supabase.from('categories').select('*').order('name')
@@ -32,27 +34,38 @@ export default function App() {
     Promise.all([loadCategories(), loadTransactions()]).finally(() => setLoading(false))
   }, [loadCategories, loadTransactions])
 
+  const monthLabelText = monthLabel(monthKey)
+
   return (
     <div className="app">
-      <header className="topbar">
-        <h1>Мой финансовый трекер</h1>
-        <div className="month-switch">
-          <button onClick={() => setMonthKey(shiftMonth(monthKey, -1))}>‹</button>
-          <span>{monthLabel(monthKey)}</span>
-          <button onClick={() => setMonthKey(shiftMonth(monthKey, 1))}>›</button>
-        </div>
-      </header>
+      <Nav tab={tab} setTab={setTab} />
 
       <main className="content">
+        {tab !== 'home' && (
+          <div className="topbar">
+            <h1>{tab === 'dashboard' ? 'Дашборд' : 'Категории'}</h1>
+            {tab === 'dashboard' && (
+              <div className="month-switch">
+                <button onClick={() => setMonthKey(shiftMonth(monthKey, -1))}>‹</button>
+                <span>{monthLabelText}</span>
+                <button onClick={() => setMonthKey(shiftMonth(monthKey, 1))}>›</button>
+              </div>
+            )}
+          </div>
+        )}
+
         {loading ? (
           <p className="muted">Загрузка…</p>
         ) : (
           <>
-            {tab === 'add' && (
-              <>
-                <TransactionForm categories={categories} onAdded={loadTransactions} />
-                <TransactionList transactions={transactions} onChanged={loadTransactions} />
-              </>
+            {tab === 'home' && (
+              <Home
+                transactions={transactions}
+                monthLabelText={monthLabelText}
+                onPrevMonth={() => setMonthKey(shiftMonth(monthKey, -1))}
+                onNextMonth={() => setMonthKey(shiftMonth(monthKey, 1))}
+                onChanged={loadTransactions}
+              />
             )}
             {tab === 'dashboard' && <Dashboard transactions={transactions} monthKey={monthKey} />}
             {tab === 'categories' && <CategoriesManager categories={categories} onChanged={loadCategories} />}
@@ -60,11 +73,17 @@ export default function App() {
         )}
       </main>
 
-      <nav className="tabbar">
-        <button className={tab === 'add' ? 'active' : ''} onClick={() => setTab('add')}>Добавить</button>
-        <button className={tab === 'dashboard' ? 'active' : ''} onClick={() => setTab('dashboard')}>Дашборд</button>
-        <button className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Категории</button>
-      </nav>
+      {tab !== 'categories' && (
+        <button className="fab" onClick={() => setShowAdd(true)} aria-label="Добавить операцию">+</button>
+      )}
+
+      {showAdd && (
+        <AddTransactionModal
+          categories={categories}
+          onAdded={loadTransactions}
+          onClose={() => setShowAdd(false)}
+        />
+      )}
     </div>
   )
 }

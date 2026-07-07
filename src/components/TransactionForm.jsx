@@ -33,7 +33,7 @@ export default function TransactionForm({ categories, onAdded }) {
   }
 
   return (
-    <form className="card form" onSubmit={handleSubmit}>
+    <form className="form" onSubmit={handleSubmit}>
       <h2>Новая операция</h2>
 
       <div className="type-toggle">

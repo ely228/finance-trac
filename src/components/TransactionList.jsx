@@ -1,26 +1,24 @@
 import { supabase } from '../supabaseClient'
 import { formatMoney } from '../utils'
 
-export default function TransactionList({ transactions, onChanged }) {
+export default function TransactionList({ transactions, onChanged, limit, title = 'Операции' }) {
   async function handleDelete(id) {
     if (!confirm('Удалить эту операцию?')) return
     await supabase.from('transactions').delete().eq('id', id)
     onChanged()
   }
 
+  const list = limit ? transactions.slice(0, limit) : transactions
   const byDate = {}
-  for (const t of transactions) {
+  for (const t of list) {
     (byDate[t.date] ||= []).push(t)
   }
   const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a))
 
-  if (dates.length === 0) {
-    return <div className="card"><p className="muted">Пока нет операций за этот месяц.</p></div>
-  }
-
   return (
     <div className="card">
-      <h2>Операции</h2>
+      <h2>{title}</h2>
+      {dates.length === 0 && <p className="muted">Пока нет операций за этот месяц.</p>}
       {dates.map(date => (
         <div key={date} className="day-group">
           <div className="day-group-title">
@@ -28,6 +26,7 @@ export default function TransactionList({ transactions, onChanged }) {
           </div>
           {byDate[date].map(t => (
             <div key={t.id} className={`tx-row ${t.type}`}>
+              <div className="tx-icon">{t.type === 'expense' ? '↓' : '↑'}</div>
               <div className="tx-main">
                 <span className="tx-cat">{t.category}</span>
                 {t.comment && <span className="tx-comment">{t.comment}</span>}

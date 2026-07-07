@@ -33,14 +33,18 @@ export default function CategoriesManager({ categories, onChanged }) {
         <button type="submit">Добавить</button>
       </form>
       {error && <div className="error">{error}</div>}
-      <ul className="category-list">
-        {categories.map(c => (
-          <li key={c.id}>
-            <span>{c.name}</span>
-            <button className="tx-delete" onClick={() => handleDelete(c.id, c.name)} aria-label="Удалить">✕</button>
-          </li>
-        ))}
-      </ul>
+      {categories.length === 0 ? (
+        <p className="muted" style={{ marginTop: 14 }}>Категорий пока нет — добавь первую выше.</p>
+      ) : (
+        <ul className="category-list">
+          {categories.map(c => (
+            <li key={c.id}>
+              <span>{c.name}</span>
+              <button className="tx-delete" onClick={() => handleDelete(c.id, c.name)} aria-label="Удалить">✕</button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
