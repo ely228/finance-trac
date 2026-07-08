@@ -52,7 +52,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Nav tab={tab} setTab={setTab} onAdd={() => setShowAdd(true)} />
+      <Nav tab={tab} setTab={setTab} />
 
       <main className="content">
         {tab !== 'home' && (
@@ -95,6 +95,10 @@ export default function App() {
           </>
         )}
       </main>
+
+      {tab !== 'categories' && (
+        <button className="fab" onClick={() => setShowAdd(true)} aria-label="Добавить операцию">+</button>
+      )}
 
       {showAdd && (
         <AddTransactionModal
