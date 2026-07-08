@@ -1,10 +1,15 @@
+import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { formatMoney } from '../utils'
+import ConfirmDialog from './ConfirmDialog'
 
 export default function TransactionList({ transactions, onChanged, limit, title = 'Операции' }) {
-  async function handleDelete(id) {
-    if (!confirm('Удалить эту операцию?')) return
-    await supabase.from('transactions').delete().eq('id', id)
+  const [pending, setPending] = useState(null) // transaction awaiting delete confirmation
+
+  async function confirmDelete() {
+    if (!pending) return
+    await supabase.from('transactions').delete().eq('id', pending.id)
+    setPending(null)
     onChanged()
   }
 
@@ -34,11 +39,20 @@ export default function TransactionList({ transactions, onChanged, limit, title 
               <div className="tx-amount">
                 {t.type === 'expense' ? '−' : '+'}{formatMoney(t.amount)}
               </div>
-              <button className="tx-delete" onClick={() => handleDelete(t.id)} aria-label="Удалить">✕</button>
+              <button className="tx-delete" onClick={() => setPending(t)} aria-label="Удалить">✕</button>
             </div>
           ))}
         </div>
       ))}
+
+      {pending && (
+        <ConfirmDialog
+          title="Удалить операцию?"
+          message={`«${pending.category}», ${formatMoney(pending.amount)} — это действие нельзя отменить.`}
+          onConfirm={confirmDelete}
+          onCancel={() => setPending(null)}
+        />
+      )}
     </div>
   )
 }

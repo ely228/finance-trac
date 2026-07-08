@@ -23,10 +23,10 @@ const icons = {
 const items = [
   { key: 'home', label: 'Главная', icon: icons.home },
   { key: 'dashboard', label: 'Дашборд', icon: icons.chart },
-  { key: 'categories', label: 'Категории', icon: icons.tag },
 ]
+const lastItem = { key: 'categories', label: 'Категории', icon: icons.tag }
 
-export default function Nav({ tab, setTab }) {
+export default function Nav({ tab, setTab, onAdd }) {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -46,6 +46,14 @@ export default function Nav({ tab, setTab }) {
           <span className="nav-dot" />
         </button>
       ))}
+      <div className="nav-add">
+        <button className="circle" onClick={onAdd} aria-label="Добавить операцию">+</button>
+      </div>
+      <button className={tab === lastItem.key ? 'active' : ''} onClick={() => setTab(lastItem.key)}>
+        {lastItem.icon}
+        <span>{lastItem.label}</span>
+        <span className="nav-dot" />
+      </button>
     </nav>
   )
 }

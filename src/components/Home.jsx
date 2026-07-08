@@ -4,7 +4,7 @@ import { formatMoney } from '../utils'
 
 const PALETTE = ['#9C87D6', '#E888AC', '#F3AF77', '#6FBFA6', '#7FA8D8', '#D89ACB', '#E0B15C', '#8FC3C9']
 
-export default function Home({ transactions, monthLabelText, onPrevMonth, onNextMonth, onChanged }) {
+export default function Home({ transactions, monthLabelText, onPrevMonth, onNextMonth, onChanged, onOpenDashboard }) {
   const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount), 0)
   const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount), 0)
   const balance = income - expense
@@ -44,9 +44,9 @@ export default function Home({ transactions, monthLabelText, onPrevMonth, onNext
             <p className="muted">Пока нет расходов за этот месяц.</p>
           ) : (
             <>
-              <div className="donut-wrap">
+              <div className="donut-wrap" onClick={onOpenDashboard} title="Открыть дашборд">
                 <PieChart width={180} height={180}>
-                  <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={58} outerRadius={80} paddingAngle={2} stroke="none">
+                  <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={58} outerRadius={80} paddingAngle={2} stroke="none" onClick={onOpenDashboard}>
                     {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
                   </Pie>
                 </PieChart>

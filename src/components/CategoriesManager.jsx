@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { supabase } from '../supabaseClient'
+import ConfirmDialog from './ConfirmDialog'
 
 export default function CategoriesManager({ categories, onChanged }) {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
+  const [pending, setPending] = useState(null)
 
   async function handleAdd(e) {
     e.preventDefault()
@@ -19,9 +21,10 @@ export default function CategoriesManager({ categories, onChanged }) {
     onChanged()
   }
 
-  async function handleDelete(id, catName) {
-    if (!confirm(`Удалить категорию «${catName}»? Прошлые операции с этой категорией останутся, но выбрать её заново будет нельзя.`)) return
-    await supabase.from('categories').delete().eq('id', id)
+  async function confirmDelete() {
+    if (!pending) return
+    await supabase.from('categories').delete().eq('id', pending.id)
+    setPending(null)
     onChanged()
   }
 
@@ -40,10 +43,19 @@ export default function CategoriesManager({ categories, onChanged }) {
           {categories.map(c => (
             <li key={c.id}>
               <span>{c.name}</span>
-              <button className="tx-delete" onClick={() => handleDelete(c.id, c.name)} aria-label="Удалить">✕</button>
+              <button className="tx-delete" onClick={() => setPending(c)} aria-label="Удалить">✕</button>
             </li>
           ))}
         </ul>
+      )}
+
+      {pending && (
+        <ConfirmDialog
+          title="Удалить категорию?"
+          message={`«${pending.name}» — прошлые операции с этой категорией останутся, но выбрать её заново будет нельзя.`}
+          onConfirm={confirmDelete}
+          onCancel={() => setPending(null)}
+        />
       )}
     </div>
   )
