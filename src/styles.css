@@ -126,6 +126,7 @@ button, input, select { font-family: inherit; }
 .nav-add .circle {
   position: relative;
   width: 50px; height: 50px;
+  flex: none;
   margin-top: -30px;
   border-radius: 50%;
   background: var(--gradient-btn);
