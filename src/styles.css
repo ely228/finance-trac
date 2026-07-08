@@ -196,7 +196,7 @@ button, input, select { font-family: inherit; }
   }
   .nav button.active { background: rgba(255, 255, 255, 0.45); box-shadow: var(--shadow-inset); }
   .nav-add { order: 3; margin: 2px 0; }
-  .nav-add .circle { margin-top: 0; width: 44px; height: 44px; font-size: 21px; }
+  .nav-add .circle { margin-top: 0; width: 44px; height: 44px; font-size: 21px; flex: none;}
   .content { margin-left: var(--sidebar-w); padding: 32px 40px 60px; }
 }
 @media (hover: hover) and (pointer: fine) {
