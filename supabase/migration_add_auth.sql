@@ -1,5 +1,3 @@
--- обнова с акками
-
 do $$
 declare
   first_user uuid;
@@ -10,6 +8,7 @@ begin
     raise exception 'В проекте пока нет ни одного пользователя. Сначала зарегистрируйся в приложении (экран входа → «Создать аккаунт»), потом запусти эту миграцию ещё раз.';
   end if;
 
+  -- добавляем колонку user_id, если её ещё нет
   if not exists (select 1 from information_schema.columns where table_name = 'categories' and column_name = 'user_id') then
     alter table categories add column user_id uuid references auth.users(id) on delete cascade;
     update categories set user_id = first_user where user_id is null;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const icons = {
   home: (
@@ -28,6 +28,9 @@ const items = [
 
 export default function Nav({ tab, setTab }) {
   const [scrolled, setScrolled] = useState(false)
+  const trackRef = useRef(null)
+  const btnRefs = useRef([])
+  const [indicator, setIndicator] = useState({ left: 0, top: 0, width: 0, height: 0 })
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -36,16 +39,41 @@ export default function Nav({ tab, setTab }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    function measure() {
+      const i = items.findIndex(it => it.key === tab)
+      const btn = btnRefs.current[i]
+      const track = trackRef.current
+      if (!btn || !track) return
+      const b = btn.getBoundingClientRect()
+      const t = track.getBoundingClientRect()
+      setIndicator({ left: b.left - t.left, top: b.top - t.top, width: b.width, height: b.height })
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [tab])
+
   return (
     <nav className={`nav${scrolled ? ' nav-scrolled' : ''}`}>
       <div className="brand" />
-      {items.map(it => (
-        <button key={it.key} className={tab === it.key ? 'active' : ''} onClick={() => setTab(it.key)}>
-          {it.icon}
-          <span>{it.label}</span>
-          <span className="nav-dot" />
-        </button>
-      ))}
+      <div className="nav-track" ref={trackRef}>
+        <div
+          className="nav-indicator"
+          style={{ transform: `translate(${indicator.left}px, ${indicator.top}px)`, width: indicator.width, height: indicator.height }}
+        />
+        {items.map((it, i) => (
+          <button
+            key={it.key}
+            ref={el => (btnRefs.current[i] = el)}
+            className={tab === it.key ? 'active' : ''}
+            onClick={() => setTab(it.key)}
+          >
+            {it.icon}
+            <span>{it.label}</span>
+          </button>
+        ))}
+      </div>
     </nav>
   )
 }

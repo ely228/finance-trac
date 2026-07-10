@@ -9,16 +9,28 @@ const PALETTE = ['#9C87D6', '#E888AC', '#F3AF77', '#6FBFA6', '#7FA8D8', '#D89ACB
 
 function renderActiveShape(props) {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent } = props
+  const midAngle = (startAngle + endAngle) / 2
   return (
-    <g>
-      <text x={cx} y={cy - 6} textAnchor="middle" fontSize="15" fontWeight="800" fill="#2E2A45">
+    <g style={{ transformOrigin: `${cx}px ${cy}px`, transform: `rotate(${(midAngle % 2 === 0 ? 1 : -1) * 1.5}deg)`, transition: 'transform 420ms cubic-bezier(.34,1.56,.64,1)' }}>
+      <defs>
+        <filter id="segGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="9" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <Sector cx={cx} cy={cy} innerRadius={innerRadius} outerRadius={outerRadius}
+              startAngle={startAngle} endAngle={endAngle} fill={fill} opacity={0.35} filter="url(#segGlow)" />
+      <Sector cx={cx} cy={cy} innerRadius={innerRadius} outerRadius={outerRadius + 9}
+              startAngle={startAngle} endAngle={endAngle} fill={fill} cornerRadius={10} />
+      <text x={cx} y={cy - 6} textAnchor="middle" fontSize="15" fontWeight="800" fill="#2A2740">
         {payload.name}
       </text>
-      <text x={cx} y={cy + 14} textAnchor="middle" fontSize="12" fill="#837C99">
+      <text x={cx} y={cy + 14} textAnchor="middle" fontSize="12" fill="#85809A">
         {formatMoney(payload.value)} · {(percent * 100).toFixed(0)}%
       </text>
-      <Sector cx={cx} cy={cy} innerRadius={innerRadius} outerRadius={outerRadius + 8}
-              startAngle={startAngle} endAngle={endAngle} fill={fill} cornerRadius={8} />
     </g>
   )
 }
@@ -79,16 +91,19 @@ export default function Dashboard({ transactions, monthKey }) {
           <div className="card chart-card">
             <h2>Расходы по категориям</h2>
             <p className="muted" style={{ marginTop: -8, marginBottom: 10 }}>Нажми на сектор, чтобы увидеть детали</p>
-            <ResponsiveContainer width="100%" height={260}>
+            <ResponsiveContainer width="100%" height={280}>
               <PieChart>
                 <Pie
                   data={pieData}
                   dataKey="value"
                   nameKey="name"
-                  innerRadius={68}
-                  outerRadius={94}
-                  paddingAngle={2}
+                  innerRadius={70}
+                  outerRadius={104}
+                  paddingAngle={3}
                   stroke="none"
+                  cornerRadius={6}
+                  animationDuration={500}
+                  animationEasing="ease-out"
                   activeIndex={activeIndex}
                   activeShape={renderActiveShape}
                   onMouseEnter={(_, i) => setActiveIndex(i)}
