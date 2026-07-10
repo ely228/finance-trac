@@ -129,6 +129,9 @@ button, input, select { font-family: inherit; }
   .content { margin-left: var(--sidebar-w); padding: var(--sp-6) var(--sp-7) var(--sp-7); }
 }
 
+/* ================================================================
+   NAVIGATION — floating glass pill (mobile) / floating rail (desktop)
+   ================================================================ */
 .nav {
   position: fixed;
   z-index: 30;
@@ -212,7 +215,9 @@ button, input, select { font-family: inherit; }
   .nav .brand::before { content:""; position:absolute; inset:0; border-radius:inherit; background: var(--sheen); }
 }
 
-
+/* ================================================================
+   GLASS CARD — the base material used everywhere
+   ================================================================ */
 .card {
   position: relative;
   background: var(--mat-2-bg);
@@ -233,6 +238,7 @@ button, input, select { font-family: inherit; }
 .grid-2 { display: grid; grid-template-columns: 1fr; gap: var(--sp-4); }
 @media (min-width: 900px) { .grid-2 { grid-template-columns: 1fr 1fr; align-items: start; } }
 
+/* ---------- home layout: reflows composition per platform ---------- */
 .home-grid { display: grid; gap: var(--sp-4); grid-template-columns: 1fr; }
 .home-grid .g-balance, .home-grid .g-quick, .home-grid .g-cta,
 .home-grid .g-spending, .home-grid .g-recent, .home-grid .g-summary, .home-grid .g-greeting {
@@ -260,6 +266,9 @@ button, input, select { font-family: inherit; }
 .g-summary { display: none; } /* desktop-only deeper analytics card */
 @media (min-width: 980px) { .g-summary { display: block; } }
 
+/* ================================================================
+   HERO / BALANCE
+   ================================================================ */
 .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-5); flex-wrap: wrap; gap: var(--sp-3); }
 .topbar h1 { font-size: 20px; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
 .month-switch { display: flex; align-items: center; gap: var(--sp-3); font-size: 13px; font-weight: 700; color: var(--ink-soft); text-transform: capitalize; }
@@ -270,7 +279,6 @@ button, input, select { font-family: inherit; }
 }
 
 .hero {
-  grid-area: balance;
   position: relative;
   overflow: hidden;
   border-radius: var(--r-xl);
@@ -322,7 +330,8 @@ button, input, select { font-family: inherit; }
   .hero-balance { font-size: 62px; }
 }
 
-.quick-duo { grid-area: quick; display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-bottom: var(--sp-4); }
+/* ---------- quick duo cards (income / expense) ---------- */
+.quick-duo { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-bottom: var(--sp-4); }
 .quick-card {
   position: relative;
   border-radius: var(--r-md);
@@ -344,8 +353,8 @@ button, input, select { font-family: inherit; }
 .quick-card.income .qc-value { color: var(--income); }
 .quick-card.expense .qc-value { color: var(--expense); }
 
+/* ---------- CTA button (inline "new operation") ---------- */
 .cta-btn {
-  grid-area: cta;
   position: relative;
   width: 100%;
   padding: 16px;
@@ -368,12 +377,12 @@ button, input, select { font-family: inherit; }
   .cta-btn:hover { box-shadow: 0 18px 38px rgba(156,135,214,.48), var(--rim-light); }
 }
 
-
+/* ---------- greeting card (desktop only) ---------- */
 .greeting-card { flex-direction: column; justify-content: space-between; }
 .greeting-date { font-size: 12px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .04em; }
 .greeting-title { font-size: 21px; font-weight: 800; margin: var(--sp-2) 0 var(--sp-5); letter-spacing: -0.01em; }
 
-
+/* ---------- KPI cards (dashboard) ---------- */
 .kpi-row { display: flex; gap: var(--sp-3); margin-bottom: var(--sp-4); }
 .kpi {
   position: relative; flex: 1; border-radius: var(--r-md); padding: var(--sp-4);
@@ -387,6 +396,7 @@ button, input, select { font-family: inherit; }
 .kpi.expense { background: var(--expense-bg); } .kpi.expense .kpi-value { color: var(--expense); }
 .kpi.balance { background: linear-gradient(135deg, rgba(199,185,234,0.26), rgba(240,168,192,0.22)); } .kpi.balance .kpi-value { color: var(--lavender-dark); }
 
+/* ---------- monthly summary card (desktop) ---------- */
 .summary-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--hairline); }
 .summary-row:last-child { border-bottom: none; }
 .summary-icon { width: 34px; height: 34px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; font-size: 14px; margin-right: 10px; }
@@ -397,7 +407,7 @@ button, input, select { font-family: inherit; }
 .summary-change.up { color: var(--income); }
 .summary-change.down { color: var(--expense); }
 
-
+/* ---------- form ---------- */
 .form label { display: block; font-size: 12px; font-weight: 700; color: var(--ink-soft); margin: var(--sp-3) 0 5px; }
 .form input, .form select {
   width: 100%; padding: 13px var(--sp-4); font-size: 15px;
@@ -431,7 +441,7 @@ button, input, select { font-family: inherit; }
 .muted { color: var(--ink-faint); font-size: 14px; }
 .link-btn { background: none; border: none; color: var(--lavender-dark); font-weight: 700; font-size: 13px; cursor: pointer; padding: 0; }
 
-
+/* ---------- modal / bottom sheet — Apple Maps style ---------- */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(35, 28, 55, 0.28);
   backdrop-filter: blur(4px); z-index: 50;
@@ -460,6 +470,7 @@ button, input, select { font-family: inherit; }
 @keyframes sheet-up { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @media (min-width: 768px) { .modal-overlay { align-items: center; } .modal-sheet { border-radius: var(--r-xl); max-height: 84vh; } }
 
+/* ---------- confirm dialog ---------- */
 .confirm-overlay {
   position: fixed; inset: 0; background: rgba(35,28,55,.28); backdrop-filter: blur(4px);
   z-index: 60; display: flex; align-items: center; justify-content: center; padding: 20px;
@@ -485,6 +496,7 @@ button, input, select { font-family: inherit; }
   .confirm-actions .danger:hover { filter: brightness(1.08); }
 }
 
+/* ---------- transactions list ---------- */
 .day-group { margin-bottom: var(--sp-2); }
 .day-group-title { font-size: 12px; font-weight: 800; color: var(--ink-faint); text-transform: capitalize; margin: var(--sp-4) 0 6px; }
 .tx-row { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--hairline); }
@@ -501,6 +513,7 @@ button, input, select { font-family: inherit; }
 .tx-delete:active { transform: scale(0.85); }
 @media (hover: hover) and (pointer: fine) { .tx-delete:hover { color: var(--expense); transform: scale(1.15); } }
 
+/* ---------- categories ---------- */
 .inline-form { display: flex; gap: var(--sp-2); }
 .inline-form input { flex: 1; padding: 12px var(--sp-4); border: 1px solid var(--hairline); border-radius: var(--r-sm); background: var(--mat-1-bg); }
 .inline-form button { position: relative; overflow: hidden; padding: 12px var(--sp-5); background: var(--gradient-btn); color: #fff; border: none; border-radius: var(--r-sm); font-weight: 800; cursor: pointer; box-shadow: var(--rim-light); transition: transform var(--dur-1) var(--smooth), filter var(--dur-2) var(--smooth); }
@@ -510,6 +523,7 @@ button, input, select { font-family: inherit; }
 .category-list li { display: flex; justify-content: space-between; align-items: center; padding: 10px 6px; border-bottom: 1px solid var(--hairline); font-size: 14px; font-weight: 700; border-radius: var(--r-xs); margin: 0 -6px; transition: background var(--dur-2) var(--smooth); }
 @media (hover: hover) and (pointer: fine) { .category-list li:hover { background: rgba(255,255,255,0.35); } }
 
+/* ---------- account / auth ---------- */
 .auth-wrap { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: var(--sp-5); position: relative; z-index: 1; }
 .auth-card { width: 100%; max-width: 380px; }
 .auth-card .brand-mark { width: 48px; height: 48px; border-radius: var(--r-sm); background: var(--gradient-btn); margin: 0 auto var(--sp-4); position: relative; overflow: hidden; box-shadow: var(--rim-light); }
@@ -523,13 +537,16 @@ button, input, select { font-family: inherit; }
 .account-email { font-size: 14px; font-weight: 700; word-break: break-all; }
 .logout-btn { margin-top: var(--sp-4); width: 100%; padding: 11px; border-radius: var(--r-sm); border: 1px solid var(--hairline); background: rgba(255,255,255,0.35); font-weight: 700; font-size: 13px; color: var(--expense); cursor: pointer; }
 
+/* ---------- export menu ---------- */
 .export-wrap { position: relative; }
 .export-btn { display: flex; align-items: center; gap: 6px; padding: 9px var(--sp-4); border-radius: var(--r-sm); border: var(--mat-2-edge); background: var(--mat-3-bg); backdrop-filter: var(--mat-2-blur); font-size: 13px; font-weight: 700; color: var(--ink); cursor: pointer; box-shadow: var(--rim-light); }
 .export-menu { position: absolute; right: 0; top: calc(100% + 8px); background: var(--mat-4-bg); backdrop-filter: var(--mat-4-blur); border: var(--mat-4-edge); border-radius: var(--r-md); padding: 6px; min-width: 190px; box-shadow: var(--el-2), var(--rim-light); z-index: 20; }
 .export-menu button { width: 100%; text-align: left; padding: 10px 12px; border-radius: var(--r-xs); background: none; border: none; font-weight: 700; font-size: 13px; color: var(--ink); cursor: pointer; }
 @media (hover: hover) and (pointer: fine) { .export-menu button:hover { background: rgba(255,255,255,0.5); } }
 
-
+/* ================================================================
+   FLOATING ACTION BUTTON — glass sphere
+   ================================================================ */
 .fab {
   position: fixed; z-index: 40;
   right: 18px; bottom: calc(94px + var(--safe-b));
@@ -553,7 +570,9 @@ button, input, select { font-family: inherit; }
 }
 @media (min-width: 768px) { .fab { right: var(--sp-6); bottom: var(--sp-6); } }
 
-
+/* ================================================================
+   CHARTS
+   ================================================================ */
 .chart-card { position: relative; }
 .chart-legend-row { display: flex; gap: var(--sp-4); flex-wrap: wrap; font-size: 12px; font-weight: 700; color: var(--ink-soft); margin-top: var(--sp-3); }
 .chart-legend-row .li { display: flex; align-items: center; gap: 6px; }
@@ -575,7 +594,9 @@ button, input, select { font-family: inherit; }
 /* sparkline card */
 .spark-wrap { margin-top: var(--sp-2); }
 
-
+/* ================================================================
+   INTERACTION LAYER — press / hover feedback (spring-based)
+   ================================================================ */
 .card, .kpi, .quick-card, .submit-btn, .type-toggle button,
 .month-switch button, .modal-close {
   transition: transform var(--dur-2) var(--spring), box-shadow var(--dur-2) var(--smooth),
@@ -596,6 +617,7 @@ button, input, select { font-family: inherit; }
 
 .recharts-pie-sector, .recharts-sector { cursor: pointer; transition: transform var(--dur-2) var(--spring), filter var(--dur-2) var(--smooth); }
 
+/* ---------- entrance (staggered, spring-flavoured) ---------- */
 @keyframes rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: no-preference) {
   .content > * { animation: rise-in var(--dur-3) var(--smooth) backwards; }
