@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import ConfirmDialog from './ConfirmDialog'
 import AddCategorySheet from './AddCategorySheet'
-import { formatMoney, categoryStyle, categoryInitial } from '../utils'
+import { formatMoney, categoryStyle } from '../utils'
+import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
 export default function Categories({ categories, transactions, onChanged }) {
   const [search, setSearch] = useState('')
@@ -28,7 +29,7 @@ export default function Categories({ categories, transactions, onChanged }) {
       if (filter === 'all') return true
       const t = totals[c.name]
       if (!t) return false
-      return filter === 'expense' ? t.expense > 0 : t.income > 0
+      return filter === 'expense' ? t.expense > 0 : filter === 'income' ? t.income > 0 : false
     })
     .map(c => {
       const t = totals[c.name] || { expense: 0, income: 0 }
@@ -60,26 +61,28 @@ export default function Categories({ categories, transactions, onChanged }) {
         <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>Все</button>
         <button className={filter === 'expense' ? 'active' : ''} onClick={() => setFilter('expense')}>Расходы</button>
         <button className={filter === 'income' ? 'active' : ''} onClick={() => setFilter('income')}>Доходы</button>
+        <button className={filter === 'transfer' ? 'active' : ''} onClick={() => setFilter('transfer')}>Трансферы</button>
       </div>
 
-      <div className="card">
+      <div className="card categories-card">
         {rows.length === 0 ? (
           <p className="muted">Ничего не найдено. Добавь категорию кнопкой «+» сверху.</p>
         ) : rows.map(c => {
           const style = categoryStyle(c.name)
           return (
-            <div className="cat-row" key={c.id}>
-              <div className="cat-avatar" style={{ background: style.bg, color: style.fg }}>{categoryInitial(c.name)}</div>
+            <button className="cat-row category-list-row" key={c.id} type="button">
+              <div className={`cat-avatar category-icon ${categoryMeta(c.name).tone}`} style={{ color: style.fg }}><CategoryIcon name={c.name} /></div>
               <div className="cat-info">
                 <div className="cat-name">{c.name}</div>
+                <div className="cat-sub">{categoryMeta(c.name).description}</div>
                 <div className="cat-progress"><div className="cat-progress-fill" style={{ width: `${Math.min(100, c.pct)}%`, background: style.fg }} /></div>
               </div>
               <div className="cat-numbers">
                 <div className="cat-amount">{formatMoney(c.amount)}</div>
                 <div className="cat-pct">{c.pct}%</div>
               </div>
-              <button className="tx-delete" onClick={() => setPending(c)} aria-label="Удалить">✕</button>
-            </div>
+              <span className="cat-chevron">›</span>
+            </button>
           )
         })}
         <div className="cat-total-row">

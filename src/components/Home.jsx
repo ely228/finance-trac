@@ -3,7 +3,8 @@ import { PieChart, Pie, Cell } from 'recharts'
 import AnimatedNumber from './AnimatedNumber'
 import ConfirmDialog from './ConfirmDialog'
 import { supabase } from '../supabaseClient'
-import { formatMoney, categoryStyle, categoryInitial } from '../utils'
+import { formatMoney, categoryStyle } from '../utils'
+import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
 const PALETTE = ['#9C87D6', '#E8659E', '#D9822E', '#3F9C7E', '#5586BE', '#BD5FA6', '#B8862A', '#3E8C96']
 
@@ -23,7 +24,7 @@ const EyeIcon = ({ off }) => (
   </svg>
 )
 
-export default function Home({ transactions, onChanged, onOpenDashboard, onAdd }) {
+export default function Home({ transactions, email, onChanged, onOpenDashboard, onAdd }) {
   const [hidden, setHidden] = useState(false)
   const [pending, setPending] = useState(null)
 
@@ -49,9 +50,14 @@ export default function Home({ transactions, onChanged, onOpenDashboard, onAdd }
   const money = v => hidden ? '••••• ₽' : formatMoney(v)
 
   const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6)
+  const userName = (email || '').split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Алексей'
 
   return (
     <div className="home-grid">
+      <header className="home-greeting">
+        <div><p>Добрый вечер,</p><h1>{userName} <span aria-hidden="true">👋</span></h1></div>
+        <button className="notification-btn" aria-label="Уведомления"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg><i /></button>
+      </header>
       <div className="card hero-card g-balance">
         <div className="hero-top">
           <span className="hero-label">Баланс</span>
@@ -126,10 +132,10 @@ export default function Home({ transactions, onChanged, onOpenDashboard, onAdd }
           const style = categoryStyle(t.category)
           return (
             <div key={t.id} className={`tx-row ${t.type}`}>
-              <div className="tx-icon" style={{ background: style.bg, color: style.fg }}>{categoryInitial(t.category)}</div>
+              <div className={`tx-icon category-icon ${categoryMeta(t.category).tone}`} style={{ color: style.fg }}><CategoryIcon name={t.category} /></div>
               <div className="tx-main">
                 <span className="tx-cat">{t.category}</span>
-                {t.comment && <span className="tx-comment">{t.comment}</span>}
+                <span className="tx-comment">{t.comment || categoryMeta(t.category).description}</span>
               </div>
               <div className="tx-right">
                 <span className="tx-amount">{t.type === 'expense' ? '−' : '+'}{money(t.amount)}</span>

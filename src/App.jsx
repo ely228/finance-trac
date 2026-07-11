@@ -91,6 +91,7 @@ export default function App() {
             {tab === 'home' && (
               <Home
                 transactions={transactions}
+                email={session.user.email}
                 onChanged={loadTransactions}
                 onOpenDashboard={() => setTab('dashboard')}
                 onAdd={() => setShowAdd(true)}

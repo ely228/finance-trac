@@ -67,9 +67,9 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
   const remaining = plan ? plan.amount - expense : 0
 
   const header = (
-    <div className="topbar">
+    <div className="topbar dashboard-header">
       <h1>Дашборд</h1>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className="dashboard-actions">
         <div className="date-pill">
           <span>📅</span>
           <span style={{ textTransform: 'capitalize' }}>{monthLabel(monthKey)}</span>
@@ -95,7 +95,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
   return (
     <div>
       {header}
-      <div className="kpi-row">
+      <div className="kpi-row dashboard-kpis">
         <div className="kpi income">
           <div className="kpi-icon">↑</div>
           <div className="kpi-label">Доходы</div>

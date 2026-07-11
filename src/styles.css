@@ -714,3 +714,106 @@ button, input, select { font-family: inherit; }
 .settings-label { flex: 1; font-size: 14px; font-weight: 700; }
 .settings-label.danger { color: var(--expense); }
 .settings-chevron { color: var(--ink-faint); font-size: 15px; }
+
+/* =================================================================
+   iOS composition – compact two-column analytics and touch-first rows
+   ================================================================= */
+.home-greeting {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: calc(8px + var(--safe-t)) 4px 4px; margin-bottom: 8px;
+}
+.home-greeting p { margin: 0 0 2px; font-size: 16px; font-weight: 700; color: var(--ink); }
+.home-greeting h1 { margin: 0; font-size: 30px; line-height: 1.12; letter-spacing: -0.04em; }
+.home-greeting h1 span { font-size: .78em; letter-spacing: 0; }
+.notification-btn {
+  width: 44px; height: 44px; display: grid; place-items: center; position: relative;
+  color: var(--ink); border: var(--mat-2-edge); border-radius: 15px; background: var(--mat-2-bg);
+  box-shadow: var(--el-1), var(--rim-light);
+}
+.notification-btn svg { width: 22px; height: 22px; }
+.notification-btn i { position: absolute; width: 7px; height: 7px; right: 9px; top: 8px; border-radius: 50%; background: #ff3d6d; border: 1px solid #fff; }
+.home-grid { grid-template-areas: 'greeting' 'balance' 'spending' 'recent'; }
+.home-greeting { grid-area: greeting; }
+.home-grid .g-balance { grid-area: balance; }
+.home-grid .g-spending { grid-area: spending; }
+.home-grid .g-recent { grid-area: recent; }
+.category-icon { padding: 10px; background: rgba(156,135,214,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.55); }
+.category-icon svg { width: 100%; height: 100%; }
+.category-icon.pink { background: rgba(232,101,158,.15); }
+.category-icon.orange { background: rgba(217,130,46,.14); }
+.category-icon.green { background: rgba(79,174,140,.14); }
+.category-icon.teal { background: rgba(56,190,181,.14); }
+.category-icon.muted { background: rgba(133,128,154,.1); }
+.category-list-row { width: 100%; text-align: left; background: none; border-left: 0; border-right: 0; border-top: 0; cursor: pointer; font: inherit; color: inherit; }
+.category-list-row:active { background: rgba(255,255,255,.38); }
+.categories-card { padding-top: 8px; padding-bottom: 10px; }
+.cat-row .cat-sub { margin-top: 2px; }
+.cat-row .cat-progress { margin-top: 9px; }
+.dashboard-header { align-items: flex-end; }
+.dashboard-actions { display: flex; align-items: center; gap: 10px; }
+
+@media (max-width: 767px) {
+  .content { padding: calc(12px + var(--safe-t)) 14px 104px; }
+  .card { border-radius: 26px; padding: 20px; margin-bottom: 14px; }
+  .card h2 { color: var(--ink); text-transform: none; letter-spacing: -.02em; font-size: 16px; }
+  .hero-card { padding: 22px; border-radius: 29px; }
+  .hero-balance { font-size: clamp(38px, 11vw, 48px); }
+  .hero-wallet { width: 145px; right: -8px; opacity: .9; }
+  .hero-duo { gap: 10px; }
+  .hero-duo-item { padding: 13px 11px; }
+  .hero-duo-item .hdi-value { font-size: 15px; }
+  .topbar { margin: calc(6px + var(--safe-t)) 4px 18px; }
+  .topbar h1 { font-size: 31px; }
+  .dashboard-header { align-items: flex-start; flex-direction: column; gap: 13px; }
+  .dashboard-actions { width: 100%; justify-content: space-between; }
+  .date-pill { padding: 10px 14px; font-size: 12px; }
+  .export-btn { padding: 10px 14px; font-size: 12px; }
+  .kpi-row { gap: 8px; margin-bottom: 14px; }
+  .kpi { min-width: 0; padding: 12px 10px; border-radius: 22px; }
+  .kpi-icon { width: 30px; height: 30px; margin-bottom: 9px; }
+  .kpi-label { font-size: 11px; }
+  .kpi-value { font-size: clamp(16px, 4.9vw, 21px); white-space: nowrap; }
+  .kpi-change { font-size: 10px; padding: 4px 6px; white-space: nowrap; }
+  .grid-2 { grid-template-columns: 1fr; gap: 0; }
+  .donut-row { gap: 8px; }
+  .donut-wrap { transform: scale(.93); margin: -5px -4px; }
+  .legend-list { gap: 9px; }
+  .legend-row { gap: 6px; }
+  .legend-name { font-size: 12px; }
+  .legend-value { display: none; }
+  .legend-pct { font-size: 11px; width: 28px; }
+  .chart-card .recharts-responsive-container { height: 178px !important; }
+  .cat-row { padding: 14px 0; gap: 10px; }
+  .cat-avatar { width: 48px; height: 48px; }
+  .cat-name { font-size: 15px; }
+  .cat-sub { font-size: 12px; }
+  .cat-progress { height: 6px; }
+  .cat-amount { font-size: 14px; }
+  .filter-pills { margin-left: 0; margin-right: 0; padding: 2px 0 4px; }
+  .filter-pills button { padding: 10px 17px; }
+  .filter-pills button.active { color: var(--lavender-dark); background: rgba(255,255,255,.76); box-shadow: var(--el-1), var(--rim-light); }
+  .search-bar { padding: 14px 16px; border-radius: 19px; }
+  .nav { left: 18px; right: 18px; bottom: calc(12px + var(--safe-b)); height: 72px; padding: 7px 8px; }
+  .nav-sphere { width: 62px; height: 62px; bottom: calc(60px + var(--safe-b)); }
+  .nav button { font-size: 10px; }
+}
+
+/* The supplied iOS references are 430 CSS px wide: keep analytics paired there. */
+@media (min-width: 400px) and (max-width: 767px) {
+  .dashboard-kpis .kpi { padding: 13px 11px; }
+  .grid-2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+  .grid-2 .card { padding: 16px; }
+  .grid-2 .card h2 { font-size: 14px; min-height: 34px; }
+  .grid-2 .chart-card .recharts-responsive-container { height: 162px !important; }
+  .grid-2 .legend-list { margin-top: 4px !important; }
+  .grid-2 .cat-row { padding: 10px 0; gap: 7px; }
+  .grid-2 .cat-avatar { width: 37px; height: 37px; padding: 8px; }
+  .grid-2 .cat-name { font-size: 12px; }
+  .grid-2 .cat-numbers { display: none; }
+  .grid-2 .plan-row { font-size: 11px; padding: 9px 0; }
+  .grid-2 .plan-donut-wrap { transform: scale(.9); margin: -7px 0 -3px; }
+}
+
+@media (min-width: 900px) {
+  .home-grid { grid-template-areas: 'greeting greeting' 'balance balance' 'spending recent'; }
+}
