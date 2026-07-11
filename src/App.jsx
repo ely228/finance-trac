@@ -5,7 +5,6 @@ import Home from './components/Home'
 import Dashboard from './components/Dashboard'
 import Categories from './components/Categories'
 import Account from './components/Account'
-import AddTransactionModal from './components/AddTransactionModal'
 import Auth from './components/Auth'
 import { currentMonthKey, monthLabel, shiftMonth } from './utils'
 
@@ -29,9 +28,7 @@ export default function App() {
   const [categories, setCategories] = useState(visualTest ? visualCategories : [])
   const [transactions, setTransactions] = useState(visualTest ? visualTransactions : [])
   const [prevTotals, setPrevTotals] = useState(visualTest ? { income: 4450, expense: 4100 } : null)
-  const [plan, setPlan] = useState(visualTest ? { amount: 5600 } : null)
   const [loading, setLoading] = useState(!visualTest)
-  const [showAdd, setShowAdd] = useState(false)
 
   useEffect(() => {
     if (visualTest) return
@@ -66,23 +63,12 @@ export default function App() {
     setPrevTotals({ income, expense })
   }, [monthKey])
 
-  const loadPlan = useCallback(async () => {
-    const { data } = await supabase.from('plans').select('*').eq('month', monthKey).maybeSingle()
-    setPlan(data || null)
-  }, [monthKey])
-
   useEffect(() => {
     if (visualTest) return
     if (!session) return
     setLoading(true)
-    Promise.all([loadCategories(), loadTransactions(), loadPrevMonthTotals(), loadPlan()]).finally(() => setLoading(false))
-  }, [loadCategories, loadTransactions, loadPrevMonthTotals, loadPlan, session])
-
-  async function savePlan(amount) {
-    if (visualTest) return setPlan({ amount })
-    await supabase.from('plans').upsert({ month: monthKey, amount }, { onConflict: 'user_id,month' })
-    loadPlan()
-  }
+    Promise.all([loadCategories(), loadTransactions(), loadPrevMonthTotals()]).finally(() => setLoading(false))
+  }, [loadCategories, loadTransactions, loadPrevMonthTotals, session])
 
   if (session === undefined) return null
   if (!session) return <Auth />
@@ -97,7 +83,7 @@ export default function App() {
       </div>
       <div className="grain" />
 
-      <Nav tab={tab} setTab={setTab} onAdd={() => setShowAdd(true)} />
+      <Nav tab={tab} setTab={setTab} />
 
       <main className="content">
         {loading ? (
@@ -110,7 +96,6 @@ export default function App() {
                 email={session.user.email}
                 onChanged={loadTransactions}
                 onOpenDashboard={() => setTab('dashboard')}
-                onAdd={() => setShowAdd(true)}
               />
             )}
             {tab === 'dashboard' && (
@@ -119,8 +104,6 @@ export default function App() {
                 monthKey={monthKey}
                 onMonthChange={setMonthKey}
                 prevTotals={prevTotals}
-                plan={plan}
-                onSavePlan={savePlan}
               />
             )}
             {tab === 'categories' && (
@@ -133,13 +116,6 @@ export default function App() {
         )}
       </main>
 
-      {showAdd && (
-        <AddTransactionModal
-          categories={categories}
-          onAdded={loadTransactions}
-          onClose={() => setShowAdd(false)}
-        />
-      )}
     </div>
   )
 }

@@ -985,3 +985,49 @@ button, input, select { font-family: inherit; }
   .nav-sphere::before { display: none; }
   .nav-sphere::after { font-size: 36px; font-family: Arial, sans-serif; font-weight: 300; line-height: .9; text-shadow: none; }
 }
+
+/* Simplified navigation and compact first screen after removing the floating add action. */
+@media (max-width: 767px) {
+  .content { padding-bottom: calc(82px + var(--safe-b)); }
+  .nav { left: 18px; right: 18px; height: 66px; bottom: calc(12px + var(--safe-b)); }
+  .nav-sphere { display: none !important; }
+  .home-grid { gap: 8px; }
+  .home-greeting { margin-bottom: 0; padding-top: 3px; }
+  .home-greeting h1 { font-size: 28px; }
+  .hero-card { padding: 14px; margin-bottom: 0; }
+  .hero-balance-row { min-height: 61px; margin: 2px 0 8px; }
+  .hero-balance { font-size: clamp(35px, 9.8vw, 42px); }
+  .hero-wallet { width: 190px; right: -18px; }
+  .hero-duo { margin-bottom: 8px; }
+  .hero-duo-item { padding: 9px 10px; }
+  .hero-cta { min-height: 42px; padding: 8px 12px; font-size: 14px; }
+  .g-recent .tx-row { padding: 9px 0; }
+}
+
+/* Dashboard: two analytical cards above one wide readable trend chart. */
+.dashboard-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
+.dashboard-pair > .card { margin-bottom: 0; }
+.dashboard-trend { margin-top: 14px; }
+.trend-title { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.trend-title .avg-pill { margin: 0; min-width: 168px; }
+.dashboard-top-categories .cat-row:last-child { border-bottom: 0; }
+
+@media (max-width: 767px) {
+  .dashboard-pair { gap: 10px; }
+  .dashboard-pair > .card { padding: 12px; border-radius: 22px; }
+  .dashboard-pair h2 { min-height: 30px; font-size: 13px; line-height: 1.15; margin-bottom: 7px; }
+  .dashboard-expenses .recharts-responsive-container { height: 142px !important; }
+  .dashboard-top-categories .cat-row { padding: 8px 0; gap: 6px; }
+  .dashboard-top-categories .cat-avatar { display: none; }
+  .dashboard-top-categories .cat-name { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dashboard-top-categories .cat-progress { height: 4px; margin-top: 5px; }
+  .dashboard-top-categories .cat-numbers { width: 62px; min-width: 62px; }
+  .dashboard-top-categories .cat-amount { font-size: 10px; white-space: nowrap; letter-spacing: -.03em; }
+  .dashboard-top-categories .cat-pct { font-size: 10px; }
+  .dashboard-trend { margin-top: 10px; padding: 14px; }
+  .dashboard-trend h2 { font-size: 15px; }
+  .dashboard-trend .recharts-responsive-container { height: 178px !important; }
+  .trend-title .avg-pill { min-width: 132px; padding: 8px 10px; }
+  .trend-title .avg-pill .label { font-size: 9px; }
+  .trend-title .avg-pill .value { font-size: 14px; }
+}

@@ -33,7 +33,7 @@ const items = [
   { key: 'account', label: 'Аккаунт', icon: icons.account },
 ]
 
-export default function Nav({ tab, setTab, onAdd }) {
+export default function Nav({ tab, setTab }) {
   const [scrolled, setScrolled] = useState(false)
   const trackRef = useRef(null)
   const btnRefs = useRef([])
@@ -62,9 +62,7 @@ export default function Nav({ tab, setTab, onAdd }) {
   }, [tab])
 
   return (
-    <>
-      <button className="nav-sphere" onClick={onAdd} aria-label="Добавить операцию">+</button>
-      <nav className={`nav${scrolled ? ' nav-scrolled' : ''}`}>
+    <nav className={`nav${scrolled ? ' nav-scrolled' : ''}`}>
         <div className="brand" />
         <div className="nav-track" ref={trackRef}>
           <div
@@ -80,11 +78,10 @@ export default function Nav({ tab, setTab, onAdd }) {
             >
               {it.icon}
               <span>{it.label}</span>
-              <span className="nav-dot" />
+              {tab === it.key && <span className="nav-dot" />}
             </button>
           ))}
         </div>
-      </nav>
-    </>
+    </nav>
   )
 }
