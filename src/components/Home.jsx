@@ -98,14 +98,14 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
           <p className="muted">Пока нет расходов за этот месяц.</p>
         ) : (
           <div className="donut-row">
-            <div className="donut-wrap" onClick={onOpenDashboard} title="Открыть дашборд">
+            <div className="donut-wrap glass-donut" onClick={onOpenDashboard} title="Открыть дашборд">
               <PieChart width={130} height={130}>
                 <defs>
                   {pieData.map((d, i) => <linearGradient key={d.name} id={`home-slice-${i}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#fff" stopOpacity=".5" /><stop offset="28%" stopColor={d.color} /><stop offset="100%" stopColor={d.color} stopOpacity=".78" /></linearGradient>)}
                   <filter id="home-pie-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" /><feFlood floodColor="#9c7cf0" floodOpacity=".34" result="color" /><feComposite in="color" in2="blur" operator="in" result="shadow" /><feMerge><feMergeNode in="shadow" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
                 </defs>
                 <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={44} outerRadius={62} paddingAngle={3} stroke="none">
-                  {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                  {pieData.map((d, i) => <Cell key={i} fill={d.color} stroke="rgba(255,255,255,.44)" strokeWidth={1.4} />)}
                 </Pie>
               </PieChart>
               <div className="donut-center">

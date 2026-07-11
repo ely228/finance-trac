@@ -5,6 +5,7 @@ import Home from './components/Home'
 import Dashboard from './components/Dashboard'
 import Categories from './components/Categories'
 import Account from './components/Account'
+import AddTransactionModal from './components/AddTransactionModal'
 import Auth from './components/Auth'
 import { currentMonthKey, monthLabel, shiftMonth } from './utils'
 
@@ -28,6 +29,7 @@ export default function App() {
   const [categories, setCategories] = useState(visualTest ? visualCategories : [])
   const [transactions, setTransactions] = useState(visualTest ? visualTransactions : [])
   const [prevTotals, setPrevTotals] = useState(visualTest ? { income: 4450, expense: 4100 } : null)
+  const [showAdd, setShowAdd] = useState(false)
   const [loading, setLoading] = useState(!visualTest)
 
   useEffect(() => {
@@ -96,6 +98,7 @@ export default function App() {
                 email={session.user.email}
                 onChanged={loadTransactions}
                 onOpenDashboard={() => setTab('dashboard')}
+                onAdd={() => setShowAdd(true)}
               />
             )}
             {tab === 'dashboard' && (
@@ -115,6 +118,8 @@ export default function App() {
           </>
         )}
       </main>
+
+      {showAdd && <AddTransactionModal categories={categories} onAdded={loadTransactions} onClose={() => setShowAdd(false)} />}
 
     </div>
   )

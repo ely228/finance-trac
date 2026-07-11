@@ -1031,3 +1031,22 @@ button, input, select { font-family: inherit; }
   .trend-title .avg-pill .label { font-size: 9px; }
   .trend-title .avg-pill .value { font-size: 14px; }
 }
+
+/* Shared liquid-glass treatment for every category donut. */
+.glass-donut { --donut-d: 130px; position: relative; isolation: isolate; filter: drop-shadow(0 9px 13px rgba(107,70,190,.18)); }
+.dashboard-donut-glass.glass-donut { --donut-d: 164px; }
+.glass-donut::before { content: ''; position: absolute; z-index: 3; pointer-events: none; width: var(--donut-d); height: var(--donut-d); left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 50%; background: linear-gradient(140deg, rgba(255,255,255,.6) 2%, rgba(255,255,255,.12) 24%, rgba(255,255,255,0) 46%); -webkit-mask: radial-gradient(circle, transparent 0 44%, #000 46% 68%, transparent 70%); mask: radial-gradient(circle, transparent 0 44%, #000 46% 68%, transparent 70%); mix-blend-mode: screen; }
+.glass-donut::after { content: ''; position: absolute; z-index: 2; pointer-events: none; width: calc(var(--donut-d) * .74); height: calc(var(--donut-d) * .74); left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(circle at 28% 17%, rgba(255,255,255,.32), rgba(255,255,255,0) 38%); box-shadow: inset 0 1px 10px rgba(255,255,255,.16); }
+.glass-donut .recharts-sector { filter: drop-shadow(0 3px 4px rgba(92,62,162,.16)); }
+
+/* Small category icons use the same glass material as the cards. */
+.category-icon, .tx-icon.category-icon, .cat-avatar.category-icon { position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,.58); background: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,.12)) !important; box-shadow: inset 0 1px rgba(255,255,255,.86), inset 0 -7px 15px rgba(126,94,184,.08), 0 7px 14px rgba(89,61,142,.10); backdrop-filter: blur(12px) saturate(180%); -webkit-backdrop-filter: blur(12px) saturate(180%); }
+.category-icon::after { content: ''; position: absolute; inset: 1px; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, rgba(255,255,255,.48), rgba(255,255,255,0) 42%); }
+.category-icon svg { position: relative; z-index: 1; filter: drop-shadow(0 1px 1px rgba(255,255,255,.35)); }
+
+@media (max-width: 767px) { .home-grid .g-spending, .home-grid .g-recent { margin-top: 0; } .home-grid .g-spending { margin-bottom: 0; } }
+
+@media (max-width: 767px) {
+  .dashboard-donut-glass.glass-donut::before { content: '' !important; display: block !important; }
+  .dashboard-donut-glass.glass-donut::after { content: '' !important; display: block !important; }
+}
