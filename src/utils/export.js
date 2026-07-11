@@ -39,7 +39,6 @@ export function exportCSV(transactions, monthLabelText) {
 export function exportXLSX(transactions, monthLabelText) {
   const sorted = [...transactions].sort((a, b) => a.date.localeCompare(b.date))
 
-  // ---- sheet 1: operations ----
   const opRows = sorted.map(t => ({
     'Дата': t.date,
     'Категория': t.category,
@@ -56,7 +55,6 @@ export function exportXLSX(transactions, monthLabelText) {
   wsOps['!autofilter'] = { ref: `A1:E${sorted.length + 1}` }
   wsOps['!freeze'] = { xSplit: 0, ySplit: 1 }
 
-  // ---- sheet 2: category summary ----
   const summary = categorySummary(sorted)
   const sumRows = summary.map(s => ({
     'Категория': s.category,

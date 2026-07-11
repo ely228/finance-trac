@@ -18,15 +18,22 @@ const icons = {
       <circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none" />
     </svg>
   ),
+  account: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="3.6" />
+      <path d="M4.5 20c1.4-3.6 4.4-5.5 7.5-5.5s6.1 1.9 7.5 5.5" />
+    </svg>
+  ),
 }
 
 const items = [
   { key: 'home', label: 'Главная', icon: icons.home },
   { key: 'dashboard', label: 'Дашборд', icon: icons.chart },
   { key: 'categories', label: 'Категории', icon: icons.tag },
+  { key: 'account', label: 'Аккаунт', icon: icons.account },
 ]
 
-export default function Nav({ tab, setTab }) {
+export default function Nav({ tab, setTab, onAdd }) {
   const [scrolled, setScrolled] = useState(false)
   const trackRef = useRef(null)
   const btnRefs = useRef([])
@@ -55,25 +62,29 @@ export default function Nav({ tab, setTab }) {
   }, [tab])
 
   return (
-    <nav className={`nav${scrolled ? ' nav-scrolled' : ''}`}>
-      <div className="brand" />
-      <div className="nav-track" ref={trackRef}>
-        <div
-          className="nav-indicator"
-          style={{ transform: `translate(${indicator.left}px, ${indicator.top}px)`, width: indicator.width, height: indicator.height }}
-        />
-        {items.map((it, i) => (
-          <button
-            key={it.key}
-            ref={el => (btnRefs.current[i] = el)}
-            className={tab === it.key ? 'active' : ''}
-            onClick={() => setTab(it.key)}
-          >
-            {it.icon}
-            <span>{it.label}</span>
-          </button>
-        ))}
-      </div>
-    </nav>
+    <>
+      <button className="nav-sphere" onClick={onAdd} aria-label="Добавить операцию">+</button>
+      <nav className={`nav${scrolled ? ' nav-scrolled' : ''}`}>
+        <div className="brand" />
+        <div className="nav-track" ref={trackRef}>
+          <div
+            className="nav-indicator"
+            style={{ transform: `translate(${indicator.left}px, ${indicator.top}px)`, width: indicator.width, height: indicator.height }}
+          />
+          {items.map((it, i) => (
+            <button
+              key={it.key}
+              ref={el => (btnRefs.current[i] = el)}
+              className={tab === it.key ? 'active' : ''}
+              onClick={() => setTab(it.key)}
+            >
+              {it.icon}
+              <span>{it.label}</span>
+              <span className="nav-dot" />
+            </button>
+          ))}
+        </div>
+      </nav>
+    </>
   )
 }

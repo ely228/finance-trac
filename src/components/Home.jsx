@@ -1,23 +1,11 @@
 import { useState } from 'react'
 import { PieChart, Pie, Cell } from 'recharts'
-import TransactionList from './TransactionList'
 import AnimatedNumber from './AnimatedNumber'
-import { formatMoney } from '../utils'
+import ConfirmDialog from './ConfirmDialog'
+import { supabase } from '../supabaseClient'
+import { formatMoney, categoryStyle, categoryInitial } from '../utils'
 
-const PALETTE = ['#9C87D6', '#E888AC', '#F3AF77', '#6FBFA6', '#82A9D6', '#D89ACB', '#E0B15C', '#8FC3C9']
-
-function Sparkline({ points }) {
-  if (!points || points.length < 2) return null
-  const max = Math.max(...points.map(p => p.total), 1)
-  const w = 100, h = 40
-  const step = w / (points.length - 1)
-  const path = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${i * step},${h - (p.total / max) * h}`).join(' ')
-  return (
-    <svg width="100%" height="56" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="spark-wrap">
-      <path d={path} fill="none" stroke="var(--lavender-dark)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
+const PALETTE = ['#9C87D6', '#E8659E', '#D9822E', '#3F9C7E', '#5586BE', '#BD5FA6', '#B8862A', '#3E8C96']
 
 const EyeIcon = ({ off }) => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -35,11 +23,16 @@ const EyeIcon = ({ off }) => (
   </svg>
 )
 
-export default function Home({
-  transactions, monthLabelText, onPrevMonth, onNextMonth, onChanged, onOpenDashboard, onAdd,
-  prevTotals, trend, greeting,
-}) {
+export default function Home({ transactions, onChanged, onOpenDashboard, onAdd }) {
   const [hidden, setHidden] = useState(false)
+  const [pending, setPending] = useState(null)
+
+  async function confirmDelete() {
+    if (!pending) return
+    await supabase.from('transactions').delete().eq('id', pending.id)
+    setPending(null)
+    onChanged()
+  }
 
   const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount), 0)
   const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount), 0)
@@ -51,77 +44,55 @@ export default function Home({
   }
   const catEntries = Object.entries(byCategory).sort((a, b) => b[1] - a[1])
   const pieData = catEntries.map(([name, value], i) => ({ name, value, color: PALETTE[i % PALETTE.length] }))
-  const topCats = catEntries.slice(0, 4)
-  const maxCat = topCats[0]?.[1] || 1
-
-  const pctChange = (curr, prev) => {
-    if (!prev) return null
-    return Math.round(((curr - prev) / prev) * 100)
-  }
-  const incomeChange = prevTotals ? pctChange(income, prevTotals.income) : null
-  const expenseChange = prevTotals ? pctChange(expense, prevTotals.expense) : null
-  const balanceChange = prevTotals ? pctChange(balance, prevTotals.income - prevTotals.expense) : null
+  const totalExpense = pieData.reduce((s, d) => s + d.value, 0) || 1
 
   const money = v => hidden ? '••••• ₽' : formatMoney(v)
 
+  const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6)
+
   return (
     <div className="home-grid">
-      {/* ---- balance hero ---- */}
-      <div className="hero g-balance">
-        <div className="hero-orb o1" /><div className="hero-orb o2" />
+      <div className="card hero-card g-balance">
         <div className="hero-top">
-          <div>
-            <div className="hero-label">Баланс · {monthLabelText}</div>
-            <div className="hero-balance">
-              {hidden ? '••••• ₽' : <AnimatedNumber value={balance} format={v => formatMoney(v)} />}
-            </div>
-          </div>
+          <span className="hero-label">Баланс</span>
           <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс">
             <EyeIcon off={hidden} />
           </button>
         </div>
-        <div className="hero-month-nav">
-          <button onClick={onPrevMonth} aria-label="Предыдущий месяц">‹</button>
-          <button onClick={onNextMonth} aria-label="Следующий месяц">›</button>
+        <div className="hero-balance-row">
+          <div className="hero-balance">
+            {hidden ? '••••• ₽' : <AnimatedNumber value={balance} format={v => formatMoney(v)} />}
+          </div>
+          <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} />
         </div>
+        <div className="hero-duo">
+          <div className="hero-duo-item income">
+            <span className="hdi-icon">↑</span>
+            <div>
+              <div className="hdi-label">Доходы</div>
+              <div className="hdi-value">{money(income)}</div>
+            </div>
+          </div>
+          <div className="hero-duo-item expense">
+            <span className="hdi-icon">↓</span>
+            <div>
+              <div className="hdi-label">Расходы</div>
+              <div className="hdi-value">{money(expense)}</div>
+            </div>
+          </div>
+        </div>
+        <button className="hero-cta" onClick={onAdd}>+ Новая операция</button>
       </div>
 
-      {/* ---- greeting card (desktop only) ---- */}
-      <div className="card g-greeting greeting-card">
-        <div>
-          <div className="greeting-date">{new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
-          <div className="greeting-title">{greeting} 👋</div>
-        </div>
-        <button className="cta-btn" onClick={onAdd}>
-          + Новая операция
-        </button>
-      </div>
-
-      {/* ---- compact income / expense duo (mobile) ---- */}
-      <div className="quick-duo g-quick">
-        <div className="quick-card income">
-          <div className="qc-top"><span className="qc-label">Доходы</span><span className="qc-arrow">↑</span></div>
-          <div className="qc-value">{money(income)}</div>
-        </div>
-        <div className="quick-card expense">
-          <div className="qc-top"><span className="qc-label">Расходы</span><span className="qc-arrow">↓</span></div>
-          <div className="qc-value">{money(expense)}</div>
-        </div>
-      </div>
-
-      {/* ---- CTA (mobile) ---- */}
-      <button className="cta-btn g-cta" onClick={onAdd}>+ Новая операция</button>
-
-      {/* ---- spending breakdown ---- */}
       <div className="card chart-card g-spending">
         <h2>Куда уходят деньги</h2>
         {pieData.length === 0 ? (
           <p className="muted">Пока нет расходов за этот месяц.</p>
         ) : (
-          <>
+          <div className="donut-row">
             <div className="donut-wrap" onClick={onOpenDashboard} title="Открыть дашборд">
-              <PieChart width={180} height={180}>
-                <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={62} outerRadius={82} paddingAngle={3} stroke="none" onClick={onOpenDashboard}>
+              <PieChart width={130} height={130}>
+                <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={44} outerRadius={62} paddingAngle={3} stroke="none">
                   {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
                 </Pie>
               </PieChart>
@@ -130,63 +101,51 @@ export default function Home({
                 <div className="lbl">расходы</div>
               </div>
             </div>
-            <div className="top-cats">
-              {topCats.map(([name, val], i) => (
-                <div className="top-cat-row" key={name}>
-                  <span className="top-cat-name">{name}</span>
-                  <div className="top-cat-bar-bg">
-                    <div className="top-cat-bar-fill" style={{ width: `${(val / maxCat) * 100}%`, background: PALETTE[i % PALETTE.length] }} />
-                  </div>
-                  <span className="top-cat-val">{money(val)}</span>
+            <div className="legend-list">
+              {pieData.slice(0, 4).map(d => (
+                <div className="legend-row" key={d.name}>
+                  <span className="legend-dot" style={{ background: d.color }} />
+                  <span className="legend-name">{d.name}</span>
+                  <span className="legend-value">{money(d.value)}</span>
+                  <span className="legend-pct">{Math.round((d.value / totalExpense) * 100)}%</span>
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
       </div>
 
-      <div className="g-recent">
-        <TransactionList transactions={transactions} onChanged={onChanged} limit={8} title="Последние операции" />
-      </div>
-
-      {/* ---- monthly summary + trend (desktop only) ---- */}
-      <div className="card g-summary">
-        <h2>Текущий месяц</h2>
-        <div className="summary-row">
-          <div className="summary-left">
-            <div className="summary-icon" style={{ background: 'var(--income-bg)', color: 'var(--income)' }}>↑</div>
-            <span className="summary-name">Доходы</span>
-          </div>
-          <div>
-            <span className="summary-value">{money(income)}</span>
-            {incomeChange !== null && <span className={`summary-change ${incomeChange >= 0 ? 'up' : 'down'}`}>{incomeChange >= 0 ? '↑' : '↓'}{Math.abs(incomeChange)}%</span>}
-          </div>
+      <div className="card g-recent">
+        <div className="chart-card-head">
+          <h2 style={{ margin: 0 }}>Последние операции</h2>
+          <button className="see-all-link" onClick={onOpenDashboard}>Смотреть все</button>
         </div>
-        <div className="summary-row">
-          <div className="summary-left">
-            <div className="summary-icon" style={{ background: 'var(--expense-bg)', color: 'var(--expense)' }}>↓</div>
-            <span className="summary-name">Расходы</span>
-          </div>
-          <div>
-            <span className="summary-value">{money(expense)}</span>
-            {expenseChange !== null && <span className={`summary-change ${expenseChange <= 0 ? 'up' : 'down'}`}>{expenseChange >= 0 ? '↑' : '↓'}{Math.abs(expenseChange)}%</span>}
-          </div>
-        </div>
-        <div className="summary-row">
-          <div className="summary-left">
-            <div className="summary-icon" style={{ background: 'rgba(199,185,234,0.25)', color: 'var(--lavender-dark)' }}>=</div>
-            <span className="summary-name">Баланс</span>
-          </div>
-          <div>
-            <span className="summary-value">{money(balance)}</span>
-            {balanceChange !== null && <span className={`summary-change ${balanceChange >= 0 ? 'up' : 'down'}`}>{balanceChange >= 0 ? '↑' : '↓'}{Math.abs(balanceChange)}%</span>}
-          </div>
-        </div>
-        {trend && trend.length > 1 && (
-          <>
-            <h2 style={{ marginTop: 20 }}>Расходы за 7 дней</h2>
-            <Sparkline points={trend} />
-          </>
+        {recent.length === 0 ? (
+          <p className="muted">Пока нет операций за этот месяц.</p>
+        ) : recent.map(t => {
+          const style = categoryStyle(t.category)
+          return (
+            <div key={t.id} className={`tx-row ${t.type}`}>
+              <div className="tx-icon" style={{ background: style.bg, color: style.fg }}>{categoryInitial(t.category)}</div>
+              <div className="tx-main">
+                <span className="tx-cat">{t.category}</span>
+                {t.comment && <span className="tx-comment">{t.comment}</span>}
+              </div>
+              <div className="tx-right">
+                <span className="tx-amount">{t.type === 'expense' ? '−' : '+'}{money(t.amount)}</span>
+                <span className="tx-date">{new Date(t.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}</span>
+              </div>
+              <button className="tx-delete" onClick={() => setPending(t)} aria-label="Удалить">✕</button>
+            </div>
+          )
+        })}
+        {pending && (
+          <ConfirmDialog
+            title="Удалить операцию?"
+            message={`«${pending.category}», ${formatMoney(pending.amount)} — это действие нельзя отменить.`}
+            onConfirm={confirmDelete}
+            onCancel={() => setPending(null)}
+          />
         )}
       </div>
     </div>
