@@ -9,18 +9,32 @@ import AddTransactionModal from './components/AddTransactionModal'
 import Auth from './components/Auth'
 import { currentMonthKey, monthLabel, shiftMonth } from './utils'
 
+const visualTest = import.meta.env.DEV && new URLSearchParams(window.location.search).get('visual-test') === '1'
+const visualTab = new URLSearchParams(window.location.search).get('tab') || 'home'
+const visualCategories = [
+  { id: '1', name: 'Zal i td' }, { id: '2', name: 'Еда' }, { id: '3', name: 'Sigi' },
+  { id: '4', name: 'Dom' }, { id: '5', name: 'Transport' }, { id: '6', name: 'Здоровье' },
+]
+const visualTransactions = [
+  { id: '1', type: 'income', amount: 5000, category: 'Доход', date: '2026-07-01', comment: 'Зарплата' },
+  { id: '2', type: 'expense', amount: 3300, category: 'Zal i td', date: '2026-07-09', comment: 'Одежда' },
+  { id: '3', type: 'expense', amount: 689, category: 'Еда', date: '2026-07-09', comment: 'Рестораны' },
+  { id: '4', type: 'expense', amount: 404, category: 'Sigi', date: '2026-07-08', comment: 'Такси' },
+]
+
 export default function App() {
-  const [session, setSession] = useState(undefined)
-  const [tab, setTab] = useState('home')
+  const [session, setSession] = useState(visualTest ? { user: { email: 'test@fintrac.local' } } : undefined)
+  const [tab, setTab] = useState(visualTest ? visualTab : 'home')
   const [monthKey, setMonthKey] = useState(currentMonthKey())
-  const [categories, setCategories] = useState([])
-  const [transactions, setTransactions] = useState([])
-  const [prevTotals, setPrevTotals] = useState(null)
-  const [plan, setPlan] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [categories, setCategories] = useState(visualTest ? visualCategories : [])
+  const [transactions, setTransactions] = useState(visualTest ? visualTransactions : [])
+  const [prevTotals, setPrevTotals] = useState(visualTest ? { income: 4450, expense: 4100 } : null)
+  const [plan, setPlan] = useState(visualTest ? { amount: 5600 } : null)
+  const [loading, setLoading] = useState(!visualTest)
   const [showAdd, setShowAdd] = useState(false)
 
   useEffect(() => {
+    if (visualTest) return
     supabase.auth.getSession().then(({ data }) => setSession(data.session))
     const { data: listener } = supabase.auth.onAuthStateChange((_event, s) => setSession(s))
     return () => listener.subscription.unsubscribe()
@@ -58,12 +72,14 @@ export default function App() {
   }, [monthKey])
 
   useEffect(() => {
+    if (visualTest) return
     if (!session) return
     setLoading(true)
     Promise.all([loadCategories(), loadTransactions(), loadPrevMonthTotals(), loadPlan()]).finally(() => setLoading(false))
   }, [loadCategories, loadTransactions, loadPrevMonthTotals, loadPlan, session])
 
   async function savePlan(amount) {
+    if (visualTest) return setPlan({ amount })
     await supabase.from('plans').upsert({ month: monthKey, amount }, { onConflict: 'user_id,month' })
     loadPlan()
   }

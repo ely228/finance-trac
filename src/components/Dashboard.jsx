@@ -134,7 +134,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
                     activeIndex={activeIndex} activeShape={renderActiveShape}
                     onMouseEnter={(_, i) => setActiveIndex(i)} onClick={(_, i) => setActiveIndex(i)}
                   >
-                    {pieData.map((d, i) => <Cell key={i} fill={`url(#dashboard-slice-${i})`} filter="url(#dashboard-pie-glow)" />)}
+                    {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>

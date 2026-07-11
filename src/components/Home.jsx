@@ -105,7 +105,7 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
                   <filter id="home-pie-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" /><feFlood floodColor="#9c7cf0" floodOpacity=".34" result="color" /><feComposite in="color" in2="blur" operator="in" result="shadow" /><feMerge><feMergeNode in="shadow" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
                 </defs>
                 <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={44} outerRadius={62} paddingAngle={3} stroke="none">
-                  {pieData.map((d, i) => <Cell key={i} fill={`url(#home-slice-${i})`} filter="url(#home-pie-glow)" />)}
+                  {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
                 </Pie>
               </PieChart>
               <div className="donut-center">

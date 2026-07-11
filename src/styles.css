@@ -570,7 +570,8 @@ button, input, select { font-family: inherit; }
 .chart-legend-row .sw { width: 9px; height: 9px; border-radius: 3px; }
 
 .donut-row { display: flex; align-items: center; gap: var(--sp-4); }
-.donut-wrap { position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.donut-wrap { position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; filter: drop-shadow(0 8px 10px rgba(124,87,218,.15)); }
+.donut-wrap::after { content: ''; position: absolute; width: 72%; height: 72%; border-radius: 50%; pointer-events: none; background: radial-gradient(circle at 31% 20%, rgba(255,255,255,.43), rgba(255,255,255,0) 39%); mix-blend-mode: screen; }
 .donut-center { position: absolute; text-align: center; pointer-events: none; }
 .donut-center .val { font-size: 17px; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
 .donut-center .lbl { font-size: 10.5px; color: var(--ink-faint); font-weight: 700; }
