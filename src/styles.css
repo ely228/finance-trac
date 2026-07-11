@@ -953,3 +953,35 @@ button, input, select { font-family: inherit; }
   .dashboard-donut-glass::before, .dashboard-donut-glass::after { content: none !important; display: none !important; }
   .dashboard-donut-glass { filter: drop-shadow(0 8px 12px rgba(133,92,224,.18)); }
 }
+
+/* Compact contents for the two-column iPhone dashboard. */
+@media (min-width: 360px) and (max-width: 767px) {
+  .grid-2 .card h2 { font-size: 12px; line-height: 1.16; letter-spacing: -.035em; }
+  .grid-2 .recharts-cartesian-axis-tick-value { font-size: 8px !important; }
+  .grid-2 .recharts-label { font-size: 8px !important; }
+  .grid-2 .cat-row { padding: 9px 0; gap: 6px; }
+  .grid-2 .cat-avatar { display: none; }
+  .grid-2 .cat-info { min-width: 0; }
+  .grid-2 .cat-name { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .grid-2 .cat-progress { height: 4px; margin-top: 5px; }
+  .grid-2 .cat-numbers { display: flex; flex-direction: column; width: 61px; min-width: 61px; }
+  .grid-2 .cat-amount { font-size: 10px; white-space: nowrap; letter-spacing: -.03em; }
+  .grid-2 .cat-pct { font-size: 10px; }
+  .grid-2 .plan-donut-wrap { transform: scale(.72); transform-origin: top center; height: 108px; margin: -16px 0 -3px; }
+  .grid-2 .plan-row { gap: 6px; font-size: 9px; }
+  .grid-2 .plan-row .label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .grid-2 .plan-row .value { font-size: 10px; white-space: nowrap; }
+  .grid-2 .avg-pill .label { font-size: 9px; }
+  .grid-2 .avg-pill .value { font-size: 14px; }
+}
+
+/* Reference plus: clean satin gradient, a single soft bloom and rounded white glyph. */
+@media (max-width: 767px) {
+  .nav-sphere {
+    border: 1px solid rgba(255,255,255,.72);
+    background: radial-gradient(circle at 35% 24%, rgba(255,255,255,.32), transparent 28%), linear-gradient(135deg, #9e5cf2 0%, #bf5ce7 46%, #f4479a 100%);
+    box-shadow: 0 9px 22px rgba(176,77,224,.24), 0 18px 28px rgba(244,71,153,.22), inset 0 1px 1px rgba(255,255,255,.56);
+  }
+  .nav-sphere::before { display: none; }
+  .nav-sphere::after { font-size: 36px; font-family: Arial, sans-serif; font-weight: 300; line-height: .9; text-shadow: none; }
+}
