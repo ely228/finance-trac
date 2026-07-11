@@ -49,7 +49,7 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
 
   const money = v => hidden ? '••••• ₽' : formatMoney(v)
 
-  const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6)
+  const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3)
   const userName = (email || '').split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Алексей'
   const currentMonth = monthLabel(currentMonthKey())
 

@@ -847,3 +847,54 @@ button, input, select { font-family: inherit; }
 @media (min-width: 900px) {
   .home-grid { grid-template-areas: 'greeting greeting' 'balance balance' 'spending recent'; }
 }
+
+/* Final iOS glass pass */
+@media (max-width: 767px) {
+  .hero-wallet { width: 178px; right: -14px; filter: drop-shadow(0 18px 28px rgba(241,63,163,.28)); }
+  .hero-duo-item {
+    background: linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.28));
+    border: 1px solid rgba(255,255,255,.72); box-shadow: inset 0 1px rgba(255,255,255,.82), 0 9px 18px rgba(122,91,158,.07);
+    backdrop-filter: blur(18px) saturate(180%); -webkit-backdrop-filter: blur(18px) saturate(180%);
+  }
+  .hero-duo-item .hdi-icon { width: 34px; height: 34px; box-shadow: inset 0 1px rgba(255,255,255,.72); }
+  .hero-cta { background: linear-gradient(110deg, rgba(255,255,255,.78), rgba(255,255,255,.34)); border: 1px solid rgba(255,255,255,.72); box-shadow: inset 0 1px rgba(255,255,255,.85); }
+
+  .home-grid .g-spending .donut-row { min-height: 144px; gap: 13px; }
+  .home-grid .g-spending .donut-wrap { transform: scale(1.04); margin: 0 4px 0 -2px; }
+  .home-grid .g-spending .donut-center .val { font-size: 15px; }
+  .home-grid .g-spending .legend-name { font-size: 13px; }
+  .home-grid .g-spending .legend-pct { font-size: 12px; }
+
+  .nav { overflow: visible; }
+  .nav::before { content: ''; position: absolute; pointer-events: none; z-index: 2; left: 50%; top: -23px; width: 72px; height: 45px; transform: translateX(-50%); border-radius: 0 0 40px 40px; box-shadow: 0 1px 0 rgba(255,255,255,.46); }
+  .nav-sphere { z-index: 42; border-color: rgba(255,255,255,.9); box-shadow: 0 0 0 2px rgba(255,255,255,.22), 0 8px 18px rgba(151,71,244,.28), 0 20px 32px rgba(243,54,162,.32), inset 0 2px 4px rgba(255,255,255,.9), inset 0 -8px 13px rgba(116,38,199,.16); }
+  .nav-sphere::before { content: ''; position: absolute; inset: 5px; border-radius: inherit; pointer-events: none; background: radial-gradient(circle at 33% 20%, rgba(255,255,255,.92), rgba(255,255,255,0) 31%), radial-gradient(circle at 75% 81%, rgba(255,255,255,.25), transparent 44%); }
+  .nav-sphere { font-size: 0; }
+  .nav-sphere::after { content: '+'; position: relative; z-index: 1; font-size: 35px; font-weight: 300; line-height: 1; text-shadow: 0 1px 8px rgba(255,255,255,.65); }
+
+  .modal-overlay { background: rgba(41,26,69,.18); backdrop-filter: blur(13px) saturate(140%); -webkit-backdrop-filter: blur(13px) saturate(140%); }
+  .modal-sheet { background: linear-gradient(150deg, rgba(255,255,255,.88), rgba(250,242,255,.64)); border-color: rgba(255,255,255,.86); box-shadow: 0 -18px 52px rgba(103,55,145,.22), inset 0 1px rgba(255,255,255,.95); padding-left: 20px; padding-right: 20px; }
+  .modal-sheet .form { padding-top: 4px; }
+  .form input[type='date'] { min-width: 0; max-width: 100%; height: 48px; padding-right: 10px; font-size: 16px; letter-spacing: -.01em; }
+
+  .categories-card .cat-delete { width: 28px; height: 28px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(232,93,166,.12); color: var(--expense); font-size: 20px; line-height: 1; cursor: pointer; opacity: .72; }
+  .categories-card .cat-delete:active { transform: scale(.88); }
+}
+
+@media (min-width: 400px) and (max-width: 767px) {
+  .dashboard-kpis { margin-bottom: 10px; }
+  .grid-2 { gap: 10px; margin-bottom: 10px; }
+  .grid-2 .card { min-height: 0; margin-bottom: 0; padding: 13px; border-radius: 22px; }
+  .grid-2 .chart-card .recharts-responsive-container { height: 148px !important; }
+  .grid-2 .avg-pill { margin-top: 6px; padding: 9px 10px; }
+  .grid-2 .avg-pill .value { font-size: 15px; }
+  .grid-2 .plan-row { padding: 7px 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .content > *, .grid-2 > *, .home-grid > * { animation: rise-in 360ms cubic-bezier(.22,1,.36,1) both; }
+  .content > *:nth-child(1), .home-grid > *:nth-child(1) { animation-delay: 20ms; }
+  .content > *:nth-child(2), .home-grid > *:nth-child(2) { animation-delay: 55ms; }
+  .content > *:nth-child(3), .home-grid > *:nth-child(3) { animation-delay: 90ms; }
+  .content > *:nth-child(4), .home-grid > *:nth-child(4) { animation-delay: 125ms; }
+}

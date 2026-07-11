@@ -70,7 +70,7 @@ export default function Categories({ categories, transactions, onChanged }) {
         ) : rows.map(c => {
           const style = categoryStyle(c.name)
           return (
-            <button className="cat-row category-list-row" key={c.id} type="button">
+            <div className="cat-row category-list-row" key={c.id}>
               <div className={`cat-avatar category-icon ${categoryMeta(c.name).tone}`} style={{ color: style.fg }}><CategoryIcon name={c.name} /></div>
               <div className="cat-info">
                 <div className="cat-name">{c.name}</div>
@@ -82,7 +82,8 @@ export default function Categories({ categories, transactions, onChanged }) {
                 <div className="cat-pct">{c.pct}%</div>
               </div>
               <span className="cat-chevron">›</span>
-            </button>
+              <button className="cat-delete" onClick={() => setPending(c)} aria-label={`Удалить категорию ${c.name}`}>×</button>
+            </div>
           )
         })}
         <div className="cat-total-row">
