@@ -763,13 +763,15 @@ button, input, select { font-family: inherit; }
   .content { padding: calc(10px + var(--safe-t)) 14px 96px; }
   .card { border-radius: 25px; padding: 18px; margin-bottom: 12px; }
   .card h2 { color: var(--ink); text-transform: none; letter-spacing: -.02em; font-size: 16px; }
-  .hero-card { padding: 20px; border-radius: 28px; }
+  .hero-card { padding: 18px; border-radius: 28px; }
   .hero-date { margin-top: 0; font-size: 11px; }
-  .hero-balance { font-size: clamp(38px, 11vw, 48px); }
+  .hero-balance-row { min-height: 68px; margin: 4px 0 12px; }
+  .hero-balance { font-size: clamp(38px, 10.5vw, 45px); }
   .hero-wallet { width: 145px; right: -8px; opacity: .9; }
-  .hero-duo { gap: 10px; }
-  .hero-duo-item { padding: 13px 11px; }
+  .hero-duo { gap: 9px; margin-bottom: 10px; }
+  .hero-duo-item { padding: 10px 11px; }
   .hero-duo-item .hdi-value { font-size: 15px; }
+  .hero-cta { min-height: 46px; padding: 10px 14px; }
   .topbar { margin: 6px 4px 16px; }
   .topbar h1 { font-size: 31px; }
   .dashboard-header { align-items: flex-start; flex-direction: column; gap: 13px; }
