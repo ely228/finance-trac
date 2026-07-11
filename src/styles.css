@@ -6,15 +6,15 @@
 
 :root {
   /* ---- palette (kept low-saturation on purpose) ---- */
-  --lavender: #C7B9EA;
-  --lavender-dark: #9C87D6;
-  --rose: #F0A8C0;
-  --rose-dark: #E888AC;
-  --peach: #F7CBA4;
-  --sky: #AFCBEA;
-  --sky-dark: #82A9D6;
-  --teal: #A6D9CE;
-  --teal-dark: #6FBFA6;
+  --lavender: #B89AF4;
+  --lavender-dark: #8865E8;
+  --rose: #F78DC5;
+  --rose-dark: #EC5DA6;
+  --peach: #FFC287;
+  --sky: #9DD7F1;
+  --sky-dark: #58AEE5;
+  --teal: #91E0CC;
+  --teal-dark: #37B891;
 
   --ink: #2A2740;
   --ink-soft: #85809A;
@@ -90,7 +90,7 @@ body {
   position: absolute;
   border-radius: 50%;
   filter: blur(70px);
-  opacity: 0.55;
+  opacity: 0.68;
   will-change: transform;
 }
 .bg-blob.b1 { width: 620px; height: 620px; top: -12%; left: -10%; background: radial-gradient(circle, var(--lavender), transparent 70%); animation: drift1 34s ease-in-out infinite; }
@@ -298,6 +298,7 @@ button, input, select { font-family: inherit; }
 
 .hero-top { display: flex; align-items: center; justify-content: space-between; }
 .hero-label { font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+.hero-date { margin-top: 2px; font-size: 12px; color: var(--ink-faint); font-weight: 700; text-transform: capitalize; }
 .hero-eye {
   border: none; background: rgba(255,255,255,0.55); width: 34px; height: 34px; border-radius: var(--r-full);
   color: var(--ink-soft); display: flex; align-items: center; justify-content: center; cursor: pointer;
@@ -720,7 +721,7 @@ button, input, select { font-family: inherit; }
    ================================================================= */
 .home-greeting {
   display: flex; align-items: center; justify-content: space-between;
-  padding: calc(8px + var(--safe-t)) 4px 4px; margin-bottom: 8px;
+  padding: 8px 4px 4px; margin-bottom: 4px;
 }
 .home-greeting p { margin: 0 0 2px; font-size: 16px; font-weight: 700; color: var(--ink); }
 .home-greeting h1 { margin: 0; font-size: 30px; line-height: 1.12; letter-spacing: -0.04em; }
@@ -753,16 +754,17 @@ button, input, select { font-family: inherit; }
 .dashboard-actions { display: flex; align-items: center; gap: 10px; }
 
 @media (max-width: 767px) {
-  .content { padding: calc(12px + var(--safe-t)) 14px 104px; }
-  .card { border-radius: 26px; padding: 20px; margin-bottom: 14px; }
+  .content { padding: calc(10px + var(--safe-t)) 14px 96px; }
+  .card { border-radius: 25px; padding: 18px; margin-bottom: 12px; }
   .card h2 { color: var(--ink); text-transform: none; letter-spacing: -.02em; font-size: 16px; }
-  .hero-card { padding: 22px; border-radius: 29px; }
+  .hero-card { padding: 20px; border-radius: 28px; }
+  .hero-date { margin-top: 0; font-size: 11px; }
   .hero-balance { font-size: clamp(38px, 11vw, 48px); }
   .hero-wallet { width: 145px; right: -8px; opacity: .9; }
   .hero-duo { gap: 10px; }
   .hero-duo-item { padding: 13px 11px; }
   .hero-duo-item .hdi-value { font-size: 15px; }
-  .topbar { margin: calc(6px + var(--safe-t)) 4px 18px; }
+  .topbar { margin: 6px 4px 16px; }
   .topbar h1 { font-size: 31px; }
   .dashboard-header { align-items: flex-start; flex-direction: column; gap: 13px; }
   .dashboard-actions { width: 100%; justify-content: space-between; }
@@ -793,9 +795,20 @@ button, input, select { font-family: inherit; }
   .filter-pills button { padding: 10px 17px; }
   .filter-pills button.active { color: var(--lavender-dark); background: rgba(255,255,255,.76); box-shadow: var(--el-1), var(--rim-light); }
   .search-bar { padding: 14px 16px; border-radius: 19px; }
-  .nav { left: 18px; right: 18px; bottom: calc(12px + var(--safe-b)); height: 72px; padding: 7px 8px; }
+  .nav {
+    left: 18px; right: 18px; bottom: calc(12px + var(--safe-b)); height: 72px; padding: 7px 8px;
+    -webkit-mask: radial-gradient(circle 37px at 50% 0, transparent 97%, #000 100%);
+    mask: radial-gradient(circle 37px at 50% 0, transparent 97%, #000 100%);
+  }
+  .nav::after {
+    content: ''; position: absolute; pointer-events: none; left: 50%; top: -1px; width: 74px; height: 37px;
+    transform: translateX(-50%); border-radius: 0 0 40px 40px;
+    box-shadow: 0 2px 0 rgba(255,255,255,.36) inset;
+  }
   .nav-sphere { width: 62px; height: 62px; bottom: calc(60px + var(--safe-b)); }
   .nav button { font-size: 10px; }
+  .donut-center .val { font-size: 14px; }
+  .donut-center .lbl { font-size: 10px; }
 }
 
 /* The supplied iOS references are 430 CSS px wide: keep analytics paired there. */

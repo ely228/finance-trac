@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell } from 'recharts'
 import AnimatedNumber from './AnimatedNumber'
 import ConfirmDialog from './ConfirmDialog'
 import { supabase } from '../supabaseClient'
-import { formatMoney, categoryStyle } from '../utils'
+import { formatMoney, categoryStyle, currentMonthKey, monthLabel } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
 const PALETTE = ['#9C87D6', '#E8659E', '#D9822E', '#3F9C7E', '#5586BE', '#BD5FA6', '#B8862A', '#3E8C96']
@@ -51,6 +51,7 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
 
   const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6)
   const userName = (email || '').split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Алексей'
+  const currentMonth = monthLabel(currentMonthKey())
 
   return (
     <div className="home-grid">
@@ -65,6 +66,7 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
             <EyeIcon off={hidden} />
           </button>
         </div>
+        <div className="hero-date">{currentMonth}</div>
         <div className="hero-balance-row">
           <div className="hero-balance">
             {hidden ? '••••• ₽' : <AnimatedNumber value={balance} format={v => formatMoney(v)} />}
@@ -98,8 +100,12 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
           <div className="donut-row">
             <div className="donut-wrap" onClick={onOpenDashboard} title="Открыть дашборд">
               <PieChart width={130} height={130}>
+                <defs>
+                  {pieData.map((d, i) => <linearGradient key={d.name} id={`home-slice-${i}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#fff" stopOpacity=".5" /><stop offset="28%" stopColor={d.color} /><stop offset="100%" stopColor={d.color} stopOpacity=".78" /></linearGradient>)}
+                  <filter id="home-pie-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" /><feFlood floodColor="#9c7cf0" floodOpacity=".34" result="color" /><feComposite in="color" in2="blur" operator="in" result="shadow" /><feMerge><feMergeNode in="shadow" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+                </defs>
                 <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={44} outerRadius={62} paddingAngle={3} stroke="none">
-                  {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                  {pieData.map((d, i) => <Cell key={i} fill={`url(#home-slice-${i})`} filter="url(#home-pie-glow)" />)}
                 </Pie>
               </PieChart>
               <div className="donut-center">

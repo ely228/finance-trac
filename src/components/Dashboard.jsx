@@ -123,6 +123,10 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
             <>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
+                  <defs>
+                    {pieData.map((d, i) => <linearGradient key={d.name} id={`dashboard-slice-${i}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#fff" stopOpacity=".5" /><stop offset="30%" stopColor={d.color} /><stop offset="100%" stopColor={d.color} stopOpacity=".78" /></linearGradient>)}
+                    <filter id="dashboard-pie-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" /><feFlood floodColor="#9c7cf0" floodOpacity=".3" result="color" /><feComposite in="color" in2="blur" operator="in" result="shadow" /><feMerge><feMergeNode in="shadow" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+                  </defs>
                   <Pie
                     data={pieData} dataKey="value" nameKey="name"
                     innerRadius={62} outerRadius={92} paddingAngle={3} stroke="none" cornerRadius={6}
@@ -130,7 +134,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
                     activeIndex={activeIndex} activeShape={renderActiveShape}
                     onMouseEnter={(_, i) => setActiveIndex(i)} onClick={(_, i) => setActiveIndex(i)}
                   >
-                    {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                    {pieData.map((d, i) => <Cell key={i} fill={`url(#dashboard-slice-${i})`} filter="url(#dashboard-pie-glow)" />)}
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
