@@ -633,6 +633,37 @@ button, input, select { font-family: inherit; }
   .home-grid > *:nth-child(4) { animation-delay: .22s; }
 }
 
+/* iPhone 390 px: analytics must remain a true 2 × 2 dashboard. */
+@media (min-width: 360px) and (max-width: 767px) {
+  .grid-2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: start; margin-bottom: 10px; }
+  .grid-2 .card { min-width: 0; padding: 13px; margin-bottom: 0; border-radius: 22px; }
+  .grid-2 .chart-card .recharts-responsive-container { height: 144px !important; }
+  .grid-2 .chart-card h2 { min-height: 32px; font-size: 14px; }
+  .grid-2 .legend-value { display: none; }
+  .grid-2 .legend-row { gap: 5px; }
+  .grid-2 .legend-name { font-size: 11px; }
+  .grid-2 .legend-pct { font-size: 10px; width: 24px; }
+}
+
+/* The add action intentionally floats beside the bar: no overlap, no hard notch. */
+@media (max-width: 767px) {
+  .nav { -webkit-mask: none; mask: none; }
+  .nav::before { display: none; }
+  .nav-sphere { left: auto; right: 22px; bottom: calc(94px + var(--safe-b)); transform: none; }
+  .nav-sphere:active { transform: scale(.9); }
+  .nav-sphere::after { font-size: 34px; font-weight: 300; }
+
+  .dashboard-donut-glass { position: relative; isolation: isolate; }
+  .dashboard-donut-glass::before {
+    content: ''; position: absolute; z-index: 2; pointer-events: none; width: 72%; aspect-ratio: 1; left: 14%; top: 11%; border-radius: 50%;
+    background: linear-gradient(138deg, rgba(255,255,255,.62), rgba(255,255,255,0) 45%);
+    -webkit-mask: radial-gradient(circle, transparent 0 47%, #000 49% 68%, transparent 70%);
+    mask: radial-gradient(circle, transparent 0 47%, #000 49% 68%, transparent 70%);
+    filter: drop-shadow(0 4px 7px rgba(255,255,255,.28));
+  }
+  .dashboard-donut-glass::after { content: ''; position: absolute; pointer-events: none; inset: 14% 14% 18%; border-radius: 50%; background: radial-gradient(circle at 31% 22%, rgba(255,255,255,.42), rgba(255,255,255,0) 36%); mix-blend-mode: screen; }
+}
+
 .search-bar {
   display: flex; align-items: center; gap: 10px;
   padding: 12px var(--sp-4); border-radius: var(--r-md);

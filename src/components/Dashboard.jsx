@@ -121,6 +121,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
           <h2>Расходы по категориям</h2>
           {pieData.length > 0 ? (
             <>
+              <div className="dashboard-donut-glass">
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <defs>
@@ -138,6 +139,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
+              </div>
               <div className="legend-list" style={{ marginTop: 8 }}>
                 {pieData.slice(0, 5).map(d => (
                   <div className="legend-row" key={d.name}>
