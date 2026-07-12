@@ -78,11 +78,11 @@ html, body { height: 100%; }
 body {
   margin: 0;
   background:
-    radial-gradient(circle at 18% 24%, rgba(249, 91, 184, .31), transparent 29%),
-    radial-gradient(circle at 84% 23%, rgba(153, 113, 244, .34), transparent 32%),
-    radial-gradient(circle at 20% 80%, rgba(62, 220, 197, .27), transparent 31%),
-    radial-gradient(circle at 87% 78%, rgba(255, 182, 108, .29), transparent 33%),
-    #f7f5fb;
+    radial-gradient(circle at 18% 24%, rgba(249, 91, 184, .08), transparent 29%),
+    radial-gradient(circle at 84% 23%, rgba(153, 113, 244, .09), transparent 32%),
+    radial-gradient(circle at 20% 80%, rgba(62, 220, 197, .07), transparent 31%),
+    radial-gradient(circle at 87% 78%, rgba(255, 182, 108, .08), transparent 33%),
+    #fafbfe;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   position: relative;
@@ -95,7 +95,7 @@ body {
   position: absolute;
   border-radius: 50%;
   filter: blur(70px);
-  opacity: 0.68;
+  opacity: 0.15;
   will-change: transform;
 }
 .bg-blob.b1 { width: 620px; height: 620px; top: -12%; left: -10%; background: radial-gradient(circle, var(--lavender), transparent 70%); animation: drift1 34s ease-in-out infinite; }
@@ -653,15 +653,6 @@ button, input, select { font-family: inherit; }
   .nav-sphere:active { transform: scale(.9); }
   .nav-sphere::after { font-size: 34px; font-weight: 300; }
 
-  .dashboard-donut-glass { position: relative; isolation: isolate; }
-  .dashboard-donut-glass::before {
-    content: ''; position: absolute; z-index: 2; pointer-events: none; width: 72%; aspect-ratio: 1; left: 14%; top: 11%; border-radius: 50%;
-    background: linear-gradient(138deg, rgba(255,255,255,.62), rgba(255,255,255,0) 45%);
-    -webkit-mask: radial-gradient(circle, transparent 0 47%, #000 49% 68%, transparent 70%);
-    mask: radial-gradient(circle, transparent 0 47%, #000 49% 68%, transparent 70%);
-    filter: drop-shadow(0 4px 7px rgba(255,255,255,.28));
-  }
-  .dashboard-donut-glass::after { content: ''; position: absolute; pointer-events: none; inset: 14% 14% 18%; border-radius: 50%; background: radial-gradient(circle at 31% 22%, rgba(255,255,255,.42), rgba(255,255,255,0) 36%); mix-blend-mode: screen; }
 }
 
 .search-bar {
@@ -950,8 +941,6 @@ button, input, select { font-family: inherit; }
   .nav::before { content: none !important; display: none !important; }
   .nav-sphere { left: auto !important; right: 22px; bottom: calc(94px + var(--safe-b)); transform: none !important; }
   .nav-sphere:active { transform: scale(.9) !important; }
-  .dashboard-donut-glass::before, .dashboard-donut-glass::after { content: none !important; display: none !important; }
-  .dashboard-donut-glass { filter: drop-shadow(0 8px 12px rgba(133,92,224,.18)); }
 }
 
 /* Compact contents for the two-column iPhone dashboard. */
@@ -1033,11 +1022,9 @@ button, input, select { font-family: inherit; }
 }
 
 /* Shared liquid-glass treatment for every category donut. */
-.glass-donut { --donut-d: 130px; position: relative; isolation: isolate; filter: drop-shadow(0 9px 13px rgba(107,70,190,.18)); }
-.dashboard-donut-glass.glass-donut { --donut-d: 164px; }
-.glass-donut::before { content: ''; position: absolute; z-index: 3; pointer-events: none; width: var(--donut-d); height: var(--donut-d); left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 50%; background: linear-gradient(140deg, rgba(255,255,255,.6) 2%, rgba(255,255,255,.12) 24%, rgba(255,255,255,0) 46%); -webkit-mask: radial-gradient(circle, transparent 0 44%, #000 46% 68%, transparent 70%); mask: radial-gradient(circle, transparent 0 44%, #000 46% 68%, transparent 70%); mix-blend-mode: screen; }
+.glass-donut { --donut-d: 130px; position: relative; isolation: isolate; }
+.glass-donut::before { content: ''; position: absolute; z-index: 3; pointer-events: none; width: var(--donut-d); height: var(--donut-d); left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 50%; background: linear-gradient(140deg, rgba(255,255,255,.6) 2%, rgba(255,255,255,.12) 24%, rgba(255,255,255,0) 46%); -webkit-mask: radial-gradient(circle, transparent 0 66%, #000 68% 94%, transparent 96%); mask: radial-gradient(circle, transparent 0 66%, #000 68% 94%, transparent 96%); mix-blend-mode: screen; }
 .glass-donut::after { content: ''; position: absolute; z-index: 2; pointer-events: none; width: calc(var(--donut-d) * .74); height: calc(var(--donut-d) * .74); left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(circle at 28% 17%, rgba(255,255,255,.32), rgba(255,255,255,0) 38%); box-shadow: inset 0 1px 10px rgba(255,255,255,.16); }
-.glass-donut .recharts-sector { filter: drop-shadow(0 3px 4px rgba(92,62,162,.16)); }
 
 /* Small category icons use the same glass material as the cards. */
 .category-icon, .tx-icon.category-icon, .cat-avatar.category-icon { position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,.58); background: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,.12)) !important; box-shadow: inset 0 1px rgba(255,255,255,.86), inset 0 -7px 15px rgba(126,94,184,.08), 0 7px 14px rgba(89,61,142,.10); backdrop-filter: blur(12px) saturate(180%); -webkit-backdrop-filter: blur(12px) saturate(180%); }
@@ -1047,6 +1034,4 @@ button, input, select { font-family: inherit; }
 @media (max-width: 767px) { .home-grid .g-spending, .home-grid .g-recent { margin-top: 0; } .home-grid .g-spending { margin-bottom: 0; } }
 
 @media (max-width: 767px) {
-  .dashboard-donut-glass.glass-donut::before { content: '' !important; display: block !important; }
-  .dashboard-donut-glass.glass-donut::after { content: '' !important; display: block !important; }
 }
