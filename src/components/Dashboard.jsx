@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import ExportMenu from './ExportMenu'
+import DonutChart from './DonutChart'
 import { formatMoney, daysInMonth, categoryStyle, categoryInitial, formatPercent, monthLabel, shiftMonth } from '../utils'
 
 const PALETTE = ['#9C87D6', '#E8659E', '#D9822E', '#3F9C7E', '#5586BE']
@@ -46,7 +47,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
 
     <div className="dashboard-pair">
       <section className="card chart-card dashboard-expenses"><h2>Расходы по категориям</h2>
-        {pieData.length ? <><div className="dashboard-donut-glass glass-donut"><ResponsiveContainer width="100%" height={180}><PieChart><Pie data={pieData} dataKey="value" innerRadius={55} outerRadius={82} paddingAngle={3} stroke="none" cornerRadius={7} activeIndex={activeIndex} onClick={(_, i) => setActiveIndex(i)}>{pieData.map((item, i) => <Cell key={item.name} fill={item.color} stroke="rgba(255,255,255,.44)" strokeWidth={1.4} />)}</Pie></PieChart></ResponsiveContainer></div>
+        {pieData.length ? <><div className="donut-wrap"><DonutChart data={pieData} size={172} thickness={32} activeIndex={activeIndex} onSegmentClick={setActiveIndex} onSegmentHover={setActiveIndex} /></div>
         <div className="legend-list">{pieData.slice(0, 3).map(item => <div className="legend-row" key={item.name}><span className="legend-dot" style={{ background: item.color }} /><span className="legend-name">{item.name}</span><span className="legend-pct">{Math.round(item.value / totalExpense * 100)}%</span></div>)}</div></> : <p className="muted">Нет расходов</p>}
       </section>
       <section className="card dashboard-top-categories"><h2>Топ категорий</h2>{pieData.slice(0, 4).map(item => { const style = categoryStyle(item.name); return <div className="cat-row" key={item.name}><div className="cat-avatar" style={{ background: style.bg, color: style.fg }}>{categoryInitial(item.name)}</div><div className="cat-info"><div className="cat-name">{item.name}</div><div className="cat-progress"><div className="cat-progress-fill" style={{ width: `${item.value / totalExpense * 100}%`, background: style.fg }} /></div></div><div className="cat-numbers"><div className="cat-amount">{formatMoney(item.value)}</div><div className="cat-pct">{Math.round(item.value / totalExpense * 100)}%</div></div></div> })}</section>
