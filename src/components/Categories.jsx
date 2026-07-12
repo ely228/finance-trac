@@ -53,7 +53,10 @@ export default function Categories({ categories, transactions, onChanged }) {
       </div>
 
       <div className="search-bar">
-        <span>🔍</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }}>
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
         <input placeholder="Поиск категорий" value={search} onChange={e => setSearch(e.target.value)} />
       </div>
 
