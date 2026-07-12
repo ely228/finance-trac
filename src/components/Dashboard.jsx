@@ -38,10 +38,29 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
     </div>
 
     <div className="kpi-row dashboard-kpis">
-      {[['income', '↑', 'Доходы', income], ['expense', '↓', 'Расходы', expense], ['balance', '=', 'Баланс', balance]].map(([type, icon, label, value], i) => <div className={`kpi ${type}`} key={type}>
-        <div className="kpi-icon">{icon}</div><div className="kpi-label">{label}</div><div className="kpi-value">{formatMoney(value)}</div>
-        {changes[i] !== null && changes[i] !== undefined && <span className={`kpi-change ${changes[i] >= 0 ? 'up' : 'down'}`}>{formatPercent(changes[i])}</span>}
-      </div>)}
+      {[['income', '↑', 'Доходы', income], ['expense', '↓', 'Расходы', expense], ['balance', '=', 'Баланс', balance]].map(([type, icon, label, value], i) => {
+        const valStr = formatMoney(value);
+        const len = valStr.length;
+        const dynamicStyle = {
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          width: '100%',
+          fontSize: len > 12 
+            ? 'clamp(10px, 2.7vw, 13px)' 
+            : len > 9 
+              ? 'clamp(12px, 3.2vw, 16px)' 
+              : 'clamp(15px, 4.5vw, 20px)'
+        };
+        return (
+          <div className={`kpi ${type}`} key={type} title={valStr}>
+            <div className="kpi-icon">{icon}</div>
+            <div className="kpi-label">{label}</div>
+            <div className="kpi-value" style={dynamicStyle}>{valStr}</div>
+            {changes[i] !== null && changes[i] !== undefined && <span className={`kpi-change ${changes[i] >= 0 ? 'up' : 'down'}`}>{formatPercent(changes[i])}</span>}
+          </div>
+        );
+      })}
     </div>
 
     <div className="dashboard-pair">
