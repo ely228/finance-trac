@@ -46,26 +46,14 @@ export default function DonutChart({
             <stop offset="100%" stopColor={seg.color} stopOpacity="0.88" />
           </linearGradient>
         ))}
-        <filter id={`${uid}-soft`} x="-60%" y="-60%" width="220%" height="220%">
-          <feGaussianBlur stdDeviation={thickness * 0.32} />
-        </filter>
-        <filter id={`${uid}-glow`} x="-60%" y="-60%" width="220%" height="220%">
-          <feGaussianBlur stdDeviation="3.2" result="b" />
-          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
       </defs>
 
       {segments.map((seg, i) => (
-        <path
-          key={`glow-${i}`}
-          d={arcPath(cx, cy, r, seg.start, seg.end)}
-          fill="none"
-          stroke={seg.color}
-          strokeWidth={thickness + 8}
-          strokeLinecap="round"
-          opacity={activeIndex === i ? 0.5 : 0.28}
-          filter={`url(#${uid}-soft)`}
-        />
+        <g key={`halo-${i}`} opacity={activeIndex === i ? 0.9 : 0.55}>
+          <path d={arcPath(cx, cy, r, seg.start, seg.end)} fill="none" stroke={seg.color} strokeWidth={thickness + 14} strokeLinecap="round" opacity={0.08} />
+          <path d={arcPath(cx, cy, r, seg.start, seg.end)} fill="none" stroke={seg.color} strokeWidth={thickness + 8} strokeLinecap="round" opacity={0.14} />
+          <path d={arcPath(cx, cy, r, seg.start, seg.end)} fill="none" stroke={seg.color} strokeWidth={thickness + 3} strokeLinecap="round" opacity={0.2} />
+        </g>
       ))}
 
       {segments.map((seg, i) => (
@@ -87,7 +75,6 @@ export default function DonutChart({
           stroke={`url(#${uid}-grad-${i})`}
           strokeWidth={activeIndex === i ? thickness + 5 : thickness}
           strokeLinecap="round"
-          filter={activeIndex === i ? `url(#${uid}-glow)` : undefined}
           style={{ cursor: onSegmentClick ? 'pointer' : 'default', transition: 'stroke-width 380ms cubic-bezier(.34,1.56,.64,1)' }}
           onClick={() => onSegmentClick && onSegmentClick(i)}
           onMouseEnter={() => onSegmentHover && onSegmentHover(i)}
