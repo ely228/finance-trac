@@ -45,7 +45,15 @@ function hashString(s) {
   return h
 }
 
+import { categoryMeta } from './components/CategoryIcon'
+
 export function categoryStyle(name) {
+  try {
+    const meta = categoryMeta(name)
+    if (meta && meta.bg && meta.fg) {
+      return { bg: meta.bg, fg: meta.fg }
+    }
+  } catch (e) {}
   const idx = hashString(name || '') % CATEGORY_PALETTE.length
   return CATEGORY_PALETTE[idx]
 }
