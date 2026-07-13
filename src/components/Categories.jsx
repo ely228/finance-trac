@@ -123,11 +123,6 @@ export default function Categories({ categories, transactions, onChanged }) {
             </div>
           )
         })}
-        <div className="cat-total-row" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px', borderTop: '1px solid var(--hairline)', paddingTop: '12px' }}>
-          <div className="cat-avatar" style={{ background: 'rgba(42, 39, 64, 0.05)', color: 'var(--ink-soft)', width: '38px', height: '38px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Σ</div>
-          <div className="cat-info" style={{ flex: 1 }}><div className="cat-name" style={{ fontSize: '13.5px', fontWeight: 700 }}>Всего расходов</div></div>
-          <div className="cat-numbers" style={{ textAlign: 'right' }}><div className="cat-amount" style={{ fontSize: '13.5px', fontWeight: 800 }}>{formatMoney(totalExpenseAll)}</div></div>
-        </div>
       </div>
 
       {/* "Совет на сегодня" Card */}
@@ -135,11 +130,13 @@ export default function Categories({ categories, transactions, onChanged }) {
         marginTop: '16px',
         display: 'flex',
         gap: '12px',
-        alignItems: 'center'
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #E6E2F3 0%, #DFE8F0 100%)',
+        border: '1px solid rgba(42, 39, 64, 0.08)'
       }}>
         <div className="advice-icon" style={{
-          background: 'rgba(247, 141, 197, 0.15)',
-          color: 'var(--rose-dark)',
+          background: 'rgba(184, 154, 244, 0.15)',
+          color: '#8865E8',
           width: '38px',
           height: '38px',
           borderRadius: '50%',
@@ -154,8 +151,8 @@ export default function Categories({ categories, transactions, onChanged }) {
           </svg>
         </div>
         <div style={{ flex: 1 }}>
-          <h2 style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, textTransform: 'none', color: 'var(--rose-dark)' }}>Совет на сегодня</h2>
-          <div style={{ fontSize: '12.5px', fontWeight: 600, marginTop: '4px', lineHeight: '1.4', color: 'var(--ink)' }}>
+          <h2 style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, textTransform: 'none', color: 'var(--ink)' }}>Совет на сегодня</h2>
+          <div style={{ fontSize: '12.5px', fontWeight: 600, marginTop: '4px', lineHeight: '1.4', color: 'var(--ink-soft)' }}>
             Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишнего стресса.
           </div>
         </div>
