@@ -64,12 +64,7 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
           {/* Lighter and smaller greeting salutation */}
           <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink-soft)', margin: 0 }}>{salutation},</p>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {userName}
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--lavender-dark)' }}>
-              <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5" />
-              <path d="M14 10V5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5" />
-              <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8c0 4 3 7 7 7h1c3 0 5-3 5-6v-3a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2" />
-            </svg>
+            {userName} 👋
           </h1>
         </div>
         <button className="notification-btn" aria-label="Уведомления" style={{ width: '38px', height: '38px', borderRadius: '12px' }}>
