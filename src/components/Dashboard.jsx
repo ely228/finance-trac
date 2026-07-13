@@ -31,8 +31,8 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
 
   return (
     <div className="dashboard-page">
-      <div className="topbar dashboard-header" style={{ marginBottom: '16px' }}>
-        <h1 style={{ fontWeight: 700 }}>Дашборд</h1>
+      <div className="topbar">
+        <h1>Дашборд</h1>
         <div className="dashboard-actions">
           {/* Custom Date Selector Pill with Vector Icon */}
           <div className="date-pill" style={{ display: 'flex', alignItems: 'center', gap: '6px', position: 'relative' }}>
@@ -91,7 +91,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
 
       {/* Unified Block combining Expenses by Categories & Top Categories */}
       <div className="card" style={{ padding: '16px' }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '14px', color: 'var(--ink)' }}>Анализ расходов</h2>
+        <h2 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '14px', color: 'var(--ink)' }}>Расходы по категориям</h2>
         
         {pieData.length ? (
           <div>
@@ -133,17 +133,18 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
             {/* Hairline Separator */}
             <div style={{ height: '1px', background: 'var(--hairline)', margin: '14px 0' }} />
 
+            <h2 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '10px', color: 'var(--ink-soft)' }}>Топ категорий</h2>
+
             {/* Bottom portion: Top Categories list */}
             <div className="dashboard-top-categories">
               {pieData.slice(0, 4).map(item => {
-                const style = categoryStyle(item.name)
                 return (
                   <div className="cat-row" key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0', borderBottom: '1px solid rgba(42,39,64,0.03)' }}>
                     <div 
                       className="cat-avatar" 
                       style={{ 
-                        background: style.bg, 
-                        color: style.fg,
+                        background: `${item.color}1a`,
+                        color: item.color,
                         width: '32px',
                         height: '32px',
                         borderRadius: '50%',
@@ -158,7 +159,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
                     <div className="cat-info" style={{ flex: 1, minWidth: 0 }}>
                       <div className="cat-name" style={{ fontSize: '12.5px', fontWeight: 700 }}>{item.name}</div>
                       <div className="cat-progress" style={{ marginTop: '5px' }}>
-                        <div className="cat-progress-fill" style={{ width: `${item.value / totalExpense * 100}%`, background: style.fg }} />
+                        <div className="cat-progress-fill" style={{ width: `${item.value / totalExpense * 100}%`, background: item.color }} />
                       </div>
                     </div>
                     <div className="cat-numbers" style={{ textAlign: 'right', flexShrink: 0 }}>

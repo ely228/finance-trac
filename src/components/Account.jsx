@@ -46,7 +46,7 @@ export default function Account({ email, transactions = [] }) {
   return (
     <div>
       <div className="topbar">
-        <h1 style={{ fontWeight: 700 }}>Аккаунт</h1>
+        <h1>Аккаунт</h1>
       </div>
 
       {/* Profile Header */}

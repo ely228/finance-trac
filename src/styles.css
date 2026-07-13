@@ -192,8 +192,9 @@ button, input, select { font-family: inherit; }
 
 @media (max-width: 767px) {
   .nav {
+    position: fixed !important;
     left: 14px; right: 14px;
-    bottom: calc(14px + var(--safe-b));
+    bottom: calc(6px + var(--safe-b)) !important;
     border-radius: var(--r-full);
     padding: 6px;
     height: 68px;
@@ -232,15 +233,15 @@ button, input, select { font-family: inherit; }
   -webkit-backdrop-filter: var(--mat-2-blur);
   border: var(--mat-2-edge);
   border-radius: var(--r-lg);
-  padding: var(--sp-5);
-  margin-bottom: var(--sp-4);
+  padding: 12px;
+  margin-bottom: 9px;
   box-shadow: var(--el-1), var(--rim-light);
   overflow: hidden;
   transition: box-shadow var(--dur-2) var(--smooth), transform var(--dur-2) var(--smooth), border-color var(--dur-2) var(--smooth);
 }
 .card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--sheen); pointer-events: none; }
 .card > * { position: relative; z-index: 1; }
-.card h2 { font-size: 14px; font-weight: 700; margin: 0 0 var(--sp-4); color: var(--ink-soft); letter-spacing: 0.01em; text-transform: uppercase; }
+.card h2 { font-size: 13.5px; font-weight: 700; margin: 0 0 10px; color: var(--ink-soft); letter-spacing: 0.01em; text-transform: uppercase; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr; gap: var(--sp-4); }
 @media (min-width: 900px) { .grid-2 { grid-template-columns: 1fr 1fr; align-items: start; } }
@@ -258,20 +259,14 @@ button, input, select { font-family: inherit; }
 /* ================================================================
    HERO / BALANCE
    ================================================================ */
-.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-5); flex-wrap: wrap; gap: var(--sp-3); }
-.topbar h1 { font-size: 20px; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: var(--sp-3); }
+.topbar h1 { font-size: 19px; font-weight: 700; margin: 0; letter-spacing: -0.01em; color: var(--ink); }
 .month-switch { display: flex; align-items: center; gap: var(--sp-3); font-size: 13px; font-weight: 700; color: var(--ink-soft); text-transform: capitalize; }
 .month-switch button {
   width: 30px; height: 30px; border-radius: var(--r-full);
   border: var(--mat-2-edge); background: var(--mat-3-bg); backdrop-filter: var(--mat-2-blur);
   color: var(--ink); font-size: 15px; cursor: pointer; box-shadow: var(--rim-light);
 }
-
-/* ================================================================
-   HERO / BALANCE
-   ================================================================ */
-.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-5); flex-wrap: wrap; gap: var(--sp-3); }
-.topbar h1 { font-size: 20px; font-weight: 700; margin: 0; letter-spacing: -0.01em; color: var(--ink); }
 
 .date-pill {
   position: relative;
@@ -294,8 +289,8 @@ button, input, select { font-family: inherit; }
   backdrop-filter: var(--mat-2-blur);
   -webkit-backdrop-filter: var(--mat-2-blur);
   border: var(--mat-2-edge);
-  padding: var(--sp-5);
-  margin-bottom: var(--sp-4);
+  padding: 12px;
+  margin-bottom: 9px;
   box-shadow: var(--el-2), var(--rim-light);
 }
 .hero-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--sheen); pointer-events: none; }
@@ -482,7 +477,7 @@ button, input, select { font-family: inherit; }
 /* ---------- transactions list ---------- */
 .day-group { margin-bottom: var(--sp-2); }
 .day-group-title { font-size: 12px; font-weight: 800; color: var(--ink-faint); text-transform: capitalize; margin: var(--sp-4) 0 6px; }
-.tx-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--hairline); }
+.tx-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--hairline); }
 .tx-icon { width: 40px; height: 40px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; flex-shrink: 0; }
 .tx-main { flex: 1; display: flex; flex-direction: column; min-width: 0; gap: 1px; }
 .tx-cat { font-size: 14px; font-weight: 800; }
@@ -612,7 +607,6 @@ button, input, select { font-family: inherit; }
   .type-toggle button:hover:not(.active) { background: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.7); }
   .month-switch button:hover, .modal-close:hover { background: rgba(255,255,255,0.8); transform: translateY(-1px); }
 }
-.card:active, .kpi:active, .quick-card:active { transform: scale(0.985); }
 .submit-btn:active, .inline-form button:active { transform: scale(0.97); filter: brightness(0.97); }
 .type-toggle button:active { transform: scale(0.97); }
 .month-switch button:active, .modal-close:active { transform: scale(0.9); }
@@ -687,7 +681,7 @@ button, input, select { font-family: inherit; }
 .header-icon-btn:active { transform: scale(0.9); }
 
 .cat-row {
-  display: flex; align-items: center; gap: 12px; padding: 13px 0;
+  display: flex; align-items: center; gap: 12px; padding: 10px 0;
   border-bottom: 1px solid var(--hairline);
 }
 .cat-row:last-child { border-bottom: none; }
@@ -739,7 +733,7 @@ button, input, select { font-family: inherit; }
 .account-sub { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
 
 .settings-row {
-  display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--hairline);
+  display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--hairline);
   cursor: pointer; background: none; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left;
 }
 .settings-row:last-child { border-bottom: none; }
@@ -788,9 +782,9 @@ button, input, select { font-family: inherit; }
 
 @media (max-width: 767px) {
   .content { padding: calc(8px + var(--safe-t)) 14px 92px; }
-  .card { border-radius: 25px; padding: 16px; margin-bottom: 10px; }
-  .card h2 { color: var(--ink); text-transform: none; letter-spacing: -.02em; font-size: 16px; }
-  .hero-card { padding: 16px; border-radius: 28px; background: linear-gradient(155deg, rgba(255,255,255,.62), rgba(255,255,255,.18)); }
+  .card { border-radius: 25px; padding: 12px; margin-bottom: 8px; }
+  .card h2 { color: var(--ink); text-transform: none; letter-spacing: -.02em; font-size: 13.5px; }
+  .hero-card { padding: 12px; border-radius: 28px; background: linear-gradient(155deg, rgba(255,255,255,.62), rgba(255,255,255,.18)); }
   .hero-date { margin-top: 0; font-size: 11px; }
   .hero-balance-row { min-height: 68px; margin: 4px 0 12px; }
   .hero-balance { font-size: clamp(38px, 10.5vw, 45px); }
@@ -820,18 +814,19 @@ button, input, select { font-family: inherit; }
   .legend-value { display: none; }
   .legend-pct { font-size: 11px; width: 28px; }
   .chart-card .recharts-responsive-container { height: 178px !important; }
-  .cat-row { padding: 14px 0; gap: 10px; }
-  .cat-avatar { width: 48px; height: 48px; }
-  .cat-name { font-size: 15px; }
-  .cat-sub { font-size: 12px; }
+  .cat-row, .tx-row, .settings-row { padding: 8px 0; gap: 8px; }
+  .cat-avatar { width: 42px; height: 42px; }
+  .cat-name { font-size: 13.5px; }
+  .cat-sub { font-size: 11.5px; }
   .cat-progress { height: 6px; }
-  .cat-amount { font-size: 14px; }
+  .cat-amount { font-size: 12.5px; }
   .filter-pills { margin-left: 0; margin-right: 0; padding: 2px 0 4px; }
   .filter-pills button { padding: 10px 17px; }
   .filter-pills button.active { color: var(--lavender-dark); background: rgba(255,255,255,.76); box-shadow: var(--el-1), var(--rim-light); }
   .search-bar { padding: 14px 16px; border-radius: 19px; }
   .nav {
-    left: 18px; right: 18px; bottom: calc(14px + var(--safe-b)); height: 68px; padding: 6px 8px;
+    position: fixed !important;
+    left: 18px; right: 18px; bottom: calc(6px + var(--safe-b)) !important; height: 68px; padding: 6px 8px;
     background: linear-gradient(105deg, rgba(238,252,250,.66), rgba(255,246,252,.68) 52%, rgba(255,245,225,.66));
     backdrop-filter: blur(30px) saturate(185%); -webkit-backdrop-filter: blur(30px) saturate(185%);
     border-color: rgba(255,255,255,.72); box-shadow: 0 12px 34px rgba(89,68,125,.12), inset 0 1px rgba(255,255,255,.82);
@@ -982,19 +977,19 @@ button, input, select { font-family: inherit; }
 /* Simplified navigation and compact first screen after removing the floating add action. */
 @media (max-width: 767px) {
   .content { padding-bottom: calc(82px + var(--safe-b)); }
-  .nav { left: 18px; right: 18px; height: 66px; bottom: calc(12px + var(--safe-b)); }
+  .nav { position: fixed !important; left: 18px; right: 18px; height: 66px; bottom: calc(6px + var(--safe-b)) !important; }
   .nav-sphere { display: none !important; }
   .home-grid { gap: 8px; }
   .home-greeting { margin-bottom: 0; padding-top: 3px; }
   .home-greeting h1 { font-size: 28px; }
-  .hero-card { padding: 14px; margin-bottom: 0; }
+  .hero-card { padding: 11px; margin-bottom: 0; }
   .hero-balance-row { min-height: 61px; margin: 2px 0 8px; }
   .hero-balance { font-size: clamp(35px, 9.8vw, 42px); }
   .hero-wallet { width: 190px; right: -18px; }
   .hero-duo { margin-bottom: 8px; }
-  .hero-duo-item { padding: 9px 10px; }
-  .hero-cta { min-height: 42px; padding: 8px 12px; font-size: 14px; }
-  .g-recent .tx-row { padding: 9px 0; }
+  .hero-duo-item { padding: 7px 8px; }
+  .hero-cta { min-height: 42px; padding: 6px 10px; font-size: 14px; }
+  .g-recent .tx-row { padding: 7px 0; }
 }
 
 /* Dashboard: two analytical cards above one wide readable trend chart. */

@@ -1,16 +1,14 @@
 import { useMemo, useState } from 'react'
-import { supabase } from '../supabaseClient'
-import ConfirmDialog from './ConfirmDialog'
 import AddCategorySheet from './AddCategorySheet'
+import EditCategorySheet from './EditCategorySheet'
 import { formatMoney, categoryStyle } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
 export default function Categories({ categories, transactions, onChanged }) {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all')
-  const [pending, setPending] = useState(null)
   const [showAdd, setShowAdd] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
+  const [editingCategory, setEditingCategory] = useState(null)
 
   const totals = useMemo(() => {
     const map = {}
@@ -39,44 +37,12 @@ export default function Categories({ categories, transactions, onChanged }) {
       return { ...c, amount, pct }
     })
 
-  async function confirmDelete() {
-    if (!pending) return
-    await supabase.from('categories').delete().eq('id', pending.id)
-    setPending(null)
-    onChanged()
-  }
-
   return (
     <div>
-      <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1 style={{ fontWeight: 500, color: 'var(--ink-soft)' }}>Категории</h1>
+      <div className="topbar">
+        <h1>Категории</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
-          {/* Edit Mode Toggle Button */}
-          <button 
-            className="header-icon-btn" 
-            onClick={() => setIsEditing(!isEditing)} 
-            aria-label="Режим редактирования" 
-            style={{ 
-              background: isEditing ? 'rgba(232, 99, 122, 0.12)' : 'transparent', 
-              borderColor: isEditing ? 'var(--expense)' : 'var(--hairline)',
-              color: isEditing ? 'var(--expense)' : 'var(--ink-soft)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              border: '1px solid var(--hairline)',
-              cursor: 'pointer'
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-          </button>
-
-          {/* Add Category Button */}
+          {/* Add Category Button - exactly one action button in topbar */}
           <button 
             className="header-icon-btn" 
             onClick={() => setShowAdd(true)} 
@@ -122,7 +88,12 @@ export default function Categories({ categories, transactions, onChanged }) {
         ) : rows.map(c => {
           const style = categoryStyle(c.name)
           return (
-            <div className="cat-row category-list-row" key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div 
+              className="cat-row category-list-row" 
+              key={c.id} 
+              onClick={() => setEditingCategory(c)}
+              style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+            >
               <div 
                 className="cat-avatar" 
                 style={{ 
@@ -148,33 +119,7 @@ export default function Categories({ categories, transactions, onChanged }) {
                 <div className="cat-amount" style={{ fontSize: '13px', fontWeight: 700 }}>{formatMoney(c.amount)}</div>
                 <div className="cat-pct" style={{ fontSize: '10.5px', color: 'var(--ink-faint)' }}>{c.pct}%</div>
               </div>
-              
-              {isEditing ? (
-                <button 
-                  className="cat-delete" 
-                  onClick={() => setPending(c)} 
-                  aria-label={`Удалить категорию ${c.name}`}
-                  style={{
-                    background: 'rgba(232, 99, 122, 0.1)',
-                    border: 'none',
-                    color: 'var(--expense)',
-                    borderRadius: '50%',
-                    width: '26px',
-                    height: '26px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                    fontWeight: 'bold'
-                  }}
-                >
-                  ×
-                </button>
-              ) : (
-                <span className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '14px', flexShrink: 0 }}>›</span>
-              )}
+              <span className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '14px', flexShrink: 0 }}>›</span>
             </div>
           )
         })}
@@ -186,21 +131,17 @@ export default function Categories({ categories, transactions, onChanged }) {
       </div>
 
       {/* "Совет на сегодня" Card */}
-      <div className="advice-card" style={{
-        background: 'linear-gradient(135deg, #F78DC5 0%, #EC5DA6 100%)',
-        color: '#fff',
-        borderRadius: 'var(--r-lg)',
-        padding: '14px 16px',
+      <div className="card advice-card" style={{
         marginTop: '16px',
-        boxShadow: 'var(--el-1)',
         display: 'flex',
         gap: '12px',
         alignItems: 'center'
       }}>
         <div className="advice-icon" style={{
-          background: 'rgba(255, 255, 255, 0.2)',
-          width: '36px',
-          height: '36px',
+          background: 'rgba(247, 141, 197, 0.15)',
+          color: 'var(--rose-dark)',
+          width: '38px',
+          height: '38px',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
@@ -213,23 +154,22 @@ export default function Categories({ categories, transactions, onChanged }) {
           </svg>
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 800, fontSize: '11px', opacity: 0.9, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Совет на сегодня</div>
-          <div style={{ fontSize: '12.5px', fontWeight: 600, marginTop: '2px', lineHeight: '1.35', opacity: 0.95 }}>
+          <h2 style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, textTransform: 'none', color: 'var(--rose-dark)' }}>Совет на сегодня</h2>
+          <div style={{ fontSize: '12.5px', fontWeight: 600, marginTop: '4px', lineHeight: '1.4', color: 'var(--ink)' }}>
             Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишнего стресса.
           </div>
         </div>
       </div>
 
-      {pending && (
-        <ConfirmDialog
-          title="Удалить категорию?"
-          message={`«${pending.name}» — прошлые операции с этой категорией останутся, но выбрать её заново будет нельзя.`}
-          onConfirm={confirmDelete}
-          onCancel={() => setPending(null)}
+      {showAdd && <AddCategorySheet onAdded={onChanged} onClose={() => setShowAdd(false)} />}
+      
+      {editingCategory && (
+        <EditCategorySheet 
+          category={editingCategory} 
+          onSaved={onChanged} 
+          onClose={() => setEditingCategory(null)} 
         />
       )}
-
-      {showAdd && <AddCategorySheet onAdded={onChanged} onClose={() => setShowAdd(false)} />}
     </div>
   )
 }
