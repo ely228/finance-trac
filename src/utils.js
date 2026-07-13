@@ -28,15 +28,16 @@ export function shiftMonth(monthKey, delta) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 }
 
+// Constrain palette to strictly: светло-розовый -> нежно-лавандовый -> насыщенный фиолетовый.
+// Base colors: #F0A8C0 (светло-розовый) and #7C57DA (насыщенный фиолетовый).
+// 6 intermediate tones / shades in this range.
 const CATEGORY_PALETTE = [
-  { bg: 'rgba(156,135,214,0.16)', fg: '#9C87D6' },
-  { bg: 'rgba(232,136,172,0.16)', fg: '#E8659E' },
-  { bg: 'rgba(243,175,119,0.18)', fg: '#D9822E' },
-  { bg: 'rgba(111,191,166,0.18)', fg: '#3F9C7E' },
-  { bg: 'rgba(130,169,214,0.18)', fg: '#5586BE' },
-  { bg: 'rgba(216,154,203,0.18)', fg: '#BD5FA6' },
-  { bg: 'rgba(224,177,92,0.20)', fg: '#B8862A' },
-  { bg: 'rgba(143,195,201,0.20)', fg: '#3E8C96' },
+  { bg: 'rgba(240, 168, 192, 0.16)', fg: '#F0A8C0' }, // светло-розовый
+  { bg: 'rgba(226, 149, 203, 0.16)', fg: '#E295CB' }, // нежно-розово-лавандовый
+  { bg: 'rgba(202, 137, 215, 0.16)', fg: '#CA89D7' }, // нежно-лавандовый
+  { bg: 'rgba(172, 122, 224, 0.16)', fg: '#AC7AE0' }, // лавандовый
+  { bg: 'rgba(144, 107, 230, 0.16)', fg: '#906BE6' }, // умеренно-фиолетовый
+  { bg: 'rgba(124, 87, 218, 0.16)',  fg: '#7C57DA' }, // насыщенный фиолетовый
 ]
 
 function hashString(s) {
@@ -45,15 +46,7 @@ function hashString(s) {
   return h
 }
 
-import { categoryMeta } from './components/CategoryIcon'
-
 export function categoryStyle(name) {
-  try {
-    const meta = categoryMeta(name)
-    if (meta && meta.bg && meta.fg) {
-      return { bg: meta.bg, fg: meta.fg }
-    }
-  } catch (e) {}
   const idx = hashString(name || '') % CATEGORY_PALETTE.length
   return CATEGORY_PALETTE[idx]
 }

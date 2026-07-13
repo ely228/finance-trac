@@ -6,7 +6,7 @@ import { supabase } from '../supabaseClient'
 import { formatMoney, categoryStyle, currentMonthKey, monthLabel } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
-const PALETTE = ['#9C87D6', '#E8659E', '#D9822E', '#3F9C7E', '#5586BE', '#BD5FA6', '#B8862A', '#3E8C96']
+const PALETTE = ['#F0A8C0', '#E295CB', '#CA89D7', '#AC7AE0', '#906BE6', '#7C57DA']
 
 const EyeIcon = ({ off }) => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -24,9 +24,12 @@ const EyeIcon = ({ off }) => (
   </svg>
 )
 
+import AllTransactionsModal from './AllTransactionsModal'
+
 export default function Home({ transactions, email, onChanged, onOpenDashboard, onAdd }) {
   const [hidden, setHidden] = useState(false)
   const [pending, setPending] = useState(null)
+  const [showAllTransactions, setShowAllTransactions] = useState(false)
 
   async function confirmDelete() {
     if (!pending) return
@@ -44,7 +47,7 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
     byCategory[t.category] = (byCategory[t.category] || 0) + Number(t.amount)
   }
   const catEntries = Object.entries(byCategory).sort((a, b) => b[1] - a[1])
-  const pieData = catEntries.map(([name, value], i) => ({ name, value, color: PALETTE[i % PALETTE.length] }))
+  const pieData = catEntries.map(([name, value]) => ({ name, value, color: categoryStyle(name).fg }))
   const totalExpense = pieData.reduce((s, d) => s + d.value, 0) || 1
 
   const money = v => hidden ? '••••• ₽' : formatMoney(v)
@@ -137,7 +140,7 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
       <div className="card g-recent" style={{ padding: '16px' }}>
         <div className="chart-card-head" style={{ marginBottom: '12px' }}>
           <h2 style={{ margin: 0, fontSize: '14px', fontWeight: 700 }}>Последние операции</h2>
-          <button className="see-all-link" onClick={onOpenDashboard} style={{ fontSize: '12.5px' }}>Смотреть все</button>
+          <button className="see-all-link" onClick={() => setShowAllTransactions(true)} style={{ fontSize: '12.5px' }}>Смотреть все</button>
         </div>
         {recent.length === 0 ? (
           <p className="muted" style={{ padding: '12px 0' }}>Пока нет операций за этот месяц.</p>
@@ -197,6 +200,14 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
           />
         )}
       </div>
+
+      {showAllTransactions && (
+        <AllTransactionsModal
+          transactions={transactions}
+          onClose={() => setShowAllTransactions(false)}
+          onChanged={onChanged}
+        />
+      )}
     </div>
   )
 }

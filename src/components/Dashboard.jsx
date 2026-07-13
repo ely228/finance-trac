@@ -4,8 +4,6 @@ import ExportMenu from './ExportMenu'
 import { formatMoney, daysInMonth, categoryStyle, categoryInitial, formatPercent, monthLabel, shiftMonth } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
-const PALETTE = ['#9C87D6', '#E8659E', '#D9822E', '#3F9C7E', '#5586BE', '#BD5FA6', '#B8862A', '#3E8C96']
-
 export default function Dashboard({ transactions, monthKey, onMonthChange, prevTotals }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const monthOptions = Array.from({ length: 12 }, (_, i) => shiftMonth(monthKey, -i))
@@ -17,7 +15,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
 
   const totals = {}
   transactions.filter(t => t.type === 'expense').forEach(t => { totals[t.category] = (totals[t.category] || 0) + Number(t.amount) })
-  const pieData = Object.entries(totals).sort((a, b) => b[1] - a[1]).map(([name, value], i) => ({ name, value, color: PALETTE[i % PALETTE.length] }))
+  const pieData = Object.entries(totals).sort((a, b) => b[1] - a[1]).map(([name, value]) => ({ name, value, color: categoryStyle(name).fg }))
   const totalExpense = pieData.reduce((sum, item) => sum + item.value, 0) || 1
 
   const days = daysInMonth(monthKey)
@@ -198,7 +196,7 @@ export default function Dashboard({ transactions, monthKey, onMonthChange, prevT
             <XAxis dataKey="day" fontSize={9} stroke="#B7B2C6" tickLine={false} axisLine={false} interval={Math.ceil(days / 5) - 1} />
             <YAxis fontSize={9} stroke="#B7B2C6" tickLine={false} axisLine={false} width={34} />
             <Tooltip formatter={v => formatMoney(v)} />
-            <Area type="monotone" dataKey="total" stroke="#8D6BE0" strokeWidth={2.0} fill="url(#areaFill)" />
+            <Area type="monotone" dataKey="total" stroke="#AC7AE0" strokeWidth={2.0} fill="url(#areaFill)" />
           </AreaChart>
         </ResponsiveContainer>
       </section>
