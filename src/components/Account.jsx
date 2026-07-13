@@ -153,6 +153,7 @@ export default function Account({ email, transactions = [] }) {
       {/* Full-Width Soft Rose Glass Logout Button */}
       <button className="logout-btn" onClick={handleLogout} style={{
         marginTop: '16px',
+        marginBottom: '100px',
         width: '100%',
         padding: '12px',
         borderRadius: 'var(--r-md)',
