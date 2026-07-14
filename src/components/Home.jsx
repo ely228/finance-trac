@@ -6,8 +6,6 @@ import { supabase } from '../supabaseClient'
 import { formatMoney, categoryStyle, currentMonthKey, monthLabel } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
-const PALETTE = ['#F0A8C0', '#E295CB', '#CA89D7', '#AC7AE0', '#906BE6', '#7C57DA']
-
 const EyeIcon = ({ off }) => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     {off ? (
@@ -24,12 +22,9 @@ const EyeIcon = ({ off }) => (
   </svg>
 )
 
-import AllTransactionsModal from './AllTransactionsModal'
-
-export default function Home({ transactions, email, onChanged, onOpenDashboard, onAdd }) {
+export default function Home({ transactions, categories = [], email, onChanged, onOpenDashboard, onAdd, onViewAllTransactions }) {
   const [hidden, setHidden] = useState(false)
   const [pending, setPending] = useState(null)
-  const [showAllTransactions, setShowAllTransactions] = useState(false)
 
   async function confirmDelete() {
     if (!pending) return
@@ -78,7 +73,7 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
         </button>
       </header>
 
-      <div className="card hero-card g-balance" style={{ padding: '16px' }}>
+      <div className="card hero-card g-balance" style={{ padding: '24px' }}>
         <div className="hero-top">
           <span className="hero-label">Баланс</span>
           <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс" style={{ width: '30px', height: '30px' }}>
@@ -111,7 +106,7 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
         <button className="hero-cta" onClick={onAdd} style={{ padding: '10px 12px', fontSize: '14px', borderRadius: 'var(--r-sm)' }}>+ Новая операция</button>
       </div>
 
-      <div className="card chart-card g-spending" style={{ padding: '16px' }}>
+      <div className="card chart-card g-spending" style={{ padding: '22px' }}>
         <h2 style={{ fontSize: '14px', fontWeight: 700 }}>Куда уходят деньги</h2>
         {pieData.length === 0 ? (
           <p className="muted" style={{ padding: '12px 0' }}>Пока нет расходов за этот месяц.</p>
@@ -137,32 +132,39 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
         )}
       </div>
 
-      <div className="card g-recent" style={{ padding: '16px' }}>
+      <div className="card g-recent" style={{ padding: '22px' }}>
         <div className="chart-card-head" style={{ marginBottom: '12px' }}>
           <h2 style={{ margin: 0, fontSize: '14px', fontWeight: 700 }}>Последние операции</h2>
-          <button className="see-all-link" onClick={() => setShowAllTransactions(true)} style={{ fontSize: '12.5px' }}>Смотреть все</button>
+          <button className="see-all-link" onClick={onViewAllTransactions} style={{ fontSize: '12.5px' }}>Смотреть все</button>
         </div>
         {recent.length === 0 ? (
           <p className="muted" style={{ padding: '12px 0' }}>Пока нет операций за этот месяц.</p>
         ) : recent.map(t => {
+          const catData = categories.find(c => c.name === t.category)
           const style = categoryStyle(t.category)
+          const customBg = catData && catData.color ? `rgba(${catData.color}, 0.16)` : style.bg
+          const customFg = catData && catData.color ? `rgb(${catData.color})` : style.fg
+          const customIcon = catData && catData.icon ? catData.icon : null
+
           return (
-            <div key={t.id} className={`tx-row ${t.type}`} style={{ padding: '10px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div 
-                className="tx-icon" 
-                style={{ 
-                  background: style.bg, 
-                  color: style.fg,
-                  width: '34px',
-                  height: '34px',
+            <div key={t.id} className={`tx-row ${t.type}`} style={{ padding: '12px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                className="tx-icon"
+                style={{
+                  background: customBg,
+                  color: customFg,
+                  width: '38px',
+                  height: '38px',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0
+                  flexShrink: 0,
+                  fontSize: '16px',
+                  fontWeight: 'bold'
                 }}
               >
-                <CategoryIcon name={t.category} />
+                {customIcon ? customIcon : <CategoryIcon name={t.category} />}
               </div>
               <div className="tx-main" style={{ flex: 1, minWidth: 0 }}>
                 <span className="tx-cat" style={{ fontSize: '13.5px', fontWeight: 700 }}>{t.category}</span>
@@ -172,9 +174,9 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
                 <span className="tx-amount" style={{ fontSize: '13px', fontWeight: 700 }}>{t.type === 'expense' ? '−' : '+'}{money(t.amount)}</span>
                 <span className="tx-date" style={{ fontSize: '10.5px', color: 'var(--ink-faint)' }}>{new Date(t.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}</span>
               </div>
-              <button 
-                className="tx-delete" 
-                onClick={() => setPending(t)} 
+              <button
+                className="tx-delete"
+                onClick={() => setPending(t)}
                 aria-label="Удалить"
                 style={{
                   background: 'none',
@@ -200,14 +202,6 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
           />
         )}
       </div>
-
-      {showAllTransactions && (
-        <AllTransactionsModal
-          transactions={transactions}
-          onClose={() => setShowAllTransactions(false)}
-          onChanged={onChanged}
-        />
-      )}
     </div>
   )
 }

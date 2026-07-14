@@ -7,6 +7,8 @@ import Categories from './components/Categories'
 import Account from './components/Account'
 import AddTransactionModal from './components/AddTransactionModal'
 import Auth from './components/Auth'
+import NewCategoryPage from './components/NewCategoryPage'
+import AllTransactionsPage from './components/AllTransactionsPage'
 import { currentMonthKey, monthLabel, shiftMonth } from './utils'
 
 const visualTest = import.meta.env.DEV && new URLSearchParams(window.location.search).get('visual-test') === '1'
@@ -31,6 +33,9 @@ export default function App() {
   const [prevTotals, setPrevTotals] = useState(visualTest ? { income: 4450, expense: 4100 } : null)
   const [showAdd, setShowAdd] = useState(false)
   const [loading, setLoading] = useState(!visualTest)
+
+  // Step 21.1: subPage state for render routing inside tabs (null | 'new-category' | 'all-transactions')
+  const [subPage, setSubPage] = useState(null)
 
   useEffect(() => {
     if (visualTest) return
@@ -72,6 +77,11 @@ export default function App() {
     Promise.all([loadCategories(), loadTransactions(), loadPrevMonthTotals()]).finally(() => setLoading(false))
   }, [loadCategories, loadTransactions, loadPrevMonthTotals, session])
 
+  // Reset subPage when switching tabs
+  useEffect(() => {
+    setSubPage(null)
+  }, [tab])
+
   if (session === undefined) return null
   if (!session) return <Auth />
 
@@ -85,6 +95,7 @@ export default function App() {
       </div>
       <div className="grain" />
 
+      {/* Nav is locked/fixed at bottom, visible even when viewing subPage based on Step 23.2 */}
       <Nav tab={tab} setTab={setTab} />
 
       <main className="content">
@@ -92,34 +103,66 @@ export default function App() {
           <p className="muted">Загрузка…</p>
         ) : (
           <>
-            {tab === 'home' && (
-              <Home
+            {/* Sub-pages logic (renders instead of tab content if active) */}
+            {subPage === 'new-category' ? (
+              <NewCategoryPage
+                onBack={() => setSubPage(null)}
+                onAdded={() => {
+                  loadCategories()
+                  setSubPage(null)
+                }}
+              />
+            ) : subPage === 'all-transactions' ? (
+              <AllTransactionsPage
+                onBack={() => setSubPage(null)}
                 transactions={transactions}
-                email={session.user.email}
                 onChanged={loadTransactions}
-                onOpenDashboard={() => setTab('dashboard')}
-                onAdd={() => setShowAdd(true)}
               />
-            )}
-            {tab === 'dashboard' && (
-              <Dashboard
-                transactions={transactions}
-                monthKey={monthKey}
-                onMonthChange={setMonthKey}
-                prevTotals={prevTotals}
-              />
-            )}
-            {tab === 'categories' && (
-              <Categories categories={categories} transactions={transactions} onChanged={loadCategories} />
-            )}
-            {tab === 'account' && (
-              <Account email={session.user.email} transactions={transactions} monthLabelText={monthLabelText} />
+            ) : (
+              <>
+                {tab === 'home' && (
+                  <Home
+                    transactions={transactions}
+                    email={session.user.email}
+                    onChanged={loadTransactions}
+                    onOpenDashboard={() => setTab('dashboard')}
+                    onAdd={() => setShowAdd(true)}
+                    onViewAllTransactions={() => setSubPage('all-transactions')}
+                  />
+                )}
+                {tab === 'dashboard' && (
+                  <Dashboard
+                    transactions={transactions}
+                    monthKey={monthKey}
+                    onMonthChange={setMonthKey}
+                    prevTotals={prevTotals}
+                  />
+                )}
+                {tab === 'categories' && (
+                  <Categories
+                    categories={categories}
+                    transactions={transactions}
+                    onChanged={loadCategories}
+                    onNavigateToNewCategory={() => setSubPage('new-category')}
+                  />
+                )}
+                {tab === 'account' && (
+                  <Account email={session.user.email} transactions={transactions} monthLabelText={monthLabelText} />
+                )}
+              </>
             )}
           </>
         )}
       </main>
 
-      {showAdd && <AddTransactionModal categories={categories} onAdded={loadTransactions} onClose={() => setShowAdd(false)} />}
+      {showAdd && (
+        <AddTransactionModal
+          categories={categories}
+          onAdded={loadTransactions}
+          onClose={() => setShowAdd(false)}
+          onNavigateToNewCategory={() => setSubPage('new-category')}
+        />
+      )}
 
     </div>
   )
