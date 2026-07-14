@@ -1,13 +1,11 @@
 import { useMemo, useState } from 'react'
-import AddCategorySheet from './AddCategorySheet'
 import EditCategorySheet from './EditCategorySheet'
 import { formatMoney, categoryStyle } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
-export default function Categories({ categories, transactions, onChanged }) {
+export default function Categories({ categories, transactions, onChanged, onNavigateToNewCategory }) {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all')
-  const [showAdd, setShowAdd] = useState(false)
   const [editingCategory, setEditingCategory] = useState(null)
 
   const totals = useMemo(() => {
@@ -42,10 +40,10 @@ export default function Categories({ categories, transactions, onChanged }) {
       <div className="topbar">
         <h1>Категории</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
-          {/* Add Category Button - exactly one action button in topbar */}
+          {/* Add Category Button - opens full New Category page (Step 21.2) */}
           <button
             className="header-icon-btn"
-            onClick={() => setShowAdd(true)}
+            onClick={onNavigateToNewCategory}
             aria-label="Добавить категорию"
             style={{
               background: 'transparent',
@@ -87,6 +85,9 @@ export default function Categories({ categories, transactions, onChanged }) {
           <p className="muted">Ничего не найдено. Добавь категорию кнопкой «+» сверху.</p>
         ) : rows.map(c => {
           const style = categoryStyle(c.name)
+          const customBg = c.color ? `rgba(${c.color}, 0.16)` : style.bg
+          const customFg = c.color ? `rgb(${c.color})` : style.fg
+
           return (
             <div
               className="cat-row category-list-row"
@@ -97,23 +98,29 @@ export default function Categories({ categories, transactions, onChanged }) {
               <div
                 className="cat-avatar"
                 style={{
-                  background: style.bg,
-                  color: style.fg,
+                  background: customBg,
+                  color: customFg,
                   width: '38px',
                   height: '38px',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0
+                  flexShrink: 0,
+                  fontSize: '16px',
+                  fontWeight: 'bold'
                 }}
               >
-                <CategoryIcon name={c.name} />
+                {c.icon ? c.icon : <CategoryIcon name={c.name} />}
               </div>
               <div className="cat-info" style={{ flex: 1, minWidth: 0 }}>
                 <div className="cat-name" style={{ fontSize: '13.5px', fontWeight: 700 }}>{c.name}</div>
-                <div className="cat-sub" style={{ fontSize: '11px', color: 'var(--ink-soft)' }}>{categoryMeta(c.name).description}</div>
-                <div className="cat-progress"><div className="cat-progress-fill" style={{ width: `${Math.min(100, c.pct)}%`, background: style.fg }} /></div>
+                <div className="cat-sub" style={{ fontSize: '11px', color: 'var(--ink-soft)' }}>
+                  {c.type ? (c.type === 'expense' ? 'Расходная категория' : 'Доходная категория') : categoryMeta(c.name).description}
+                </div>
+                <div className="cat-progress">
+                  <div className="cat-progress-fill" style={{ width: `${Math.min(100, c.pct)}%`, background: customFg }} />
+                </div>
               </div>
               <div className="cat-numbers" style={{ textAlign: 'right', flexShrink: 0 }}>
                 <div className="cat-amount" style={{ fontSize: '13px', fontWeight: 700 }}>{formatMoney(c.amount)}</div>
@@ -157,8 +164,6 @@ export default function Categories({ categories, transactions, onChanged }) {
           </div>
         </div>
       </div>
-
-      {showAdd && <AddCategorySheet onAdded={onChanged} onClose={() => setShowAdd(false)} />}
 
       {editingCategory && (
         <EditCategorySheet
