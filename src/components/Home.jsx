@@ -80,76 +80,79 @@ export default function Home({ transactions, categories = [], email, onChanged, 
   }
 
   return (
-    <div className="home-grid" style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '480px', margin: '0 auto' }}>
-      <header className="home-greeting" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
-        <div>
-          <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--ink-soft)', margin: 0 }}>{salutation},</p>
-          <h1 style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '24px', fontWeight: 800, margin: '4px 0 0' }}>
-            {userName} 👋
-          </h1>
-        </div>
-        <button className="notification-btn" aria-label="Уведомления" style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '20px', height: '20px', color: 'var(--ink)' }}>
-            <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
-          </svg>
-          <i style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ff3d6d', position: 'absolute', top: '10px', right: '10px', border: '1px solid #fff' }} />
-        </button>
-      </header>
-
-      <div className="card hero-card g-balance" style={{ padding: '24px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '18px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '0' }}>
-        <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span className="hero-label" style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
-          <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс" style={{ width: '30px', height: '30px', border: 'none', background: '#F5F6FA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-            <EyeIcon off={hidden} />
+    <div className="home-grid">
+      {/* Grouping header/balance/insight on the left, recent transactions on the right for widescreen/PC */}
+      <div className="home-main-col">
+        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
+          <div>
+            <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--ink-soft)', margin: 0 }}>{salutation},</p>
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '24px', fontWeight: 800, margin: '4px 0 0' }}>
+              {userName} 👋
+            </h1>
+          </div>
+          <button className="notification-btn" aria-label="Уведомления" style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '20px', height: '20px', color: 'var(--ink)' }}>
+              <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
+            </svg>
+            <i style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ff3d6d', position: 'absolute', top: '10px', right: '10px', border: '1px solid #fff' }} />
           </button>
-        </div>
-        <div className="hero-date" style={{ fontSize: '11px', color: 'var(--ink-faint)', marginTop: '-8px' }}>{formattedCurrentMonth}</div>
-        <div className="hero-balance-row" style={{ minHeight: '60px', margin: '4px 0 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="hero-balance" style={{ fontSize: '36px', fontWeight: 800, color: 'var(--ink)' }}>
-            {hidden ? '••••• ₽' : <AnimatedNumber value={balance} format={v => formatMoney(v)} />}
+        </header>
+
+        <div className="card hero-card g-balance" style={{ padding: '24px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '18px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '0' }}>
+          <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="hero-label" style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
+            <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс" style={{ width: '30px', height: '30px', border: 'none', background: '#F5F6FA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+              <EyeIcon off={hidden} />
+            </button>
           </div>
-          <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '100px', height: 'auto' }} />
+          <div className="hero-date" style={{ fontSize: '11px', color: 'var(--ink-faint)', marginTop: '-8px' }}>{formattedCurrentMonth}</div>
+          <div className="hero-balance-row" style={{ minHeight: '60px', margin: '4px 0 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="hero-balance" style={{ fontSize: '36px', fontWeight: 800, color: 'var(--ink)' }}>
+              {hidden ? '••••• ₽' : <AnimatedNumber value={balance} format={v => formatMoney(v)} />}
+            </div>
+            <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '100px', height: 'auto' }} />
+          </div>
+
+          <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div className="hero-duo-item income" style={{ padding: '12px', borderRadius: '14px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>↑</span>
+              <div>
+                <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Доходы</div>
+                <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#37B891', marginTop: '2px' }}>{money(income)}</div>
+              </div>
+            </div>
+            <div className="hero-duo-item expense" style={{ padding: '12px', borderRadius: '14px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>↓</span>
+              <div>
+                <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Расходы</div>
+                <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#EC5DA6', marginTop: '2px' }}>{money(expense)}</div>
+              </div>
+            </div>
+          </div>
+          <button className="hero-cta" onClick={onAdd} style={{ padding: '14px', fontSize: '14px', fontWeight: 700, borderRadius: '14px', background: '#FFFFFF', color: 'var(--lavender-dark)', border: '1px solid var(--hairline)', cursor: 'pointer', textAlign: 'center', marginTop: '4px', width: '100%' }}>+ Новая операция</button>
         </div>
 
-        <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <div className="hero-duo-item income" style={{ padding: '12px', borderRadius: '14px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>↑</span>
-            <div>
-              <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Доходы</div>
-              <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#37B891', marginTop: '2px' }}>{money(income)}</div>
+        {insightText && (
+          <div className="card insight-card" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0', marginTop: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(184, 154, 244, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--lavender-dark)' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Финансовый инсайт</span>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>{insightText}</span>
+              </div>
             </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--ink-faint)' }}>
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </div>
-          <div className="hero-duo-item expense" style={{ padding: '12px', borderRadius: '14px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>↓</span>
-            <div>
-              <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Расходы</div>
-              <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#EC5DA6', marginTop: '2px' }}>{money(expense)}</div>
-            </div>
-          </div>
-        </div>
-        <button className="hero-cta" onClick={onAdd} style={{ padding: '14px', fontSize: '14px', fontWeight: 700, borderRadius: '14px', background: '#FFFFFF', color: 'var(--lavender-dark)', border: '1px solid var(--hairline)', cursor: 'pointer', textAlign: 'center', marginTop: '4px', width: '100%' }}>+ Новая операция</button>
+        )}
       </div>
 
-      {insightText && (
-        <div className="card insight-card" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(184, 154, 244, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--lavender-dark)' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Финансовый инсайт</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>{insightText}</span>
-            </div>
-          </div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--ink-faint)' }}>
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </div>
-      )}
-
-      <div className="recent-section" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '4px' }}>
+      <div className="recent-section" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div className="recent-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px' }}>
           <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ink)' }}>Последние операции</span>
           <button className="see-all-link" onClick={onViewAllTransactions} style={{ fontSize: '13px', fontWeight: 700, color: 'var(--lavender-dark)', background: 'none', border: 'none', cursor: 'pointer', padding: '0' }}>Смотреть все</button>

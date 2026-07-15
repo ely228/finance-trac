@@ -264,7 +264,7 @@ button, input, select { font-family: inherit; }
 
 .hero-top { display: flex; align-items: center; justify-content: space-between; }
 .hero-label { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.05em; } /* Step 19.4 */
-.hero-date { margin-top: 2px; font-size: 12px; color: var(--ink-soft); font-weight: 700; text-transform: capitalize; }
+.hero-date { margin-top: 2px; font-size: 12px; color: var(--ink-soft); font-weight: 700; }
 .hero-eye {
   border: none; background: var(--mat-1-bg); width: 34px; height: 34px; border-radius: var(--r-full);
   color: var(--ink-soft); display: flex; align-items: center; justify-content: center; cursor: pointer;
@@ -579,6 +579,35 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 /* ---------- entrance transitions ---------- */
 @keyframes rise-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .content > * { animation: rise-in 240ms var(--smooth) backwards; }
+
+.home-main-col { display: flex; flex-direction: column; gap: 16px; }
+
+@media (min-width: 768px) {
+  .home-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 32px !important;
+    align-items: start;
+  }
+}
+@media (max-width: 767px) {
+  .home-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+
+.all-transactions-page {
+  max-width: 800px;
+}
+@media (max-width: 767px) {
+  .all-transactions-page {
+    max-width: 480px;
+  }
+}
 
 /* ---------- search-bar ---------- */
 .search-bar {

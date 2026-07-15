@@ -50,7 +50,7 @@ export default function AllTransactionsPage({ transactions = [], categories = []
   })
 
   return (
-    <div className="all-transactions-page" style={{ position: 'relative', zIndex: 10, maxWidth: '480px', margin: '0 auto' }}>
+    <div className="all-transactions-page" style={{ position: 'relative', zIndex: 10, margin: '0 auto' }}>
       {/* Step 29.1 & 29.2: Back button plain, filter button subtle */}
       <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
