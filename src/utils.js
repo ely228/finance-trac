@@ -58,3 +58,53 @@ export function categoryInitial(name) {
 export function formatPercent(v) {
   return `${v >= 0 ? '' : '−'}${Math.abs(Math.round(v))}%`
 }
+
+export function parseLocalDate(dateStr) {
+  if (!dateStr) return new Date()
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [y, m, d] = dateStr.split('-').map(Number)
+    return new Date(y, m - 1, d)
+  }
+  return new Date(dateStr)
+}
+
+export function formatRelativeDate(dateStr, showFullYear = false) {
+  if (!dateStr) return ''
+  const d = parseLocalDate(dateStr)
+  if (isNaN(d.getTime())) return ''
+  
+  const today = new Date()
+  
+  const dYear = d.getFullYear()
+  const dMonth = d.getMonth()
+  const dDay = d.getDate()
+  
+  const tYear = today.getFullYear()
+  const tMonth = today.getMonth()
+  const tDay = today.getDate()
+  
+  const isToday = dYear === tYear && dMonth === tMonth && dDay === tDay
+  
+  const yesterday = new Date()
+  yesterday.setDate(today.getDate() - 1)
+  const isYesterday = dYear === yesterday.getFullYear() && dMonth === yesterday.getMonth() && dDay === yesterday.getDate()
+  
+  if (isToday) {
+    if (dateStr.includes('T') || dateStr.includes(' ')) {
+      const parts = dateStr.split(/[T ]/)
+      if (parts[1] && parts[1].includes(':')) {
+        const timeParts = parts[1].split(':')
+        return `${timeParts[0]}:${timeParts[1]}`
+      }
+    }
+    return 'Сегодня'
+  } else if (isYesterday) {
+    return 'Вчера'
+  } else {
+    const formatted = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
+    if (showFullYear) {
+      return `${formatted} ${dYear} г.`
+    }
+    return formatted
+  }
+}

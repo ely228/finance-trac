@@ -123,11 +123,13 @@ export default function App() {
                 {tab === 'home' && (
                   <Home
                     transactions={transactions}
+                    categories={categories}
                     email={session.user.email}
                     onChanged={loadTransactions}
                     onOpenDashboard={() => setTab('dashboard')}
                     onAdd={() => setShowAdd(true)}
                     onViewAllTransactions={() => setSubPage('all-transactions')}
+                    prevTotals={prevTotals}
                   />
                 )}
                 {tab === 'dashboard' && (

@@ -24,7 +24,7 @@ export function categoryMeta(name = '') {
   const normalized = name.toLowerCase()
   const style = categoryStyle(name)
   let desc = 'Покупки и одежда'
-  
+
   if (/еда|ресторан|кафе|продукты|кофе|пицца|food|rest/.test(normalized)) {
     desc = 'Рестораны, продукты, кафе'
   } else if (/такси|транспорт|transport|авто|машина|бензин/.test(normalized)) {
@@ -61,7 +61,7 @@ export default function CategoryIcon({ name, type = 'category' }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
