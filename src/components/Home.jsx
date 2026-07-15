@@ -3,8 +3,17 @@ import { PieChart, Pie, Cell } from 'recharts'
 import AnimatedNumber from './AnimatedNumber'
 import ConfirmDialog from './ConfirmDialog'
 import { supabase } from '../supabaseClient'
-import { formatMoney, categoryStyle, currentMonthKey, monthLabel } from '../utils'
+import { formatMoney, categoryStyle, currentMonthKey, monthLabel, shiftMonth } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
+
+function getMonthPrepositional(monthKey) {
+  const m = Number(monthKey.split('-')[1])
+  const months = [
+    'январе', 'феврале', 'марте', 'апреле', 'мае', 'июне',
+    'июле', 'августе', 'сентябре', 'октябре', 'ноябре', 'декабре'
+  ]
+  return months[m - 1]
+}
 
 const PALETTE = ['#F0A8C0', '#E295CB', '#CA89D7', '#AC7AE0', '#906BE6', '#7C57DA']
 
@@ -26,7 +35,7 @@ const EyeIcon = ({ off }) => (
 
 import AllTransactionsModal from './AllTransactionsModal'
 
-export default function Home({ transactions, email, onChanged, onOpenDashboard, onAdd }) {
+export default function Home({ transactions, email, onChanged, onOpenDashboard, onAdd, prevTotals }) {
   const [hidden, setHidden] = useState(false)
   const [pending, setPending] = useState(null)
   const [showAllTransactions, setShowAllTransactions] = useState(false)
@@ -58,18 +67,27 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
 
   // Dynamic greeting based on current hour
   const hour = new Date().getHours()
-  const salutation = hour < 6 ? 'Доброй ночи' : hour < 12 ? 'Доброе утро' : hour < 18 ? 'Добрый день' : 'Добрый вечер'
+  const salutation = hour < 6 ? 'Доброй ночи' : hour < 12 ? 'Доброе утро' : hour < 18 ? 'Добрый день' : 'Добрый evening'
+
+  // Financial Insight Logic
+  const showInsight = prevTotals && prevTotals.expense > 0
+  let insightText = ''
+  if (showInsight) {
+    const prevExpense = prevTotals.expense
+    const pctDiff = Math.round(Math.abs((expense - prevExpense) / prevExpense) * 100)
+    const prevMonthName = getMonthPrepositional(shiftMonth(currentMonthKey(), -1))
+    if (expense > prevExpense) {
+      insightText = `Вы потратили на ${pctDiff}% больше, чем в ${prevMonthName}.`
+    } else if (expense < prevExpense) {
+      insightText = `Вы потратили на ${pctDiff}% меньше, чем в ${prevMonthName}.`
+    } else {
+      insightText = `Вы потратили столько же, сколько в ${prevMonthName}.`
+    }
+  }
 
   return (
     <div className="home-grid">
-      <header className="home-greeting" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          {/* Lighter and smaller greeting salutation */}
-          <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink-soft)', margin: 0 }}>{salutation},</p>
-          <h1 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {userName} 👋
-          </h1>
-        </div>
+      <header className="home-greeting" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
         <button className="notification-btn" aria-label="Уведомления" style={{ width: '38px', height: '38px', borderRadius: '12px' }}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px' }}>
             <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
@@ -108,8 +126,30 @@ export default function Home({ transactions, email, onChanged, onOpenDashboard, 
             </div>
           </div>
         </div>
-        <button className="hero-cta" onClick={onAdd} style={{ padding: '10px 12px', fontSize: '14px', borderRadius: 'var(--r-sm)' }}>+ Новая операция</button>
       </div>
+
+      <div className="g-new-op">
+        <button className="submit-btn" onClick={onAdd}>
+          + Новая операция
+        </button>
+      </div>
+
+      {showInsight && (
+        <div className="card g-insight" style={{ padding: '16px', gridArea: 'insight' }}>
+          <div className="insight-card">
+            <div className="insight-icon-square">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" />
+              </svg>
+            </div>
+            <div className="insight-text-wrapper">
+              <h3 className="insight-title">Финансовый инсайт</h3>
+              <p className="insight-subtitle">{insightText}</p>
+            </div>
+            <span className="insight-chevron">›</span>
+          </div>
+        </div>
+      )}
 
       <div className="card chart-card g-spending" style={{ padding: '16px' }}>
         <h2 style={{ fontSize: '14px', fontWeight: 700 }}>Куда уходят деньги</h2>

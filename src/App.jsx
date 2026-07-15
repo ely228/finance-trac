@@ -99,6 +99,7 @@ export default function App() {
                 onChanged={loadTransactions}
                 onOpenDashboard={() => setTab('dashboard')}
                 onAdd={() => setShowAdd(true)}
+                prevTotals={prevTotals}
               />
             )}
             {tab === 'dashboard' && (
