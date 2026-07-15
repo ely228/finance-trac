@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
-import { todayISO } from '../utils'
+import { todayISO, categoryStyle, categoryInitial } from '../utils'
 
 export default function TransactionForm({ categories, onAdded }) {
   const [date, setDate] = useState(todayISO())
@@ -32,49 +32,103 @@ export default function TransactionForm({ categories, onAdded }) {
     onAdded()
   }
 
+  // Automatically select the first category if none is set
+  useEffect(() => {
+    if (categories && categories.length > 0 && !category) {
+      setCategory(categories[0].name)
+    }
+  }, [categories, category])
+
+  function handleTransferClick(e) {
+    e.preventDefault()
+    alert('Переводы появятся в будущих обновлениях!')
+  }
+
   return (
     <form className="form" onSubmit={handleSubmit}>
-      <h2>Новая операция</h2>
+      <h2 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 var(--gap-block) 0', textAlign: 'center' }}>Новая операция</h2>
 
-      <div className="type-toggle" style={{ display: 'flex', gap: '10px' }}>
-        <button type="button" className={type === 'expense' ? 'active expense' : 'expense'} onClick={() => setType('expense')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: 'rgba(226, 99, 122, 0.15)',
-            color: 'var(--expense)',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            flexShrink: 0
-          }}>↓</span>
+      <div className="ops-toggle">
+        <button
+          type="button"
+          className={type === 'expense' ? 'active expense' : ''}
+          onClick={() => setType('expense')}
+        >
+          <span style={{ fontSize: '15px' }}>↓</span>
           <span>Расход</span>
         </button>
-        <button type="button" className={type === 'income' ? 'active income' : 'income'} onClick={() => setType('income')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: 'rgba(79, 174, 140, 0.15)',
-            color: 'var(--income)',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            flexShrink: 0
-          }}>↑</span>
+        <button
+          type="button"
+          className={type === 'income' ? 'active income' : ''}
+          onClick={() => setType('income')}
+        >
+          <span style={{ fontSize: '15px' }}>↑</span>
           <span>Доход</span>
         </button>
+        <button
+          type="button"
+          onClick={handleTransferClick}
+          className=""
+        >
+          {/* arrow.right.arrow.left SF Symbol style */}
+          <span style={{ fontSize: '15px' }}>⇄</span>
+          <span>Перевод</span>
+        </button>
+      </div>
+
+      <div className="dynamic-amount-wrapper">
+        <div className="dynamic-amount-label">Сумма</div>
+        <div className="dynamic-amount-row">
+          <input
+            type="number"
+            inputMode="decimal"
+            step="0.01"
+            min="0"
+            placeholder="0,00"
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+            required
+            style={{ width: amount ? `${Math.max(80, amount.length * 20)}px` : '90px' }}
+          />
+          <span
+            className="ruble-sym"
+            style={{ color: amount ? 'var(--ink)' : 'var(--ink-faint)' }}
+          >
+            ₽
+          </span>
+        </div>
+      </div>
+
+      <label style={{ marginBottom: '8px' }}>Категория</label>
+      <div className="categories-horizontal-grid">
+        {categories.map(c => {
+          const style = categoryStyle(c.name)
+          const isActive = category === c.name
+          const initial = categoryInitial(c.name)
+          return (
+            <div
+              key={c.id}
+              className={`category-horizontal-item ${isActive ? 'active' : ''}`}
+              onClick={() => setCategory(c.name)}
+            >
+              <div
+                className="category-plate"
+                style={{
+                  background: isActive ? style.bg : '#f1f1f5',
+                  color: isActive ? style.fg : 'var(--ink-soft)'
+                }}
+              >
+                {initial}
+              </div>
+              <div className="category-name-lbl">{c.name}</div>
+            </div>
+          )
+        })}
       </div>
 
       <label>Дата</label>
       <div className="form-field-group">
         <div className="form-field-icon-sq" style={{ background: 'rgba(184, 154, 244, 0.12)', color: '#8865E8' }}>
-          {/* Calendar Icon Left */}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
             <line x1="16" y1="2" x2="16" y2="6" />
@@ -83,43 +137,6 @@ export default function TransactionForm({ categories, onAdded }) {
           </svg>
         </div>
         <input type="date" value={date} onChange={e => setDate(e.target.value)} required style={{ textAlign: 'left' }} />
-        {/* Calendar Icon Right (trigger/indicator) */}
-        <div style={{ color: 'var(--ink-faint)', display: 'flex', alignItems: 'center', paddingRight: '4px', cursor: 'pointer' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
-        </div>
-      </div>
-
-      <label>Категория</label>
-      <div className="form-field-group">
-        <div className="form-field-icon-sq" style={{ background: 'rgba(184, 154, 244, 0.12)', color: '#8865E8' }}>
-          {/* Tag Icon Left */}
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.6 12.4 12.6 3H5a2 2 0 0 0-2 2v7.6l9.4 9.4a1.5 1.5 0 0 0 2 0l6.2-6.2a1.5 1.5 0 0 0 0-2Z" />
-            <circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none" />
-          </svg>
-        </div>
-        <select value={category} onChange={e => setCategory(e.target.value)} required style={{ paddingRight: '24px' }}>
-          <option value="" disabled>Выбери категорию…</option>
-          {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-        </select>
-        {/* Down chevron right */}
-        <div style={{ position: 'absolute', right: '14px', pointerEvents: 'none', color: 'var(--ink-faint)', fontSize: '11px', fontWeight: 'bold' }}>
-          v
-        </div>
-      </div>
-
-      <label>Сумма, ₽</label>
-      <div className="form-field-group">
-        <div className="form-field-icon-sq" style={{ background: 'rgba(247, 141, 197, 0.12)', color: '#EC5DA6' }}>
-          <span style={{ fontSize: '16px', fontWeight: 'bold' }}>₽</span>
-        </div>
-        <input type="number" inputMode="decimal" step="0.01" min="0" placeholder="0.00"
-               value={amount} onChange={e => setAmount(e.target.value)} required />
       </div>
 
       <label>Комментарий (необязательно)</label>
@@ -136,12 +153,7 @@ export default function TransactionForm({ categories, onAdded }) {
       {error && <div className="error">{error}</div>}
 
       <button type="submit" className="submit-btn" disabled={saving}>
-        {saving ? 'Сохраняю…' : (
-          <>
-            <span style={{ fontSize: '18px', fontWeight: 'bold', lineHeight: 1 }}>+</span>
-            <span>Добавить</span>
-          </>
-        )}
+        {saving ? 'Сохраняю…' : 'Сохранить'}
       </button>
     </form>
   )

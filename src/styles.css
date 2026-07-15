@@ -813,9 +813,11 @@ button, input, select { font-family: inherit; }
 }
 .notification-btn svg { width: 22px; height: 22px; }
 .notification-btn i { position: absolute; width: 7px; height: 7px; right: 9px; top: 8px; border-radius: 50%; background: #ff3d6d; border: 1px solid #fff; }
-.home-grid { grid-template-areas: 'greeting' 'balance' 'spending' 'recent'; }
+.home-grid { grid-template-areas: 'greeting' 'balance' 'new_op' 'insight' 'spending' 'recent' !important; }
 .home-greeting { grid-area: greeting; }
 .home-grid .g-balance { grid-area: balance; }
+.home-grid .g-new-op { grid-area: new_op; }
+.home-grid .g-insight { grid-area: insight; }
 .home-grid .g-spending { grid-area: spending; }
 .home-grid .g-recent { grid-area: recent; }
 .category-icon { padding: 10px; background: rgba(156,135,214,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.55); }
@@ -919,7 +921,7 @@ button, input, select { font-family: inherit; }
 }
 
 @media (min-width: 900px) {
-  .home-grid { grid-template-areas: 'greeting greeting' 'balance balance' 'spending recent'; }
+  .home-grid { grid-template-areas: 'greeting greeting' 'balance balance' 'new_op new_op' 'insight insight' 'spending recent' !important; }
 }
 
 /* Final iOS glass pass */
@@ -1120,4 +1122,329 @@ button, input, select { font-family: inherit; }
 @media (max-width: 767px) { .home-grid .g-spending, .home-grid .g-recent { margin-top: 0; } .home-grid .g-spending { margin-bottom: 0; } }
 
 @media (max-width: 767px) {
+}
+
+/* =================================================================
+   PREMIUM iOS DESIGN SYSTEM OVERRIDES (APPLE-LIKE STYLE)
+   ================================================================= */
+
+:root {
+  /* Strict 8-pt spacing grid tokens */
+  --margin-screen: 24px;
+  --padding-card: 20px;
+  --gap-related: 8px;
+  --gap-block: 16px;
+  --gap-card: 24px;
+  --gap-section: 32px;
+
+  /* Strict premium radii */
+  --r-apple-card: 24px;
+  --r-apple-button: 24px;
+  --r-apple-input: 20px;
+
+  /* Colors */
+  --apple-pure-white: #ffffff;
+  --apple-soft-shadow: 0 10px 30px rgba(42, 39, 64, 0.04), 0 4px 12px rgba(42, 39, 64, 0.01);
+  --apple-modal-shadow: 0 20px 40px rgba(35, 28, 55, 0.08), 0 8px 24px rgba(35, 28, 55, 0.04);
+  --gradient-purple-apple: linear-gradient(135deg, #a56cff 0%, #bf5ce7 50%, #f4479a 100%);
+}
+
+/* Override body background to use exact pastel gradient */
+body {
+  background: linear-gradient(135deg, #ffffff 0%, #fff0f5 35%, #f6f0ff 70%, #f0f8ff 100%) !important;
+  margin: 0;
+}
+
+/* Hide drifted blobs for a cleaner, sharper matte pastel layout */
+.bg-scene, .grain {
+  display: none !important;
+}
+
+/* Base Content Layout */
+.content {
+  padding: var(--margin-screen) var(--margin-screen) 116px !important;
+  max-width: 480px !important; /* Center single-column layout on mobile */
+  margin: 0 auto !important;
+}
+@media (min-width: 768px) {
+  .content {
+    max-width: 1360px !important; /* Standard layout for widescreen viewports */
+    margin-left: var(--sidebar-w) !important;
+    padding: var(--margin-screen) var(--margin-screen) var(--margin-screen) !important;
+  }
+}
+
+/* Float surfaces (cards) override */
+.card, .hero-card, .chart-card {
+  background: var(--apple-pure-white) !important;
+  border: none !important;
+  border-radius: var(--r-apple-card) !important;
+  padding: var(--padding-card) !important;
+  box-shadow: var(--apple-soft-shadow) !important;
+  margin-bottom: var(--gap-card) !important;
+}
+.card::before, .hero-card::before, .chart-card::before {
+  display: none !important; /* Remove glare/sheen gradients to maintain clean matte look */
+}
+
+/* Modal Bottom Sheets override */
+.modal-overlay {
+  background: rgba(35, 28, 55, 0.2) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+.modal-sheet {
+  background: var(--apple-pure-white) !important;
+  border: none !important;
+  border-radius: var(--r-apple-card) !important;
+  box-shadow: var(--apple-modal-shadow) !important;
+  padding: var(--padding-card) !important;
+  max-width: 440px !important;
+  animation: sheet-up 320ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+.modal-sheet::before {
+  display: none !important;
+}
+
+/* Fields & Inputs override */
+.form-field-group {
+  background: #f7f7fa !important;
+  border: none !important;
+  border-radius: var(--r-apple-input) !important;
+  padding: 6px 12px !important;
+}
+.form-field-group input, .form-field-group select {
+  font-size: 15px !important;
+  color: var(--ink) !important;
+}
+
+/* BUTTONS VISUAL STYLING */
+/* 1. Primary buttons: Save ("Сохранить"), "+ Новая операция" */
+.submit-btn, .hero-cta-btn, .apple-primary-btn {
+  height: 48px !important;
+  border-radius: var(--r-apple-button) !important;
+  background: var(--gradient-purple-apple) !important;
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  border: none !important;
+  box-shadow: 0 8px 20px rgba(165, 108, 255, 0.25) !important;
+  padding: 12px 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--gap-related) !important;
+  cursor: pointer !important;
+  transition: transform 150ms ease, opacity 150ms ease !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.submit-btn:active, .hero-cta-btn:active, .apple-primary-btn:active {
+  transform: scale(0.98) !important;
+}
+.submit-btn:disabled, .hero-cta-btn:disabled, .apple-primary-btn:disabled {
+  opacity: 0.6 !important;
+}
+.submit-btn::before, .hero-cta-btn::before, .apple-primary-btn::before {
+  display: none !important;
+}
+
+/* 2. Operations Segment Buttons (Доход, Расход, Перевод) */
+.ops-toggle {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-related);
+  background: #f1f1f5;
+  padding: 4px;
+  border-radius: 16px;
+  margin-bottom: var(--gap-block);
+}
+.ops-toggle button {
+  height: 40px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink-soft);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+.ops-toggle button.active.expense {
+  background: #ffffff !important;
+  color: var(--expense) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
+}
+.ops-toggle button.active.income {
+  background: #ffffff !important;
+  color: var(--income) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
+}
+.ops-toggle button.active.transfer {
+  background: #ffffff !important;
+  color: var(--lavender-dark) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
+}
+
+/* 3. Filter pills (Все, Расходы, Доходы) */
+.filter-pills {
+  display: flex !important;
+  gap: var(--gap-related) !important;
+  margin: 0 !important;
+}
+.filter-pills button {
+  height: 38px !important;
+  border-radius: 19px !important;
+  padding: 0 20px !important;
+  background: #f1f1f5 !important;
+  color: var(--ink-soft) !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 180ms ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.filter-pills button.active {
+  background: var(--gradient-purple-apple) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(165, 108, 255, 0.2) !important;
+}
+
+/* Dynamic ruble amount typography */
+.dynamic-amount-wrapper {
+  text-align: center;
+  margin: var(--gap-block) 0;
+}
+.dynamic-amount-label {
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.dynamic-amount-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+.dynamic-amount-row input {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  font-size: 36px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  text-align: right !important;
+  width: 140px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.dynamic-amount-row input::placeholder {
+  color: var(--ink-faint) !important;
+}
+.dynamic-amount-row .ruble-sym {
+  margin-left: 6px;
+  transition: color 150ms ease;
+}
+
+/* Category selector horizontal list */
+.categories-horizontal-grid {
+  display: flex;
+  gap: var(--gap-block);
+  overflow-x: auto;
+  padding: 8px 4px;
+  margin-bottom: var(--gap-block);
+  scrollbar-width: none;
+}
+.categories-horizontal-grid::-webkit-scrollbar {
+  display: none;
+}
+.category-horizontal-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 72px;
+}
+.category-plate {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background: #f1f1f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: all 200ms ease;
+}
+.category-horizontal-item.active .category-plate {
+  background: var(--apple-pure-white) !important;
+  box-shadow: 0 0 0 2px var(--lavender-dark), var(--apple-soft-shadow) !important;
+}
+.category-name-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+.category-horizontal-item.active .category-name-lbl {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* "Финансовый инсайт" Card Styling */
+.insight-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+.insight-icon-square {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.insight-text-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+.insight-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 2px 0;
+}
+.insight-subtitle {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.35;
+}
+.insight-chevron {
+  color: var(--ink-faint);
+  font-size: 18px;
+  font-weight: bold;
 }
