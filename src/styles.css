@@ -263,7 +263,7 @@ button, input, select { font-family: inherit; }
 }
 
 .hero-top { display: flex; align-items: center; justify-content: space-between; }
-.hero-label { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.05em; } /* Step 19.4 */
+.hero-label { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.05em; text-transform: none !important; } /* Step 19.4 */
 .hero-date { margin-top: 2px; font-size: 12px; color: var(--ink-soft); font-weight: 700; }
 .hero-eye {
   border: none; background: var(--mat-1-bg); width: 34px; height: 34px; border-radius: var(--r-full);
@@ -291,7 +291,7 @@ button, input, select { font-family: inherit; }
 }
 .hero-duo-item.income .hdi-icon { background: var(--income-bg); color: var(--income); }
 .hero-duo-item.expense .hdi-icon { background: var(--expense-bg); color: var(--expense); }
-.hero-duo-item .hdi-label { font-size: 11px; font-weight: 700; color: var(--ink-faint); }
+.hero-duo-item .hdi-label { font-size: 11px; font-weight: 700; color: var(--ink-faint); text-transform: none !important; }
 .hero-duo-item .hdi-value { font-size: 18px; font-weight: 800; margin-top: 1px; font-variant-numeric: tabular-nums; }
 .hero-duo-item.income .hdi-value { color: var(--income); }
 .hero-duo-item.expense .hdi-value { color: var(--expense); }
