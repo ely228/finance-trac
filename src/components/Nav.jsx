@@ -65,10 +65,6 @@ export default function Nav({ tab, setTab }) {
     <nav className={`nav${scrolled ? ' nav-scrolled' : ''}`}>
         <div className="brand" />
         <div className="nav-track" ref={trackRef}>
-          <div
-            className="nav-indicator"
-            style={{ transform: `translate(${indicator.left}px, ${indicator.top}px)`, width: indicator.width, height: indicator.height }}
-          />
           {items.map((it, i) => (
             <button
               key={it.key}
