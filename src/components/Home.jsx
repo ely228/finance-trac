@@ -56,10 +56,6 @@ export default function Home({ transactions, categories = [], email, onChanged, 
   const monthRaw = monthLabel(activeMonthKey) // e.g. "июль 2026 г."
   const formattedCurrentMonth = monthRaw.charAt(0).toUpperCase() + monthRaw.slice(1) // "Июль 2026 г."
 
-  // Calculate greeting name from email
-  const username = email ? email.split('@')[0] : 'Пользователь'
-  const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1)
-
   // Calculate "Финансовый инсайт" dynamically based on current expense vs prevTotals.expense
   let insightText = null
   const currentExpense = expense
@@ -96,13 +92,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
     <div className="home-grid">
       {/* Grouping header/balance/insight on the left, recent transactions on the right for widescreen/PC */}
       <div className="home-main-col">
-        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--ink-soft)' }}>Добрый день,</span>
-            <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              {capitalizedUsername} 👋
-            </span>
-          </div>
+        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '0 4px', marginBottom: '20px' }}>
           <button className="notification-btn" aria-label="Уведомления" style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', boxShadow: 'var(--el-1)' }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '22px', height: '22px', color: 'var(--ink)' }}>
               <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
