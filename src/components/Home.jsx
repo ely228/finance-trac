@@ -2,7 +2,7 @@ import { useState } from 'react'
 import AnimatedNumber from './AnimatedNumber'
 import ConfirmDialog from './ConfirmDialog'
 import { supabase } from '../supabaseClient'
-import { formatMoney, categoryStyle, currentMonthKey, monthLabel, formatRelativeDate } from '../utils'
+import { formatMoney, categoryStyle, currentMonthKey, monthLabel, formatRelativeDate, shiftMonth } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
 const EyeIcon = ({ off }) => (
@@ -33,7 +33,7 @@ const ArrowDownIcon = () => (
   </svg>
 )
 
-export default function Home({ transactions, categories = [], email, onChanged, onOpenDashboard, onAdd, onViewAllTransactions, prevTotals }) {
+export default function Home({ transactions, categories = [], email, onChanged, onOpenDashboard, onAdd, onViewAllTransactions, prevTotals, monthKey }) {
   const [hidden, setHidden] = useState(false)
   const [pending, setPending] = useState(null)
 
@@ -52,9 +52,13 @@ export default function Home({ transactions, categories = [], email, onChanged, 
 
   const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4)
 
-  // Format current month specifically as "Июль 2026 г." with low-case "г."
-  const monthRaw = monthLabel(currentMonthKey()) // e.g. "июль 2026 г." or similar
+  const activeMonthKey = monthKey || currentMonthKey()
+  const monthRaw = monthLabel(activeMonthKey) // e.g. "июль 2026 г."
   const formattedCurrentMonth = monthRaw.charAt(0).toUpperCase() + monthRaw.slice(1) // "Июль 2026 г."
+
+  // Calculate greeting name from email
+  const username = email ? email.split('@')[0] : 'Пользователь'
+  const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1)
 
   // Calculate "Финансовый инсайт" dynamically based on current expense vs prevTotals.expense
   let insightText = null
@@ -64,11 +68,11 @@ export default function Home({ transactions, categories = [], email, onChanged, 
   if (prevExpense > 0 && currentExpense > 0) {
     const procent = Math.round(((prevExpense - currentExpense) / prevExpense) * 100)
 
-    // Get past month name
-    const d = new Date()
-    d.setMonth(d.getMonth() - 1)
-    const prevMonthName = d.toLocaleDateString('ru-RU', { month: 'long' }) // e.g. "июне" in prepositional or similar, but let's translate to correct form or use general prep.
-    // For general month matching like "в июне", let's format safely
+    const prevKey = shiftMonth(activeMonthKey, -1)
+    const [prevY, prevM] = prevKey.split('-').map(Number)
+    const tempDate = new Date(prevY, prevM - 1, 1)
+    const prevMonthName = tempDate.toLocaleDateString('ru-RU', { month: 'long' }) // e.g. "июнь"
+
     let prevMonthLocative = prevMonthName
     const monthPrepositional = {
       'январь': 'январе', 'февраль': 'феврале', 'март': 'марте', 'апрель': 'апреле', 'май': 'мае', 'июнь': 'июне',
@@ -83,6 +87,8 @@ export default function Home({ transactions, categories = [], email, onChanged, 
       insightText = `Вы потратили на ${procent}% меньше, чем в ${prevMonthLocative}.`
     } else if (procent < 0) {
       insightText = `Вы потратили на ${Math.abs(procent)}% больше, чем в ${prevMonthLocative}.`
+    } else {
+      insightText = `Вы потратили столько же, сколько в ${prevMonthLocative}.`
     }
   }
 
@@ -90,45 +96,54 @@ export default function Home({ transactions, categories = [], email, onChanged, 
     <div className="home-grid">
       {/* Grouping header/balance/insight on the left, recent transactions on the right for widescreen/PC */}
       <div className="home-main-col">
-        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
-          <button className="notification-btn" aria-label="Уведомления" style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '20px', height: '20px', color: 'var(--ink)' }}>
+        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--ink-soft)' }}>Добрый день,</span>
+            <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {capitalizedUsername} 👋
+            </span>
+          </div>
+          <button className="notification-btn" aria-label="Уведомления" style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', boxShadow: 'var(--el-1)' }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '22px', height: '22px', color: 'var(--ink)' }}>
               <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
             </svg>
-            <i style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ff3d6d', position: 'absolute', top: '10px', right: '10px', border: '1px solid #fff' }} />
+            <i style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ff3d6d', position: 'absolute', top: '10px', right: '11px', border: '1px solid #fff' }} />
           </button>
         </header>
 
-        <div className="card hero-card g-balance" style={{ padding: '24px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '18px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '0' }}>
-          <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span className="hero-label" style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
-            <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс" style={{ width: '30px', height: '30px', border: 'none', background: '#F5F6FA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+        <div className="card hero-card g-balance" style={{ padding: '24px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '0', boxShadow: 'var(--el-1)' }}>
+          <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span className="hero-label" style={{ fontSize: '13px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
+              <div className="hero-date" style={{ fontSize: '12px', color: 'var(--ink-faint)', marginTop: '2px' }}>{formattedCurrentMonth}</div>
+            </div>
+            <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс" style={{ width: '34px', height: '34px', border: 'none', background: '#F5F6FA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
               <EyeIcon off={hidden} />
             </button>
           </div>
-          <div className="hero-date" style={{ fontSize: '11px', color: 'var(--ink-faint)', marginTop: '-8px' }}>{formattedCurrentMonth}</div>
-          <div className="hero-balance-row" style={{ minHeight: '60px', margin: '4px 0 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div className="hero-balance" style={{ fontSize: '36px', fontWeight: 800, color: 'var(--ink)' }}>
+
+          <div className="hero-balance-row" style={{ minHeight: '60px', margin: '4px 0 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+            <div className="hero-balance" style={{ fontSize: '38px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em' }}>
               {hidden ? '••••• ₽' : <AnimatedNumber value={balance} format={v => formatMoney(v)} />}
             </div>
-            <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '100px', height: 'auto' }} />
+            <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '130px', height: 'auto', position: 'absolute', right: '-8px', top: '50%', transform: 'translateY(-50%)', opacity: 1 }} />
           </div>
 
           <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            <div className="hero-duo-item income" style={{ padding: '12px', borderRadius: '14px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
+            <div className="hero-duo-item income" style={{ padding: '12px', borderRadius: '16px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span className="hdi-icon" style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ArrowUpIcon />
               </span>
-              <div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Доходы</div>
                 <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#37B891', marginTop: '2px' }}>{money(income)}</div>
               </div>
             </div>
-            <div className="hero-duo-item expense" style={{ padding: '12px', borderRadius: '14px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
+            <div className="hero-duo-item expense" style={{ padding: '12px', borderRadius: '16px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span className="hdi-icon" style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ArrowDownIcon />
               </span>
-              <div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Расходы</div>
                 <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#EC5DA6', marginTop: '2px' }}>{money(expense)}</div>
               </div>
@@ -140,12 +155,12 @@ export default function Home({ transactions, categories = [], email, onChanged, 
           className="new-tx-btn"
           onClick={onAdd}
           style={{
-            padding: '18px',
+            padding: '16px',
             fontSize: '15px',
             fontWeight: 700,
             borderRadius: '18px',
             background: '#FFFFFF',
-            color: 'var(--lavender-dark)',
+            color: '#8865E8',
             border: '1px solid var(--hairline)',
             boxShadow: 'var(--el-1)',
             cursor: 'pointer',
@@ -158,28 +173,26 @@ export default function Home({ transactions, categories = [], email, onChanged, 
         </button>
 
         {insightText && (
-          <div className="card insight-card" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0', marginTop: '16px' }}>
+          <div className="card insight-card" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0', marginTop: '16px', boxShadow: 'var(--el-1)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(184, 154, 244, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--lavender-dark)' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: 'linear-gradient(135deg, #EBE5FC 0%, #C8B9FA 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: '#8865E8' }}>
+                  <path d="M12 2a1 1 0 0 0-1 1c0 4.5-3.5 8-8 8a1 1 0 0 0 0 2c4.5 0 8 3.5 8 8a1 1 0 0 0 2 0c0-4.5 3.5-8 8-8a1 1 0 0 0 0-2c-4.5 0-8-3.5-8-8a1 1 0 0 0-1-1z" />
                 </svg>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Финансовый инсайт</span>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>{insightText}</span>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)' }}>Финансовый инсайт</span>
+                <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-soft)', marginTop: '2px' }}>{insightText}</span>
               </div>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--ink-faint)' }}>
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
+            <span style={{ fontSize: '18px', color: 'var(--ink-faint)', marginLeft: 'auto', paddingLeft: '8px', cursor: 'default' }}>›</span>
           </div>
         )}
       </div>
 
       <div className="recent-section" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <div className="recent-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px' }}>
-          <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ink)' }}>Последние операции</span>
+        <div className="recent-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', marginTop: '4px' }}>
+          <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--ink)' }}>Последние операции</span>
           <button className="see-all-link" onClick={onViewAllTransactions} style={{ fontSize: '13px', fontWeight: 700, color: 'var(--lavender-dark)', background: 'none', border: 'none', cursor: 'pointer', padding: '0' }}>Смотреть все</button>
         </div>
 
@@ -220,7 +233,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
                     <span className="tx-comment" style={{ fontSize: '12px', color: 'var(--ink-faint)' }}>{t.comment || categoryMeta(t.category).description}</span>
                   </div>
                   <div className="tx-right" style={{ textAlign: 'right', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    <span className="tx-amount" style={{ fontSize: '14px', fontWeight: 800, color: t.type === 'expense' ? 'var(--ink)' : 'var(--income)' }}>
+                    <span className="tx-amount" style={{ fontSize: '14px', fontWeight: 800, color: t.type === 'expense' ? 'var(--expense)' : 'var(--income)' }}>
                       {t.type === 'expense' ? '−' : '+'}{money(t.amount)}
                     </span>
                     <span className="tx-date" style={{ fontSize: '11px', color: 'var(--ink-faint)' }}>{formatRelativeDate(t.date)}</span>

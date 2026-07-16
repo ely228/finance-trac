@@ -73,15 +73,24 @@
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; }
-
-body {
+html, body {
+  min-height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
-  background: var(--gradient-app-bg); /* soft pastel: white -> rose -> lavender -> sky */
+  padding: 0;
+  background: var(--gradient-app-bg) !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   position: relative;
   overflow-x: hidden;
+}
+
+body {
+  background: transparent !important;
 }
 
 /* ---------- background scene: minimalist tone down (Step 19.2) ---------- */
