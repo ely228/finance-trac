@@ -309,7 +309,6 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
           {/* Date row: clickable row without a "Дата" label */}
           <div
             className="form-field-group"
-            onClick={() => dateInputRef.current && dateInputRef.current.showPicker()}
             style={{
               cursor: 'pointer',
               display: 'flex',
@@ -342,7 +341,17 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
               ref={dateInputRef}
               value={date}
               onChange={e => setDate(e.target.value)}
-              style={{ position: 'absolute', opacity: 0, width: '100%', height: '100%', left: 0, top: 0, pointerEvents: 'none' }}
+              style={{
+                position: 'absolute',
+                opacity: 0,
+                width: '100%',
+                height: '100%',
+                left: 0,
+                top: 0,
+                cursor: 'pointer',
+                zIndex: 2,
+                pointerEvents: 'auto'
+              }}
               required
             />
 

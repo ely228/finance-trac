@@ -50,6 +50,16 @@ export default function Home({ transactions, categories = [], email, onChanged, 
 
   const money = v => hidden ? '••••• ₽' : formatMoney(v)
 
+  // Dynamic font size computation for income/expense to prevent wrapping
+  const getDuoFontSize = (val) => {
+    if (hidden) return '14px'
+    const str = formatMoney(val)
+    const len = str.replace(/\s/g, '').length
+    if (len > 12) return '10.5px'
+    if (len > 9) return '12px'
+    return '14px'
+  }
+
   const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4)
 
   const activeMonthKey = monthKey || currentMonthKey()
@@ -92,7 +102,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
     <div className="home-grid">
       {/* Grouping header/balance/insight on the left, recent transactions on the right for widescreen/PC */}
       <div className="home-main-col">
-        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '0 4px', marginBottom: '20px' }}>
+        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
           <button className="notification-btn" aria-label="Уведомления" style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', boxShadow: 'var(--el-1)' }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '22px', height: '22px', color: 'var(--ink)' }}>
               <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
@@ -101,7 +111,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
           </button>
         </header>
 
-        <div className="card hero-card g-balance" style={{ padding: '24px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '0', boxShadow: 'var(--el-1)' }}>
+        <div className="card hero-card g-balance" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '0', boxShadow: 'var(--el-1)' }}>
           <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span className="hero-label" style={{ fontSize: '13px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
@@ -112,30 +122,30 @@ export default function Home({ transactions, categories = [], email, onChanged, 
             </button>
           </div>
 
-          <div className="hero-balance-row" style={{ minHeight: '60px', margin: '4px 0 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-            <div className="hero-balance" style={{ fontSize: '38px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em' }}>
+          <div className="hero-balance-row" style={{ minHeight: '52px', margin: '0 0 6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+            <div className="hero-balance" style={{ fontSize: '36px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em', zIndex: 1 }}>
               {hidden ? '••••• ₽' : <AnimatedNumber value={balance} format={v => formatMoney(v)} />}
             </div>
-            <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '130px', height: 'auto', position: 'absolute', right: '-8px', top: '50%', transform: 'translateY(-50%)', opacity: 1 }} />
+            <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '160px', height: 'auto', position: 'absolute', right: '-14px', top: '50%', transform: 'translateY(-50%)', opacity: 1 }} />
           </div>
 
-          <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            <div className="hero-duo-item income" style={{ padding: '12px', borderRadius: '16px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span className="hdi-icon" style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            <div className="hero-duo-item income" style={{ padding: '8px 10px', borderRadius: '16px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="hdi-icon" style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ArrowUpIcon />
               </span>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Доходы</div>
-                <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#37B891', marginTop: '2px' }}>{money(income)}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, width: '100%' }}>
+                <div className="hdi-label" style={{ fontSize: '10px', fontWeight: 500, color: 'var(--ink-faint)' }}>Доходы</div>
+                <div className="hdi-value" style={{ fontSize: getDuoFontSize(income), fontWeight: 800, color: '#37B891', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{money(income)}</div>
               </div>
             </div>
-            <div className="hero-duo-item expense" style={{ padding: '12px', borderRadius: '16px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span className="hdi-icon" style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div className="hero-duo-item expense" style={{ padding: '8px 10px', borderRadius: '16px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="hdi-icon" style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ArrowDownIcon />
               </span>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Расходы</div>
-                <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#EC5DA6', marginTop: '2px' }}>{money(expense)}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, width: '100%' }}>
+                <div className="hdi-label" style={{ fontSize: '10px', fontWeight: 500, color: 'var(--ink-faint)' }}>Расходы</div>
+                <div className="hdi-value" style={{ fontSize: getDuoFontSize(expense), fontWeight: 800, color: '#EC5DA6', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{money(expense)}</div>
               </div>
             </div>
           </div>
@@ -156,7 +166,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
             cursor: 'pointer',
             textAlign: 'center',
             width: '100%',
-            marginTop: '16px'
+            marginTop: '12px'
           }}
         >
           + Новая операция
