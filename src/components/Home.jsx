@@ -21,6 +21,18 @@ const EyeIcon = ({ off }) => (
   </svg>
 )
 
+const ArrowUpIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 19V5M5 12l7-7 7 7" />
+  </svg>
+)
+
+const ArrowDownIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 5v14M19 12l-7 7-7-7" />
+  </svg>
+)
+
 export default function Home({ transactions, categories = [], email, onChanged, onOpenDashboard, onAdd, onViewAllTransactions, prevTotals }) {
   const [hidden, setHidden] = useState(false)
   const [pending, setPending] = useState(null)
@@ -39,15 +51,10 @@ export default function Home({ transactions, categories = [], email, onChanged, 
   const money = v => hidden ? '••••• ₽' : formatMoney(v)
 
   const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4)
-  const userName = (email || '').split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Алексей'
-  
+
   // Format current month specifically as "Июль 2026 г." with low-case "г."
   const monthRaw = monthLabel(currentMonthKey()) // e.g. "июль 2026 г." or similar
   const formattedCurrentMonth = monthRaw.charAt(0).toUpperCase() + monthRaw.slice(1) // "Июль 2026 г."
-
-  // Dynamic greeting based on current hour
-  const hour = new Date().getHours()
-  const salutation = hour < 6 ? 'Добрый ночи' : hour < 12 ? 'Доброе утро' : hour < 18 ? 'Добрый день' : 'Добрый вечер'
 
   // Calculate "Финансовый инсайт" dynamically based on current expense vs prevTotals.expense
   let insightText = null
@@ -56,7 +63,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
 
   if (prevExpense > 0 && currentExpense > 0) {
     const procent = Math.round(((prevExpense - currentExpense) / prevExpense) * 100)
-    
+
     // Get past month name
     const d = new Date()
     d.setMonth(d.getMonth() - 1)
@@ -83,13 +90,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
     <div className="home-grid">
       {/* Grouping header/balance/insight on the left, recent transactions on the right for widescreen/PC */}
       <div className="home-main-col">
-        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
-          <div>
-            <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--ink-soft)', margin: 0 }}>{salutation},</p>
-            <h1 style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '24px', fontWeight: 800, margin: '4px 0 0' }}>
-              {userName} 👋
-            </h1>
-          </div>
+        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
           <button className="notification-btn" aria-label="Уведомления" style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '20px', height: '20px', color: 'var(--ink)' }}>
               <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
@@ -112,25 +113,49 @@ export default function Home({ transactions, categories = [], email, onChanged, 
             </div>
             <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '100px', height: 'auto' }} />
           </div>
-          
+
           <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div className="hero-duo-item income" style={{ padding: '12px', borderRadius: '14px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>↑</span>
+              <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
+                <ArrowUpIcon />
+              </span>
               <div>
                 <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Доходы</div>
                 <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#37B891', marginTop: '2px' }}>{money(income)}</div>
               </div>
             </div>
             <div className="hero-duo-item expense" style={{ padding: '12px', borderRadius: '14px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>↓</span>
+              <span className="hdi-icon" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
+                <ArrowDownIcon />
+              </span>
               <div>
                 <div className="hdi-label" style={{ fontSize: '11px', fontWeight: 500, color: 'var(--ink-faint)' }}>Расходы</div>
                 <div className="hdi-value" style={{ fontSize: '14px', fontWeight: 800, color: '#EC5DA6', marginTop: '2px' }}>{money(expense)}</div>
               </div>
             </div>
           </div>
-          <button className="hero-cta" onClick={onAdd} style={{ padding: '14px', fontSize: '14px', fontWeight: 700, borderRadius: '14px', background: '#FFFFFF', color: 'var(--lavender-dark)', border: '1px solid var(--hairline)', cursor: 'pointer', textAlign: 'center', marginTop: '4px', width: '100%' }}>+ Новая операция</button>
         </div>
+
+        <button
+          className="new-tx-btn"
+          onClick={onAdd}
+          style={{
+            padding: '18px',
+            fontSize: '15px',
+            fontWeight: 700,
+            borderRadius: '18px',
+            background: '#FFFFFF',
+            color: 'var(--lavender-dark)',
+            border: '1px solid var(--hairline)',
+            boxShadow: 'var(--el-1)',
+            cursor: 'pointer',
+            textAlign: 'center',
+            width: '100%',
+            marginTop: '16px'
+          }}
+        >
+          + Новая операция
+        </button>
 
         {insightText && (
           <div className="card insight-card" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0', marginTop: '16px' }}>
@@ -157,7 +182,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
           <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ink)' }}>Последние операции</span>
           <button className="see-all-link" onClick={onViewAllTransactions} style={{ fontSize: '13px', fontWeight: 700, color: 'var(--lavender-dark)', background: 'none', border: 'none', cursor: 'pointer', padding: '0' }}>Смотреть все</button>
         </div>
-        
+
         {recent.length === 0 ? (
           <p className="muted" style={{ padding: '12px 4px', fontSize: '13px', color: 'var(--ink-faint)' }}>Пока нет операций за этот месяц.</p>
         ) : (

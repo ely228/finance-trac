@@ -73,7 +73,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
         <form className="form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h2 style={{ fontSize: '16px', fontWeight: 800, margin: '0 0 8px', color: 'var(--ink)' }}>Новая операция</h2>
 
-          {/* Operation type toggle (Step 28.1: Expense, Income, Transfer) */}
+          {/* Operation type toggle: Expense, Income, Transfer */}
           <div className="type-toggle-segment" style={{
             display: 'flex',
             background: '#F5F6FA',
@@ -103,9 +103,8 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                 boxShadow: type === 'expense' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EC5DA6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
-                <polyline points="17 18 23 18 23 12" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EC5DA6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 5v14M19 12l-7 7-7-7" />
               </svg>
               <span style={{ fontSize: '12.5px', fontWeight: 700, color: type === 'expense' ? '#EC5DA6' : 'var(--ink-soft)' }}>Расход</span>
             </button>
@@ -129,15 +128,14 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                 boxShadow: type === 'income' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#37B891" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                <polyline points="17 6 23 6 23 12" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#37B891" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7" />
               </svg>
               <span style={{ fontSize: '12.5px', fontWeight: 700, color: type === 'income' ? '#37B891' : 'var(--ink-soft)' }}>Доход</span>
             </button>
             <button
               type="button"
-              disabled
+              onClick={() => alert('Переводы появятся в будущих обновлениях')}
               style={{
                 flex: 1,
                 display: 'flex',
@@ -148,22 +146,25 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                 background: 'transparent',
                 borderRadius: '12px',
                 padding: '10px 4px',
-                cursor: 'not-allowed',
-                opacity: 0.4,
+                cursor: 'pointer',
+                opacity: 0.55,
                 outline: 'none'
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--lavender-dark)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 3a2.82 2.82 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--lavender-dark)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 3 4 7l4 4" />
+                <path d="M4 7h16" />
+                <path d="M16 21l4-4-4-4" />
+                <path d="M20 17H4" />
               </svg>
               <span style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--ink-soft)' }}>Перевод</span>
             </button>
           </div>
 
-          {/* Sum input overhaul (Step 28.2) */}
+          {/* Sum input: amount and ₽ sit together, both muted until a value is entered */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Сумма</span>
-            <div style={{ display: 'flex', alignItems: 'baseline', border: 'none', background: 'transparent', width: '100%', position: 'relative' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', border: 'none', background: 'transparent', width: '100%' }}>
               <input
                 type="number"
                 inputMode="decimal"
@@ -178,19 +179,19 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                   background: 'transparent',
                   fontSize: '40px',
                   fontWeight: 800,
-                  color: 'var(--ink)',
+                  color: amount ? 'var(--ink)' : 'var(--ink-faint)',
                   padding: '8px 0',
                   outline: 'none',
-                  width: '100%',
+                  width: `${Math.max(4, String(amount || '0,00').length + 1)}ch`,
                   textAlign: 'left'
                 }}
               />
-              <span style={{ fontSize: '32px', fontWeight: 800, color: 'var(--ink)', position: 'absolute', right: '0', bottom: '14px', pointerEvents: 'none' }}>₽</span>
+              <span style={{ fontSize: '32px', fontWeight: 800, color: amount ? 'var(--ink)' : 'var(--ink-faint)' }}>₽</span>
             </div>
             <div style={{ height: '1px', background: 'var(--hairline)', width: '100%', marginTop: '4px', marginBottom: '8px' }} />
           </div>
 
-          {/* Category Selector Overhaul (Step 28.3: horizontal row) */}
+          {/* Category Selector: horizontal row */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Категория</span>
             <div style={{
@@ -305,7 +306,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
             </div>
           </div>
 
-          {/* Date row overhauled (Step 28.4: clickable row without "Дата" label) */}
+          {/* Date row: clickable row without a "Дата" label */}
           <div
             className="form-field-group"
             onClick={() => dateInputRef.current && dateInputRef.current.showPicker()}
@@ -335,7 +336,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                 {formatFriendlyDate(date)}
               </span>
             </div>
-            
+
             <input
               type="date"
               ref={dateInputRef}
@@ -344,13 +345,13 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
               style={{ position: 'absolute', opacity: 0, width: '100%', height: '100%', left: 0, top: 0, pointerEvents: 'none' }}
               required
             />
-            
+
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--ink-faint)' }}>
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </div>
 
-          {/* Comment input overhaul (Step 28.5: simple rectangle, no icon) */}
+          {/* Comment input: simple rectangle, no icon */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Комментарий (необязательно)</span>
             <input
@@ -371,7 +372,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
             />
           </div>
 
-          {/* New Tag field (Step 28.6: pure visualization/placeholder row) */}
+          {/* Tags field: placeholder/visualization row */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Теги</span>
             <div
@@ -396,7 +397,6 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
 
           {error && <div className="error" style={{ marginBottom: '16px' }}>{error}</div>}
 
-          {/* Save Action Button (Step 20.6) */}
           <button type="submit" className="submit-btn" disabled={saving}>
             {saving ? 'Сохраняю…' : (
               <>

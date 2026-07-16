@@ -9,7 +9,7 @@ export default function AllTransactionsPage({ transactions = [], categories = []
   const [filter, setFilter] = useState('all') // 'all' | 'expense' | 'income'
   const [limit, setLimit] = useState(15) // spacious default limit
   const [pending, setPending] = useState(null)
-  const [showFilters, setShowFilters] = useState(true) // toggleable filters as per Step 22.2
+  const [showFilters, setShowFilters] = useState(false) // filters hidden by default, revealed on tap
 
   async function confirmDelete() {
     if (!pending) return
@@ -37,7 +37,7 @@ export default function AllTransactionsPage({ transactions = [], categories = []
 
   // Group transactions by date using utils relative date helper
   const groups = []
-  
+
   paginated.forEach(t => {
     // Relative date grouping title formatted cleanly
     const dateLabel = formatRelativeDate(t.date, true) // Pass true to show full year if old
@@ -51,7 +51,7 @@ export default function AllTransactionsPage({ transactions = [], categories = []
 
   return (
     <div className="all-transactions-page" style={{ position: 'relative', zIndex: 10, margin: '0 auto' }}>
-      {/* Step 29.1 & 29.2: Back button plain, filter button subtle */}
+      {/* Back button plain, filter toggle subtle (no circle) */}
       <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
@@ -80,26 +80,31 @@ export default function AllTransactionsPage({ transactions = [], categories = []
           aria-label="Фильтры"
           style={{
             background: 'none',
-            color: 'var(--ink-soft)',
+            border: 'none',
+            color: showFilters ? 'var(--lavender-dark)' : 'var(--ink-soft)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             width: '38px',
             height: '38px',
-            borderRadius: '50%',
-            border: '1px solid var(--hairline)',
+            padding: 0,
             cursor: 'pointer',
             outline: 'none'
           }}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <circle cx="9" cy="7" r="2" fill="#FFFFFF" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <circle cx="15" cy="12" r="2" fill="#FFFFFF" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+            <circle cx="11" cy="17" r="2" fill="#FFFFFF" />
           </svg>
         </button>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        {/* Search Input (Step 29.3 placeholder) */}
+        {/* Search Input */}
         <div className="search-bar" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--hairline)', background: '#F5F6FA' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }}>
             <circle cx="11" cy="11" r="8" />
@@ -116,15 +121,18 @@ export default function AllTransactionsPage({ transactions = [], categories = []
           />
         </div>
 
-        {/* Toggleable Filter Pills (Step 29.4) */}
+        {/* Toggleable Filter Pills + calendar, aligned on one row */}
         {showFilters && (
-          <div className="filter-pills-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', margin: '4px 0 16px' }}>
-            <div className="filter-pills" style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+          <div className="filter-pills-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', margin: '4px 0 16px', height: '42px' }}>
+            <div className="filter-pills" style={{ display: 'flex', alignItems: 'center', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none', height: '42px' }}>
               <button
                 className={filter === 'all' ? 'active' : ''}
                 onClick={() => { setFilter('all'); setLimit(15); }}
                 style={{
-                  padding: '10px 18px',
+                  height: '42px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '0 18px',
                   borderRadius: '999px',
                   border: '1px solid var(--hairline)',
                   background: filter === 'all' ? 'var(--gradient-btn)' : '#FFFFFF',
@@ -141,7 +149,10 @@ export default function AllTransactionsPage({ transactions = [], categories = []
                 className={filter === 'expense' ? 'active' : ''}
                 onClick={() => { setFilter('expense'); setLimit(15); }}
                 style={{
-                  padding: '10px 18px',
+                  height: '42px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '0 18px',
                   borderRadius: '999px',
                   border: '1px solid var(--hairline)',
                   background: filter === 'expense' ? 'var(--gradient-btn)' : '#FFFFFF',
@@ -158,7 +169,10 @@ export default function AllTransactionsPage({ transactions = [], categories = []
                 className={filter === 'income' ? 'active' : ''}
                 onClick={() => { setFilter('income'); setLimit(15); }}
                 style={{
-                  padding: '10px 18px',
+                  height: '42px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '0 18px',
                   borderRadius: '999px',
                   border: '1px solid var(--hairline)',
                   background: filter === 'income' ? 'var(--gradient-btn)' : '#FFFFFF',
@@ -173,11 +187,11 @@ export default function AllTransactionsPage({ transactions = [], categories = []
               </button>
             </div>
 
-            {/* Separated calendar icon button (Step 29.4) */}
+            {/* Calendar icon button, same height as pills for exact alignment */}
             <button
               style={{
-                width: '38px',
-                height: '38px',
+                width: '42px',
+                height: '42px',
                 borderRadius: '12px',
                 border: '1px solid var(--hairline)',
                 background: '#FFFFFF',
