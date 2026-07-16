@@ -130,6 +130,7 @@ export default function App() {
                     onAdd={() => setShowAdd(true)}
                     onViewAllTransactions={() => setSubPage('all-transactions')}
                     prevTotals={prevTotals}
+                    monthKey={monthKey}
                   />
                 )}
                 {tab === 'dashboard' && (
