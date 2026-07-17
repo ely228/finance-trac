@@ -65,7 +65,7 @@
 
   --gradient-hero: linear-gradient(135deg, var(--lavender) 0%, var(--rose) 55%, var(--peach) 100%);
   --gradient-btn: linear-gradient(135deg, var(--lavender-dark), var(--rose-dark));
-  --gradient-app-bg: linear-gradient(160deg, #FFFFFF 0%, #FCF3F8 32%, #F4F0FC 62%, #EFF8FC 100%);
+  --gradient-app-bg: linear-gradient(160deg, #F9EEF7 0%, #E7DCF9 42%, #DDF1FC 100%);
   --sidebar-w: 88px;
   --safe-t: env(safe-area-inset-top, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);

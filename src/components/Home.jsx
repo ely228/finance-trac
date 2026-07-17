@@ -111,25 +111,24 @@ export default function Home({ transactions, categories = [], email, onChanged, 
           </button>
         </header>
 
-        <div className="card hero-card g-balance" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '0', boxShadow: 'var(--el-1)' }}>
-          <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="card hero-card g-balance" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '0', boxShadow: 'var(--el-1)', position: 'relative' }}>
+          <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span className="hero-label" style={{ fontSize: '13px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
-              <div className="hero-date" style={{ fontSize: '12px', color: 'var(--ink-faint)', marginTop: '2px' }}>{formattedCurrentMonth}</div>
+              <span className="hero-label" style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
+              <div className="hero-date" style={{ fontSize: '11px', color: 'var(--ink-faint)', marginTop: '4px' }}>{formattedCurrentMonth}</div>
             </div>
             <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс" style={{ width: '34px', height: '34px', border: 'none', background: '#F5F6FA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
               <EyeIcon off={hidden} />
             </button>
           </div>
           
-          <div className="hero-balance-row" style={{ minHeight: '52px', margin: '0 0 6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-            <div className="hero-balance" style={{ fontSize: '36px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em', zIndex: 1 }}>
+          <div className="hero-balance-row" style={{ minHeight: '52px', margin: '0 0 6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 1 }}>
+            <div className="hero-balance" style={{ fontSize: '30px', fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em' }}>
               {hidden ? '••••• ₽' : <AnimatedNumber value={balance} format={v => formatMoney(v)} />}
             </div>
-            <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '160px', height: 'auto', position: 'absolute', right: '-14px', top: '50%', transform: 'translateY(-50%)', opacity: 1 }} />
           </div>
 
-          <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+          <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', position: 'relative', zIndex: 1 }}>
             <div className="hero-duo-item income" style={{ padding: '8px 10px', borderRadius: '16px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
               <span className="hdi-icon" style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ArrowUpIcon />
@@ -149,6 +148,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
               </div>
             </div>
           </div>
+          <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '160px', height: 'auto', position: 'absolute', right: '-10px', top: '50%', transform: 'translateY(-50%)', opacity: 0.85, zIndex: 0, pointerEvents: 'none' }} />
         </div>
 
         <button
@@ -166,28 +166,28 @@ export default function Home({ transactions, categories = [], email, onChanged, 
             cursor: 'pointer',
             textAlign: 'center',
             width: '100%',
-            marginTop: '12px'
+            marginTop: '8px'
           }}
         >
           + Новая операция
         </button>
 
-        {insightText && (
-          <div className="card insight-card" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0', marginTop: '16px', boxShadow: 'var(--el-1)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: 'linear-gradient(135deg, #EBE5FC 0%, #C8B9FA 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: '#8865E8' }}>
-                  <path d="M12 2a1 1 0 0 0-1 1c0 4.5-3.5 8-8 8a1 1 0 0 0 0 2c4.5 0 8 3.5 8 8a1 1 0 0 0 2 0c0-4.5 3.5-8 8-8a1 1 0 0 0 0-2c-4.5 0-8-3.5-8-8a1 1 0 0 0-1-1z" />
-                </svg>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)' }}>Финансовый инсайт</span>
-                <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-soft)', marginTop: '2px' }}>{insightText}</span>
-              </div>
+        <div className="card insight-card" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0', marginTop: '8px', boxShadow: 'var(--el-1)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: 'linear-gradient(135deg, #F3EFFE 0%, #E2DAFC 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: '#8865E8' }}>
+                <path d="M12 2a1 1 0 0 0-1 1c0 4.5-3.5 8-8 8a1 1 0 0 0 0 2c4.5 0 8 3.5 8 8a1 1 0 0 0 2 0c0-4.5 3.5-8 8-8a1 1 0 0 0 0-2c-4.5 0-8-3.5-8-8a1 1 0 0 0-1-1z" />
+              </svg>
             </div>
-            <span style={{ fontSize: '18px', color: 'var(--ink-faint)', marginLeft: 'auto', paddingLeft: '8px', cursor: 'default' }}>›</span>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)' }}>Финансовый инсайт</span>
+              <span style={{ fontSize: '12.5px', fontWeight: 500, color: 'var(--ink-soft)', marginTop: '2px', lineHeight: '1.3' }}>
+                {insightText ? insightText : `Добавьте больше операций за прошлый месяц, чтобы получить инсайт на ${new Date(Number(activeMonthKey.split('-')[0]), Number(activeMonthKey.split('-')[1]) - 1, 1).toLocaleDateString('ru-RU', { month: 'long' })}.`}
+              </span>
+            </div>
           </div>
-        )}
+          <span style={{ fontSize: '18px', color: 'var(--ink-faint)', marginLeft: 'auto', paddingLeft: '8px', cursor: 'default' }}>›</span>
+        </div>
       </div>
 
       <div className="recent-section" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -197,18 +197,21 @@ export default function Home({ transactions, categories = [], email, onChanged, 
         </div>
 
         {recent.length === 0 ? (
-          <p className="muted" style={{ padding: '12px 4px', fontSize: '13px', color: 'var(--ink-faint)' }}>Пока нет операций за этот месяц.</p>
+          <div className="card recent-card" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', boxShadow: 'var(--el-1)' }}>
+            <p className="muted" style={{ margin: 0, fontSize: '13px', color: 'var(--ink-faint)', textAlign: 'center' }}>Пока нет операций за этот месяц.</p>
+          </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {recent.map(t => {
+          <div className="card recent-card" style={{ padding: '8px 16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', boxShadow: 'var(--el-1)', display: 'flex', flexDirection: 'column', marginBottom: 0 }}>
+            {recent.map((t, idx) => {
               const catData = categories.find(c => c.name === t.category)
               const style = categoryStyle(t.category)
               const customBg = catData && catData.color ? `rgba(${catData.color}, 0.16)` : style.bg
               const customFg = catData && catData.color ? `rgb(${catData.color})` : style.fg
               const customIcon = catData && catData.icon ? catData.icon : null
+              const isLast = idx === recent.length - 1
 
               return (
-                <div key={t.id} className={`tx-row ${t.type}`} style={{ padding: '14px 4px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--hairline)' }}>
+                <div key={t.id} className={`tx-row ${t.type}`} style={{ padding: '12px 0', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: isLast ? 'none' : '1px solid rgba(0, 0, 0, 0.025)' }}>
                   <div
                     className="tx-icon"
                     style={{
