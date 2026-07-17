@@ -14,9 +14,8 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
 
   const dateInputRef = useRef(null)
 
-  // Filter categories according to the active type (expense or income) if they have a 'type' attribute,
-  // or fall back to displaying all if 'type' is not yet present on some/all entries.
-  const filteredCategories = categories.filter(c => !c.type || c.type === type)
+  // Categories are universally shared regardless of the transaction type
+  const filteredCategories = categories
 
   // Format date correctly like "13 июля 2026 г."
   const formatFriendlyDate = (dateStr) => {
@@ -55,15 +54,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
     onClose()
   }
 
-  // When changing type, clear category if the currently selected category is not in the filtered categories
-  useEffect(() => {
-    if (category) {
-      const exists = filteredCategories.some(c => c.name === category)
-      if (!exists) {
-        setCategory('')
-      }
-    }
-  }, [type, categories])
+  // No need to clear selected category on type change since categories are universally shared
 
   return (
     <div className="modal-overlay" onClick={onClose}>

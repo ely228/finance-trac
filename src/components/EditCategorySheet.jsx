@@ -69,29 +69,37 @@ export default function EditCategorySheet({ category, onSaved, onClose }) {
           />
           {error && <div className="error">{error}</div>}
           <button type="submit" className="submit-btn" disabled={saving || !name.trim()}>{saving ? 'Сохраняю…' : 'Сохранить'}</button>
-        </form>
 
-        <div style={{ marginTop: '16px', borderTop: '1px solid var(--hairline)', paddingTop: '16px' }}>
           <button 
             type="button" 
             onClick={handleDelete}
             style={{
               width: '100%',
-              padding: '12px',
-              borderRadius: 'var(--r-md)',
-              border: '1px solid rgba(226, 99, 122, 0.16)',
-              background: 'rgba(226, 99, 122, 0.08)',
-              fontWeight: '800',
-              fontSize: '14px',
-              color: 'var(--expense)',
+              height: '52px',
+              borderRadius: '24px',
+              border: '1.5px solid rgba(216, 88, 88, 0.25)',
+              background: '#FFFFFF',
+              fontWeight: '700',
+              fontSize: '15px',
+              color: '#D85858',
               cursor: 'pointer',
-              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
               transition: 'all 0.2s ease',
+              marginTop: '12px',
+              boxShadow: '0 2px 8px rgba(216, 88, 88, 0.04)',
+              outline: 'none'
             }}
           >
-            Удалить категорию
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+            <span>Удалить категорию</span>
           </button>
-        </div>
+        </form>
 
         {showConfirm && (
           <ConfirmDialog
