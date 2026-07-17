@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../supabaseClient'
+import { categoryMeta } from './CategoryIcon'
 
 const ICON_SVGS = {
   bag: (
@@ -116,17 +117,16 @@ const PRESET_ICONS = [
 ]
 
 const PALETTE_COLORS = [
-  { rgb: '236, 93, 166', hex: '#EC5DA6', name: 'Розовый' },
-  { rgb: '249, 115, 22', hex: '#F97316', name: 'Оранжевый' },
-  { rgb: '245, 158, 11', hex: '#F59E0B', name: 'Желтый' },
-  { rgb: '55, 184, 145', hex: '#37B891', name: 'Зеленый' },
-  { rgb: '59, 130, 246', hex: '#3B82F6', name: 'Синий' },
-  { rgb: '144, 107, 230', hex: '#906BE6', name: 'Фиолетовый' }
+  { rgb: '240, 168, 192', hex: '#F0A8C0', name: 'Светло-розовый' },
+  { rgb: '226, 149, 203', hex: '#E295CB', name: 'Розово-лавандовый' },
+  { rgb: '202, 137, 215', hex: '#CA89D7', name: 'Нежно-лавандовый' },
+  { rgb: '172, 122, 224', hex: '#AC7AE0', name: 'Лавандовый' },
+  { rgb: '144, 107, 230', hex: '#906BE6', name: 'Фиолетовый' },
+  { rgb: '124, 87, 218', hex: '#7C57DA', name: 'Насыщенный фиолетовый' }
 ]
 
 export default function NewCategoryPage({ onBack, onAdded }) {
   const [name, setName] = useState('')
-  const [type, setType] = useState('expense')
   const [selectedIcon, setSelectedIcon] = useState(PRESET_ICONS[0])
   const [selectedColor, setSelectedColor] = useState(PALETTE_COLORS[0])
   const [saving, setSaving] = useState(false)
@@ -141,7 +141,6 @@ export default function NewCategoryPage({ onBack, onAdded }) {
     setSaving(true)
     const { error: err } = await supabase.from('categories').insert({
       name: trimmed,
-      type,
       icon: selectedIcon,
       color: selectedColor.rgb
     })
@@ -156,11 +155,20 @@ export default function NewCategoryPage({ onBack, onAdded }) {
 
   return (
     <div className="new-category-page" style={{ position: 'relative', zIndex: 10 }}>
-      {/* Top Header Row with back arrow */}
-      <div className="topbar" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+      {/* Centered top bar matching iOS native screens */}
+      <div className="topbar" style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '44px',
+        marginBottom: '24px'
+      }}>
         <button
           onClick={onBack}
           style={{
+            position: 'absolute',
+            left: '0px',
             background: 'none',
             border: 'none',
             color: 'var(--ink)',
@@ -168,8 +176,7 @@ export default function NewCategoryPage({ onBack, onAdded }) {
             padding: '4px 8px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            marginLeft: '-8px'
+            justifyContent: 'center'
           }}
           aria-label="Назад"
         >
@@ -178,7 +185,9 @@ export default function NewCategoryPage({ onBack, onAdded }) {
             <polyline points="12 19 5 12 12 5" />
           </svg>
         </button>
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 800, color: 'var(--ink)' }}>Новая категория</h1>
+        <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--ink)', textAlign: 'center' }}>
+          Новая категория
+        </h1>
       </div>
 
       <div style={{ maxWidth: '520px', margin: '0 auto' }}>
@@ -247,95 +256,6 @@ export default function NewCategoryPage({ onBack, onAdded }) {
                   boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
                 }}
               />
-            </div>
-          </div>
-
-          {/* Type Selector (Segmented switch) */}
-          <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--ink-soft)', marginBottom: '8px' }}>
-              Тип категории
-            </label>
-            <div
-              className="type-toggle"
-              style={{
-                display: 'flex',
-                background: '#FFFFFF',
-                borderRadius: '999px',
-                padding: '4px',
-                border: '1px solid var(--hairline)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setType('expense')}
-                style={{
-                  flex: 1,
-                  height: '44px',
-                  borderRadius: '999px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  transition: 'all 0.2s ease',
-                  background: type === 'expense' ? 'rgba(236, 93, 166, 0.12)' : 'transparent',
-                  color: type === 'expense' ? '#EC5DA6' : 'var(--ink-soft)'
-                }}
-              >
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
-                  background: type === 'expense' ? 'rgba(236, 93, 166, 0.15)' : 'rgba(0,0,0,0.05)',
-                  color: '#EC5DA6',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  flexShrink: 0
-                }}>↓</span>
-                <span>Расход</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setType('income')}
-                style={{
-                  flex: 1,
-                  height: '44px',
-                  borderRadius: '999px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  transition: 'all 0.2s ease',
-                  background: type === 'income' ? 'rgba(55, 184, 145, 0.12)' : 'transparent',
-                  color: type === 'income' ? '#37B891' : 'var(--ink-soft)'
-                }}
-              >
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
-                  background: type === 'income' ? 'rgba(55, 184, 145, 0.15)' : 'rgba(0,0,0,0.05)',
-                  color: '#37B891',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  flexShrink: 0
-                }}>↑</span>
-                <span>Доход</span>
-              </button>
             </div>
           </div>
 
@@ -422,7 +342,7 @@ export default function NewCategoryPage({ onBack, onAdded }) {
             </div>
           </div>
 
-          {/* Preview Row (Step 21.3) */}
+          {/* Preview Row */}
           <div>
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--ink-soft)', marginBottom: '8px' }}>
               Предпросмотр
@@ -451,7 +371,7 @@ export default function NewCategoryPage({ onBack, onAdded }) {
                     {name || 'Название категории'}
                   </div>
                   <div className="cat-sub" style={{ fontSize: '11px', color: 'var(--ink-soft)' }}>
-                    {type === 'expense' ? 'Расходная категория' : 'Доходная категория'}
+                    {categoryMeta(name).description}
                   </div>
                   <div className="cat-progress">
                     <div className="cat-progress-fill" style={{ width: '0%', background: selectedColor.hex }} />

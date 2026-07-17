@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { todayISO, categoryStyle } from '../utils'
+import CategoryIcon from './CategoryIcon'
 
 export default function AddTransactionModal({ categories, onAdded, onClose, onNavigateToNewCategory }) {
   const [date, setDate] = useState(todayISO())
@@ -244,7 +245,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                       fontWeight: 'bold',
                       border: '1px solid rgba(0,0,0,0.02)'
                     }}>
-                      {c.icon ? c.icon : (c.name ? c.name.charAt(0).toUpperCase() : '?')}
+                      <CategoryIcon name={c.icon || c.name} />
                     </div>
                     <span style={{
                       fontSize: '11px',

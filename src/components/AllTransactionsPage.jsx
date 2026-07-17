@@ -250,7 +250,7 @@ export default function AllTransactionsPage({ transactions = [], categories = []
                           border: '1px solid rgba(0,0,0,0.02)'
                         }}
                       >
-                        {customIcon ? customIcon : <CategoryIcon name={t.category} />}
+                        <CategoryIcon name={customIcon || t.category} />
                       </div>
                       <div className="tx-main" style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
                         <span className="tx-cat" style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ink)' }}>{t.category}</span>
