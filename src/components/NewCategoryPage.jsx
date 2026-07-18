@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 
 const PRESET_ICONS = [
@@ -15,13 +15,34 @@ const PALETTE_COLORS = [
   { rgb: '124, 87, 218', hex: '#7C57DA', name: 'Насыщенный фиолетовый' }
 ]
 
-export default function NewCategoryPage({ onBack, onAdded }) {
-  const [name, setName] = useState('')
-  const [type, setType] = useState('expense')
-  const [selectedIcon, setSelectedIcon] = useState(PRESET_ICONS[0])
-  const [selectedColor, setSelectedColor] = useState(PALETTE_COLORS[0])
+export default function NewCategoryPage({ onBack, onAdded, categoryToEdit = null, isEditing = false }) {
+  const [name, setName] = useState(isEditing && categoryToEdit ? categoryToEdit.name : '')
+  const [type, setType] = useState(isEditing && categoryToEdit ? (categoryToEdit.type || 'expense') : 'expense')
+  const [selectedIcon, setSelectedIcon] = useState(
+    isEditing && categoryToEdit && categoryToEdit.icon ? categoryToEdit.icon : PRESET_ICONS[0]
+  )
+  const [selectedColor, setSelectedColor] = useState(() => {
+    if (isEditing && categoryToEdit && categoryToEdit.color) {
+      const match = PALETTE_COLORS.find(c => c.rgb === categoryToEdit.color)
+      return match || { rgb: categoryToEdit.color, hex: `rgb(${categoryToEdit.color})`, name: 'Текущий цвет' }
+    }
+    return PALETTE_COLORS[0]
+  })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+
+  // If the props change, update state accordingly
+  useEffect(() => {
+    if (isEditing && categoryToEdit) {
+      setName(categoryToEdit.name)
+      setType(categoryToEdit.type || 'expense')
+      if (categoryToEdit.icon) setSelectedIcon(categoryToEdit.icon)
+      if (categoryToEdit.color) {
+        const match = PALETTE_COLORS.find(c => c.rgb === categoryToEdit.color)
+        setSelectedColor(match || { rgb: categoryToEdit.color, hex: `rgb(${categoryToEdit.color})`, name: 'Текущий цвет' })
+      }
+    }
+  }, [categoryToEdit, isEditing])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -30,12 +51,27 @@ export default function NewCategoryPage({ onBack, onAdded }) {
     if (!trimmed) return
 
     setSaving(true)
-    const { error: err } = await supabase.from('categories').insert({
-      name: trimmed,
-      type,
-      icon: selectedIcon,
-      color: selectedColor.rgb
-    })
+    let err
+    if (isEditing && categoryToEdit) {
+      const { error: updateErr } = await supabase
+        .from('categories')
+        .update({
+          name: trimmed,
+          type,
+          icon: selectedIcon,
+          color: selectedColor.rgb
+        })
+        .eq('id', categoryToEdit.id)
+      err = updateErr
+    } else {
+      const { error: insertErr } = await supabase.from('categories').insert({
+        name: trimmed,
+        type,
+        icon: selectedIcon,
+        color: selectedColor.rgb
+      })
+      err = insertErr
+    }
     setSaving(false)
 
     if (err) {
@@ -66,7 +102,9 @@ export default function NewCategoryPage({ onBack, onAdded }) {
         >
           ←
         </button>
-        <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800 }}>Новая категория</h1>
+        <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800 }}>
+          {isEditing ? 'Редактирование категории' : 'Новая категория'}
+        </h1>
       </div>
 
       <div style={{ maxWidth: '520px', margin: '0 auto' }}>
@@ -271,13 +309,13 @@ export default function NewCategoryPage({ onBack, onAdded }) {
 
           {error && <div className="error" style={{ marginBottom: '16px' }}>{error}</div>}
 
-          {/* Create Button (Step 21.3) */}
+          {/* Create / Edit Button */}
           <button
             type="submit"
             className="submit-btn"
             disabled={saving || !name.trim()}
           >
-            {saving ? 'Создание…' : 'Создать категорию'}
+            {saving ? 'Сохранение…' : (isEditing ? 'Сохранить изменения' : 'Создать категорию')}
           </button>
         </form>
       </div>
