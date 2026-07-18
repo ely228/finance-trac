@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
+import { supabase } from '../supabaseClient'
 import EditCategorySheet from './EditCategorySheet'
+import ConfirmDialog from './ConfirmDialog'
 import { formatMoney, categoryStyle } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
@@ -7,6 +9,7 @@ export default function Categories({ categories, transactions, onChanged, onNavi
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all')
   const [editingCategory, setEditingCategory] = useState(null)
+  const [deletingCategory, setDeletingCategory] = useState(null)
 
   const totals = useMemo(() => {
     const map = {}
@@ -35,12 +38,26 @@ export default function Categories({ categories, transactions, onChanged, onNavi
       return { ...c, amount, pct }
     })
 
+  async function confirmDeleteCategory() {
+    if (!deletingCategory) return
+    const { error: err } = await supabase
+      .from('categories')
+      .delete()
+      .eq('id', deletingCategory.id)
+    if (err) {
+      alert(err.message)
+      return
+    }
+    setDeletingCategory(null)
+    onChanged()
+  }
+
   return (
     <div>
       <div className="topbar">
         <h1>Категории</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
-          {/* Add Category Button - opens full New Category page (Step 21.2) */}
+          {/* Add Category Button - opens full New Category page */}
           <button
             className="header-icon-btn"
             onClick={onNavigateToNewCategory}
@@ -126,7 +143,9 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                 <div className="cat-amount" style={{ fontSize: '13px', fontWeight: 700 }}>{formatMoney(c.amount)}</div>
                 <div className="cat-pct" style={{ fontSize: '10.5px', color: 'var(--ink-faint)' }}>{c.pct}%</div>
               </div>
-              <span className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '14px', flexShrink: 0 }}>›</span>
+              <div className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '18px', flexShrink: 0 }}>
+                ›
+              </div>
             </div>
           )
         })}
@@ -160,7 +179,7 @@ export default function Categories({ categories, transactions, onChanged, onNavi
         <div style={{ flex: 1 }}>
           <h2 style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, textTransform: 'none', color: 'var(--ink)' }}>Совет на сегодня</h2>
           <div style={{ fontSize: '12.5px', fontWeight: 600, marginTop: '4px', lineHeight: '1.4', color: 'var(--ink-soft)' }}>
-            Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишнего стресса.
+            Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишстого стресса.
           </div>
         </div>
       </div>
@@ -170,6 +189,15 @@ export default function Categories({ categories, transactions, onChanged, onNavi
           category={editingCategory}
           onSaved={onChanged}
           onClose={() => setEditingCategory(null)}
+        />
+      )}
+
+      {deletingCategory && (
+        <ConfirmDialog
+          title="Удалить категорию?"
+          message="Эту операцию нельзя отменить."
+          onConfirm={confirmDeleteCategory}
+          onCancel={() => setDeletingCategory(null)}
         />
       )}
     </div>
