@@ -438,13 +438,31 @@ button, input, select { font-family: inherit; }
   background: #FFFFFF;
   border: var(--mat-4-edge);
   width: 100%; max-width: 480px;
-  border-radius: var(--r-xl) var(--r-xl) 0 0 !important;
-  padding: 24px;
-  max-height: 92vh !important;
+  border-radius: 28px 28px 0 0 !important; /* premium larger rounded top corners */
+  padding: 24px 20px 56px !important; /* uniform internal padding with bottom offset space */
+  max-height: 85vh !important; /* uniform vertical spacing from top of screen */
+  margin-top: auto !important;
   overflow-y: auto;
   box-shadow: 0 -8px 30px rgba(31, 29, 47, 0.08);
   animation: sheet-up var(--dur-3) var(--smooth);
   margin: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Hide the bottom navigation bar and float overlay when any modal overlay is active */
+body:has(.modal-overlay) .nav {
+  display: none !important;
+}
+body:has(.modal-overlay) .nav-sphere {
+  display: none !important;
+}
+
+.modal-title {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  text-align: center !important;
+  margin: 12px 0 20px 0 !important; /* shifted slightly downwards, uniform spacing */
 }
 .modal-handle { width: 36px; height: 5px; border-radius: 3px; background: rgba(31, 29, 47, 0.12); margin: 0 auto 16px; }
 .modal-close {
@@ -778,3 +796,70 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 /* Glass donut style neutralizer */
 .glass-donut::before { display: none !important; }
 .glass-donut::after { display: none !important; }
+
+/* ================================================================
+   NATIVE iOS CONTEXT MENU & EFFECTS (Step 21.2)
+   ================================================================ */
+@keyframes ios-context-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.ios-context-menu {
+  animation: ios-context-appear 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.ios-context-item {
+  transition: background var(--dur-1) ease, transform var(--dur-1) ease;
+}
+
+.ios-context-item:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.ios-context-item:active {
+  background: rgba(0, 0, 0, 0.1) !important;
+  transform: scale(0.98);
+}
+
+.categories-card {
+  overflow: visible !important;
+}
+
+/* Full-Screen Blur Mode for All Elements Except Active Context */
+/* Simplified to avoid complex selective child selectors which caused rendering visual bugs */
+body.context-blur-active {
+  /* prevent scrolling under context menu */
+  overflow: hidden !important;
+}
+
+.context-blur-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  background: rgba(230, 226, 243, 0.45) !important; /* premium translucent backdrop */
+  backdrop-filter: blur(6px) !important; /* lower, softer blur as requested (6px instead of 12px) */
+  -webkit-backdrop-filter: blur(6px) !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+}
+
+.categories-card, .recent-card, .card {
+  /* clear background filters / borders to avoid nested layer compositing visual issues */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.content, .nav, .cat-row, .tx-row {
+  transition: filter 0.28s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: filter, transform;
+}

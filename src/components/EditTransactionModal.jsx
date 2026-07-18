@@ -1,26 +1,21 @@
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
-import { todayISO, categoryStyle } from '../utils'
+import { categoryStyle } from '../utils'
 import CategoryIcon from './CategoryIcon'
 
-export default function AddTransactionModal({ categories, onAdded, onClose, onNavigateToNewCategory }) {
-  const [date, setDate] = useState(todayISO())
-  const [category, setCategory] = useState('')
-  const [type, setType] = useState('expense')
-  const [amount, setAmount] = useState('')
-  const [comment, setComment] = useState('')
+export default function EditTransactionModal({ transaction, categories, onSaved, onClose, onNavigateToNewCategory }) {
+  const [date, setDate] = useState(transaction.date)
+  const [category, setCategory] = useState(transaction.category)
+  const [type, setType] = useState(transaction.type)
+  const [amount, setAmount] = useState(transaction.amount)
+  const [comment, setComment] = useState(transaction.comment || '')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   const dateInputRef = useRef(null)
 
-  // Categories are filtered based on transaction type (expense / income)
+  // Filter categories based on transaction type
   const filteredCategories = categories.filter(c => c.type === type)
-
-  // Clear selected category on type change if it's not present in the new set
-  useEffect(() => {
-    setCategory('')
-  }, [type])
 
   // Format date correctly like "13 июля 2026 г."
   const formatFriendlyDate = (dateStr) => {
@@ -40,34 +35,34 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
     if (!amount || Number(amount) <= 0) return setError('Укажи сумму больше нуля')
 
     setSaving(true)
-    const { error: err } = await supabase.from('transactions').insert({
-      date,
-      category,
-      type,
-      amount: Number(amount),
-      comment: comment || null,
-    })
+    const { error: err } = await supabase.from('transactions')
+      .update({
+        date,
+        category,
+        type,
+        amount: Number(amount),
+        comment: comment || null,
+      })
+      .eq('id', transaction.id)
     setSaving(false)
 
     if (err) {
       setError('Ошибка сохранения: ' + err.message)
       return
     }
-    setAmount('')
-    setComment('')
-    onAdded()
+    onSaved()
     onClose()
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1200 }}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()}>
         <div className="modal-handle" />
 
         <form className="form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h2 className="modal-title">Новая операция</h2>
+          <h2 className="modal-title">Редактировать операцию</h2>
 
-          {/* Operation type toggle: Expense, Income, Transfer */}
+          {/* Operation type toggle */}
           <div className="type-toggle-segment" style={{
             display: 'flex',
             background: '#F5F6FA',
@@ -79,7 +74,10 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
           }}>
             <button
               type="button"
-              onClick={() => setType('expense')}
+              onClick={() => {
+                setType('expense')
+                setCategory('')
+              }}
               style={{
                 flex: 1,
                 display: 'flex',
@@ -104,7 +102,10 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
             </button>
             <button
               type="button"
-              onClick={() => setType('income')}
+              onClick={() => {
+                setType('income')
+                setCategory('')
+              }}
               style={{
                 flex: 1,
                 display: 'flex',
@@ -155,7 +156,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
             </button>
           </div>
 
-          {/* Sum input: amount and ₽ sit together, both muted until a value is entered */}
+          {/* Sum input */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Сумма</span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', border: 'none', background: 'transparent', width: '100%' }}>
@@ -185,7 +186,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
             <div style={{ height: '1px', background: 'var(--hairline)', width: '100%', marginTop: '4px', marginBottom: '8px' }} />
           </div>
 
-          {/* Category Selector: horizontal row */}
+          {/* Category Selector */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Категория</span>
             <div style={{
@@ -300,7 +301,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
             </div>
           </div>
 
-          {/* Date row: clickable row without a "Дата" label */}
+          {/* Date row */}
           <div
             className="form-field-group"
             style={{
@@ -354,7 +355,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
             </svg>
           </div>
 
-          {/* Comment input: simple rectangle, no icon */}
+          {/* Comment input */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Комментарий (необязательно)</span>
             <input
@@ -373,29 +374,6 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                 color: 'var(--ink)'
               }}
             />
-          </div>
-
-          {/* Tags field: placeholder/visualization row */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Теги</span>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '14px 16px',
-                borderRadius: '16px',
-                border: '1px solid var(--hairline)',
-                background: '#FFFFFF',
-                cursor: 'pointer'
-              }}
-              onClick={() => alert('Управление тегами появится в будущих обновлениях')}
-            >
-              <span style={{ fontSize: '14px', color: 'var(--ink-faint)' }}>Добавить тег</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--ink-faint)' }}>
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </div>
           </div>
 
           {error && <div className="error" style={{ marginBottom: '16px' }}>{error}</div>}

@@ -88,6 +88,14 @@ const ICON_SVGS = {
       <circle cx="19" cy="12" r="1.5" />
       <circle cx="5" cy="12" r="1.5" />
     </>
+  ),
+  transfer: (
+    <>
+      <path d="M17 3L21 7L17 11" />
+      <path d="M3 7H21" />
+      <path d="M7 21L3 17L7 13" />
+      <path d="M21 17H3" />
+    </>
   )
 }
 
@@ -110,10 +118,13 @@ function CategoryContourIcon({ name, size = 24, strokeWidth = 1.8, style }) {
   )
 }
 
-const PRESET_ICONS = [
-  'bag', 'burger', 'car', 'bus',
-  'house', 'heart', 'gamepad', 'airplane',
-  'wallet', 'book', 'paw', 'more'
+const EXPENSE_ICONS = [
+  'bag', 'burger', 'car', 'house',
+  'heart', 'gamepad', 'airplane', 'more'
+]
+
+const INCOME_ICONS = [
+  'wallet', 'transfer', 'more'
 ]
 
 const PALETTE_COLORS = [
@@ -127,10 +138,21 @@ const PALETTE_COLORS = [
 
 export default function NewCategoryPage({ onBack, onAdded }) {
   const [name, setName] = useState('')
-  const [selectedIcon, setSelectedIcon] = useState(PRESET_ICONS[0])
+  const [categoryType, setCategoryType] = useState('expense') // 'expense' or 'income'
+  const [selectedIcon, setSelectedIcon] = useState(EXPENSE_ICONS[0])
   const [selectedColor, setSelectedColor] = useState(PALETTE_COLORS[0])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+
+  // Automatically adjust default icon if category type switches
+  const handleTypeChange = (newType) => {
+    setCategoryType(newType)
+    if (newType === 'expense') {
+      setSelectedIcon(EXPENSE_ICONS[0])
+    } else {
+      setSelectedIcon(INCOME_ICONS[0])
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -142,7 +164,8 @@ export default function NewCategoryPage({ onBack, onAdded }) {
     const { error: err } = await supabase.from('categories').insert({
       name: trimmed,
       icon: selectedIcon,
-      color: selectedColor.rgb
+      color: selectedColor.rgb,
+      type: categoryType
     })
     setSaving(false)
 
@@ -193,6 +216,72 @@ export default function NewCategoryPage({ onBack, onAdded }) {
       <div style={{ maxWidth: '520px', margin: '0 auto' }}>
         <form className="form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
+          {/* Category Type Toggle */}
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--ink-soft)', marginBottom: '8px' }}>
+              Тип категории
+            </label>
+            <div className="type-toggle-segment" style={{
+              display: 'flex',
+              background: '#F5F6FA',
+              borderRadius: '14px',
+              border: '1px solid var(--hairline)',
+              overflow: 'hidden',
+              padding: '2px',
+              marginBottom: '4px'
+            }}>
+              <button
+                type="button"
+                onClick={() => handleTypeChange('expense')}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  border: 'none',
+                  background: categoryType === 'expense' ? '#FFFFFF' : 'transparent',
+                  borderRadius: '12px',
+                  padding: '10px 4px',
+                  cursor: 'pointer',
+                  borderRight: '1px solid var(--hairline)',
+                  outline: 'none',
+                  transition: 'all 0.15s ease',
+                  boxShadow: categoryType === 'expense' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EC5DA6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 5v14M19 12l-7 7-7-7" />
+                </svg>
+                <span style={{ fontSize: '12.5px', fontWeight: 700, color: categoryType === 'expense' ? '#EC5DA6' : 'var(--ink-soft)' }}>Расход</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTypeChange('income')}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  border: 'none',
+                  background: categoryType === 'income' ? '#FFFFFF' : 'transparent',
+                  borderRadius: '12px',
+                  padding: '10px 4px',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  transition: 'all 0.15s ease',
+                  boxShadow: categoryType === 'income' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#37B891" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 19V5M5 12l7-7 7 7" />
+                </svg>
+                <span style={{ fontSize: '12.5px', fontWeight: 700, color: categoryType === 'income' ? '#37B891' : 'var(--ink-soft)' }}>Доход</span>
+              </button>
+            </div>
+          </div>
+
           {/* Big Center Preview Circle */}
           <div style={{ display: 'flex', justifyContent: 'center', margin: '16px 0' }}>
             <div
@@ -272,7 +361,7 @@ export default function NewCategoryPage({ onBack, onAdded }) {
                 padding: '4px'
               }}
             >
-              {PRESET_ICONS.map(ic => {
+              {(categoryType === 'expense' ? EXPENSE_ICONS : INCOME_ICONS).map(ic => {
                 const isSelected = selectedIcon === ic
                 return (
                   <button

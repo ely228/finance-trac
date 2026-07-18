@@ -54,7 +54,9 @@ export default function App() {
     const [y, m] = monthKey.split('-').map(Number)
     const end = new Date(y, m, 1).toISOString().slice(0, 10)
     const { data } = await supabase.from('transactions')
-      .select('*').gte('date', start).lt('date', end).order('date', { ascending: false })
+      .select('*').gte('date', start).lt('date', end)
+      .order('date', { ascending: false })
+      .order('id', { ascending: false })
     setTransactions(data || [])
   }, [monthKey])
 
@@ -116,7 +118,9 @@ export default function App() {
               <AllTransactionsPage
                 onBack={() => setSubPage(null)}
                 transactions={transactions}
+                categories={categories}
                 onChanged={loadTransactions}
+                onNavigateToNewCategory={() => setSubPage('new-category')}
               />
             ) : (
               <>
@@ -131,6 +135,7 @@ export default function App() {
                     onViewAllTransactions={() => setSubPage('all-transactions')}
                     prevTotals={prevTotals}
                     monthKey={monthKey}
+                    onNavigateToNewCategory={() => setSubPage('new-category')}
                   />
                 )}
                 {tab === 'dashboard' && (
