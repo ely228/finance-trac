@@ -22,8 +22,15 @@ export default function AllTransactionsPage({ transactions = [], categories = []
         setContextTransactionId(null)
       }
     }
+    const handleOutsideClick = () => {
+      setContextTransactionId(null)
+    }
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener('click', handleOutsideClick)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('click', handleOutsideClick)
+    }
   }, [])
 
   // Toggle body class to trigger full-screen blur when transaction context menu is open
@@ -88,13 +95,6 @@ export default function AllTransactionsPage({ transactions = [], categories = []
         <div
           className="context-blur-overlay"
           onClick={() => setContextTransactionId(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            background: 'rgba(31, 29, 47, 0.28)',
-            transition: 'opacity 0.26s ease'
-          }}
         />
       )}
 
@@ -283,7 +283,8 @@ export default function AllTransactionsPage({ transactions = [], categories = []
                     <div
                       key={t.id}
                       className={`tx-row ${t.type} ${isSelected ? 'context-menu-unblurred' : ''}`}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         if (contextTransactionId === t.id) {
                           setContextTransactionId(null)
                         } else {

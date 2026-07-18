@@ -17,8 +17,15 @@ export default function Categories({ categories, transactions, onChanged, onNavi
         setContextCategoryId(null)
       }
     }
+    const handleOutsideClick = () => {
+      setContextCategoryId(null)
+    }
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener('click', handleOutsideClick)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('click', handleOutsideClick)
+    }
   }, [])
 
   // Toggle body class to trigger full-screen blur when context menu is open
@@ -102,13 +109,6 @@ export default function Categories({ categories, transactions, onChanged, onNavi
         <div
           className="context-blur-overlay"
           onClick={() => setContextCategoryId(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            background: 'rgba(31, 29, 47, 0.28)',
-            transition: 'opacity 0.26s ease'
-          }}
         />
       )}
 
@@ -165,7 +165,8 @@ export default function Categories({ categories, transactions, onChanged, onNavi
               <div
                 className={`cat-row category-list-row ${isSelected ? 'context-menu-unblurred' : ''}`}
                 key={c.id}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   if (contextCategoryId === c.id) {
                     setContextCategoryId(null)
                   } else {

@@ -58,7 +58,6 @@ export default function EditTransactionModal({ transaction, categories, onSaved,
     <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1200 }}>
       <div className="modal-sheet" onClick={e => e.stopPropagation()}>
         <div className="modal-handle" />
-        <button className="modal-close" onClick={onClose} aria-label="Закрыть">✕</button>
 
         <form className="form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h2 className="modal-title">Редактировать операцию</h2>

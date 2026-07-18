@@ -48,8 +48,15 @@ export default function Home({ transactions, categories = [], email, onChanged, 
         setContextTransactionId(null)
       }
     }
+    const handleOutsideClick = () => {
+      setContextTransactionId(null)
+    }
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener('click', handleOutsideClick)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('click', handleOutsideClick)
+    }
   }, [])
 
   // Toggle body class to trigger full-screen blur when transaction context menu is open
@@ -90,7 +97,10 @@ export default function Home({ transactions, categories = [], email, onChanged, 
   const recent = [...transactions].sort((a, b) => {
     const dateComp = b.date.localeCompare(a.date)
     if (dateComp !== 0) return dateComp
-    return (b.id || '').localeCompare(a.id || '')
+    // Secure safe secondary ordering checks
+    const aId = String(a.id || '')
+    const bId = String(b.id || '')
+    return bId.localeCompare(aId)
   }).slice(0, 4)
 
   const activeMonthKey = monthKey || currentMonthKey()
@@ -136,13 +146,6 @@ export default function Home({ transactions, categories = [], email, onChanged, 
         <div
           className="context-blur-overlay"
           onClick={() => setContextTransactionId(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            background: 'rgba(31, 29, 47, 0.28)',
-            transition: 'opacity 0.26s ease'
-          }}
         />
       )}
 
@@ -261,7 +264,8 @@ export default function Home({ transactions, categories = [], email, onChanged, 
                 <div
                   key={t.id}
                   className={`tx-row ${t.type} ${isSelected ? 'context-menu-unblurred' : ''}`}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     if (contextTransactionId === t.id) {
                       setContextTransactionId(null)
                     } else {
@@ -321,7 +325,9 @@ export default function Home({ transactions, categories = [], email, onChanged, 
                   {isSelected && (
                     <div
                       className="ios-context-menu"
-                      onClick={e => e.stopPropagation()}
+                      onClick={e => {
+                        e.stopPropagation();
+                      }}
                       style={{
                         position: 'absolute',
                         top: 'calc(100% + 6px)',

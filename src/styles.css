@@ -438,14 +438,23 @@ button, input, select { font-family: inherit; }
   background: #FFFFFF;
   border: var(--mat-4-edge);
   width: 100%; max-width: 480px;
-  border-radius: var(--r-xl) var(--r-xl) 0 0 !important;
-  padding: 24px 20px 40px !important; /* uniform internal padding */
-  max-height: 82vh !important; /* uniform vertical spacing from top of screen */
+  border-radius: 28px 28px 0 0 !important; /* premium larger rounded top corners */
+  padding: 24px 20px 56px !important; /* uniform internal padding with bottom offset space */
+  max-height: 85vh !important; /* uniform vertical spacing from top of screen */
   margin-top: auto !important;
   overflow-y: auto;
   box-shadow: 0 -8px 30px rgba(31, 29, 47, 0.08);
   animation: sheet-up var(--dur-3) var(--smooth);
   margin: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Hide the bottom navigation bar and float overlay when any modal overlay is active */
+body:has(.modal-overlay) .nav {
+  display: none !important;
+}
+body:has(.modal-overlay) .nav-sphere {
+  display: none !important;
 }
 
 .modal-title {
@@ -825,24 +834,10 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 }
 
 /* Full-Screen Blur Mode for All Elements Except Active Context */
-body.context-blur-active .nav,
-body.context-blur-active .home-greeting,
-body.context-blur-active .search-bar,
-body.context-blur-active .filter-pills,
-body.context-blur-active .filter-pills-row,
-body.context-blur-active .advice-card,
-body.context-blur-active .insight-card,
-body.context-blur-active .recent-header,
-body.context-blur-active .hero-card,
-body.context-blur-active .new-tx-btn,
-body.context-blur-active .topbar,
-body.context-blur-active .categories-card > *:not(.context-menu-unblurred),
-body.context-blur-active .recent-card > *:not(.context-menu-unblurred),
-body.context-blur-active .day-group > *:not(.context-menu-unblurred),
-body.context-blur-active .recent-section,
-body.context-blur-active .home-main-col > *:not(.categories-card):not(.recent-card) {
-  filter: blur(12px);
-  pointer-events: none;
+/* Simplified to avoid complex selective child selectors which caused rendering visual bugs */
+body.context-blur-active {
+  /* prevent scrolling under context menu */
+  overflow: hidden !important;
 }
 
 .context-blur-overlay {
@@ -851,9 +846,9 @@ body.context-blur-active .home-main-col > *:not(.categories-card):not(.recent-ca
   width: 100vw !important;
   height: 100vh !important;
   height: 100dvh !important;
-  background: rgba(31, 29, 47, 0.28) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+  background: rgba(230, 226, 243, 0.45) !important; /* premium translucent backdrop */
+  backdrop-filter: blur(6px) !important; /* lower, softer blur as requested (6px instead of 12px) */
+  -webkit-backdrop-filter: blur(6px) !important;
   z-index: 1000 !important;
   pointer-events: auto !important;
 }

@@ -200,7 +200,6 @@ export default function EditCategorySheet({ category, onSaved, onClose }) {
         onClick={e => e.stopPropagation()}
       >
         <div className="modal-handle" />
-        <button className="modal-close" onClick={onClose} aria-label="Закрыть">✕</button>
 
         <h2 className="modal-title">
           Редактирование категории
