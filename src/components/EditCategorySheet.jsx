@@ -219,58 +219,63 @@ export default function EditCategorySheet({ category, onSaved, onClose }) {
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--ink-soft)', marginBottom: '8px' }}>
               Тип категории
             </label>
-            <div style={{
+            <div className="type-toggle-segment" style={{
               display: 'flex',
-              background: 'rgba(255, 255, 255, 0.7)',
-              border: '1.5px solid var(--hairline)',
-              borderRadius: '16px',
-              padding: '4px',
-              gap: '4px',
-              boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.02)'
+              background: '#F5F6FA',
+              borderRadius: '14px',
+              border: '1px solid var(--hairline)',
+              overflow: 'hidden',
+              padding: '2px',
+              marginBottom: '4px'
             }}>
               <button
                 type="button"
                 onClick={() => handleTypeChange('expense')}
                 style={{
                   flex: 1,
-                  height: '44px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  background: categoryType === 'expense' ? 'rgba(255, 59, 48, 0.08)' : 'transparent',
-                  color: categoryType === 'expense' ? '#FF3B30' : 'var(--ink-soft)',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px',
-                  transition: 'all 0.2s cubic-bezier(0.22, 1, 0.36, 1)'
+                  border: 'none',
+                  background: categoryType === 'expense' ? '#FFFFFF' : 'transparent',
+                  borderRadius: '12px',
+                  padding: '10px 4px',
+                  cursor: 'pointer',
+                  borderRight: '1px solid var(--hairline)',
+                  outline: 'none',
+                  transition: 'all 0.15s ease',
+                  boxShadow: categoryType === 'expense' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
                 }}
               >
-                <span style={{ fontSize: '15px' }}>↓</span> Расход
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EC5DA6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 5v14M19 12l-7 7-7-7" />
+                </svg>
+                <span style={{ fontSize: '12.5px', fontWeight: 700, color: categoryType === 'expense' ? '#EC5DA6' : 'var(--ink-soft)' }}>Расход</span>
               </button>
               <button
                 type="button"
                 onClick={() => handleTypeChange('income')}
                 style={{
                   flex: 1,
-                  height: '44px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  background: categoryType === 'income' ? 'rgba(52, 199, 89, 0.08)' : 'transparent',
-                  color: categoryType === 'income' ? '#34C759' : 'var(--ink-soft)',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px',
-                  transition: 'all 0.2s cubic-bezier(0.22, 1, 0.36, 1)'
+                  border: 'none',
+                  background: categoryType === 'income' ? '#FFFFFF' : 'transparent',
+                  borderRadius: '12px',
+                  padding: '10px 4px',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  transition: 'all 0.15s ease',
+                  boxShadow: categoryType === 'income' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
                 }}
               >
-                <span style={{ fontSize: '15px' }}>↑</span> Доход
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#37B891" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 19V5M5 12l7-7 7 7" />
+                </svg>
+                <span style={{ fontSize: '12.5px', fontWeight: 700, color: categoryType === 'income' ? '#37B891' : 'var(--ink-soft)' }}>Доход</span>
               </button>
             </div>
           </div>
