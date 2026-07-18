@@ -1,12 +1,13 @@
 import { useMemo, useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
+import EditCategorySheet from './EditCategorySheet'
 import ConfirmDialog from './ConfirmDialog'
 import { formatMoney, categoryStyle } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
-export default function Categories({ categories, transactions, onChanged, onNavigateToNewCategory, onNavigateToEditCategory }) {
+export default function Categories({ categories, transactions, onChanged, onNavigateToNewCategory }) {
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState('all')
+  const [editingCategory, setEditingCategory] = useState(null)
   const [contextCategoryId, setContextCategoryId] = useState(null)
   const [deletingCategory, setDeletingCategory] = useState(null)
 
@@ -34,15 +35,10 @@ export default function Categories({ categories, transactions, onChanged, onNavi
 
   const rows = categories
     .filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
-    .filter(c => {
-      if (filter === 'all') return true
-      const t = totals[c.name]
-      if (!t) return false
-      return filter === 'expense' ? t.expense > 0 : filter === 'income' ? t.income > 0 : false
-    })
     .map(c => {
       const t = totals[c.name] || { expense: 0, income: 0 }
-      const amount = filter === 'income' ? t.income : t.expense
+      // All Unified under standard expense or general total sum
+      const amount = t.expense
       const pct = Math.round((t.expense / expenseDivisor) * 100)
       return { ...c, amount, pct }
     })
@@ -83,6 +79,7 @@ export default function Categories({ categories, transactions, onChanged, onNavi
       <div className="topbar">
         <h1>Категории</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
+          {/* Add Category Button - opens full New Category page (Step 21.2) */}
           <button
             className="header-icon-btn"
             onClick={onNavigateToNewCategory}
@@ -116,11 +113,7 @@ export default function Categories({ categories, transactions, onChanged, onNavi
         <input placeholder="Поиск категорий" value={search} onChange={e => setSearch(e.target.value)} />
       </div>
 
-      <div className="filter-pills">
-        <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>Все</button>
-        <button className={filter === 'expense' ? 'active' : ''} onClick={() => setFilter('expense')}>Расходы</button>
-        <button className={filter === 'income' ? 'active' : ''} onClick={() => setFilter('income')}>Доходы</button>
-      </div>
+      {/* Clean, Unified categories. Expense/Income tabs deleted as requested */}
 
       <div className="card categories-card">
         {rows.length === 0 ? (
@@ -173,12 +166,12 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                   fontWeight: 'bold'
                 }}
               >
-                {c.icon ? c.icon : <CategoryIcon name={c.name} />}
+                <CategoryIcon name={c.icon || c.name} />
               </div>
               <div className="cat-info" style={{ flex: 1, minWidth: 0 }}>
                 <div className="cat-name" style={{ fontSize: '13.5px', fontWeight: 700 }}>{c.name}</div>
                 <div className="cat-sub" style={{ fontSize: '11px', color: 'var(--ink-soft)' }}>
-                  {c.type ? (c.type === 'expense' ? 'Расходная категория' : 'Доходная категория') : categoryMeta(c.name).description}
+                  {categoryMeta(c.name).description}
                 </div>
                 <div className="cat-progress">
                   <div className="cat-progress-fill" style={{ width: `${Math.min(100, c.pct)}%`, background: customFg }} />
@@ -192,7 +185,7 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                 ›
               </div>
 
-              {/* Native iOS-style Context Menu */}
+              {/* Native iOS-style Context Menu with SF Symbols / SVG style outline icons */}
               {isSelected && (
                 <div
                   className="ios-context-menu"
@@ -211,19 +204,14 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
                     zIndex: 1011,
                     display: 'flex',
-                    flexDirection: 'column',
-                    transform: 'scale(1)',
-                    opacity: 1,
-                    animation: 'ios-context-appear 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
+                    flexDirection: 'column'
                   }}
                 >
                   <button
                     className="ios-context-item"
                     onClick={() => {
                       setContextCategoryId(null)
-                      if (onNavigateToEditCategory) {
-                        onNavigateToEditCategory(c)
-                      }
+                      setEditingCategory(c)
                     }}
                     style={{
                       display: 'flex',
@@ -243,7 +231,10 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                     }}
                   >
                     <span>Редактировать</span>
-                    <span style={{ fontSize: '16px', opacity: 0.8 }}>✏️</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}>
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
                   </button>
                   <div style={{ height: '1px', background: 'rgba(0, 0, 0, 0.05)', margin: '2px 8px' }} />
                   <button
@@ -270,7 +261,12 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                     }}
                   >
                     <span>Удалить</span>
-                    <span style={{ fontSize: '16px', color: '#FF3B30' }}>🗑️</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#FF3B30' }}>
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
                   </button>
                 </div>
               )}
@@ -307,10 +303,18 @@ export default function Categories({ categories, transactions, onChanged, onNavi
         <div style={{ flex: 1 }}>
           <h2 style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, textTransform: 'none', color: 'var(--ink)' }}>Совет на сегодня</h2>
           <div style={{ fontSize: '12.5px', fontWeight: 600, marginTop: '4px', lineHeight: '1.4', color: 'var(--ink-soft)' }}>
-            Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишстого стресса.
+            Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишнего стресса.
           </div>
         </div>
       </div>
+
+      {editingCategory && (
+        <EditCategorySheet
+          category={editingCategory}
+          onSaved={onChanged}
+          onClose={() => setEditingCategory(null)}
+        />
+      )}
 
       {deletingCategory && (
         <ConfirmDialog

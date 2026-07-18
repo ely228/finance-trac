@@ -87,7 +87,7 @@ export default function AllTransactionsModal({ transactions = [], onClose, onCha
           ) : (
             groups.map(group => (
               <div key={group.label} className="day-group">
-                <div className="day-group-title" style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ink-faint)', textTransform: 'uppercase', marginBottom: '8px', marginTop: '12px' }}>
+                <div className="day-group-title" style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ink-faint)', textTransform: 'none', marginBottom: '8px', marginTop: '12px' }}>
                   {group.label}
                 </div>
                 {group.items.map(t => {
