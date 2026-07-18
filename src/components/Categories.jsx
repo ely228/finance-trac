@@ -21,6 +21,18 @@ export default function Categories({ categories, transactions, onChanged, onNavi
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  // Toggle body class to trigger full-screen blur when context menu is open
+  useEffect(() => {
+    if (contextCategoryId) {
+      document.body.classList.add('context-blur-active')
+    } else {
+      document.body.classList.remove('context-blur-active')
+    }
+    return () => {
+      document.body.classList.remove('context-blur-active')
+    }
+  }, [contextCategoryId])
+
   const totals = useMemo(() => {
     const map = {}
     for (const t of transactions) {
@@ -31,7 +43,9 @@ export default function Categories({ categories, transactions, onChanged, onNavi
   }, [transactions])
 
   const totalExpenseAll = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount), 0)
+  const totalIncomeAll = transactions.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount), 0)
   const expenseDivisor = totalExpenseAll || 1
+  const incomeDivisor = totalIncomeAll || 1
 
   const latestDateMap = useMemo(() => {
     const map = {}
@@ -52,7 +66,9 @@ export default function Categories({ categories, transactions, onChanged, onNavi
       // Show appropriate amount depending on category type or fallback to expense
       const isIncome = c.type === 'income'
       const amount = isIncome ? t.income : t.expense
-      const pct = Math.round((t.expense / expenseDivisor) * 100)
+      const pct = isIncome
+        ? Math.round((t.income / incomeDivisor) * 100)
+        : Math.round((t.expense / expenseDivisor) * 100)
       const latestDate = latestDateMap[c.name] || ''
       return { ...c, amount, pct, latestDate }
     })
@@ -81,24 +97,22 @@ export default function Categories({ categories, transactions, onChanged, onNavi
 
   return (
     <div className="home-grid">
-      <div className="home-main-col">
-        {/* Full viewport dim and blur backdrop for the context menu */}
-        {contextCategoryId && (
-          <div
-            className="context-blur-overlay"
-            onClick={() => setContextCategoryId(null)}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 1000,
-              background: 'rgba(31, 29, 47, 0.28)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              transition: 'opacity 0.26s ease'
-            }}
-          />
-        )}
+      {/* Full viewport dim and blur backdrop for the context menu */}
+      {contextCategoryId && (
+        <div
+          className="context-blur-overlay"
+          onClick={() => setContextCategoryId(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(31, 29, 47, 0.28)',
+            transition: 'opacity 0.26s ease'
+          }}
+        />
+      )}
 
+      <div className="home-main-col">
         <div className="home-greeting" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
           <h1 style={{ margin: 0, fontSize: '30px', fontWeight: 800, color: 'var(--ink)' }}>Категории</h1>
           <button
@@ -149,7 +163,7 @@ export default function Categories({ categories, transactions, onChanged, onNavi
 
             return (
               <div
-                className="cat-row category-list-row"
+                className={`cat-row category-list-row ${isSelected ? 'context-menu-unblurred' : ''}`}
                 key={c.id}
                 onClick={() => {
                   if (contextCategoryId === c.id) {
@@ -167,8 +181,8 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                   zIndex: isSelected ? 1010 : 1,
                   transform: isSelected ? 'scale(1.02)' : 'scale(1)',
                   background: isSelected ? '#FFFFFF' : 'transparent',
-                  borderRadius: isSelected ? '16px' : '0',
-                  padding: isSelected ? '16px 12px' : '16px 6px',
+                  borderRadius: isSelected ? '16px' : '16px', // constant 16px to prevent layout changes
+                  padding: isSelected ? '16px 12px' : '16px 12px', // constant padding prevents stutter
                   boxShadow: isSelected ? '0 10px 30px rgba(31, 29, 47, 0.12)' : 'none',
                   transition: 'all 0.24s cubic-bezier(0.22, 1, 0.36, 1)'
                 }}
