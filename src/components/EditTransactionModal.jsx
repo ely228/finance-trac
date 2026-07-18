@@ -61,7 +61,7 @@ export default function EditTransactionModal({ transaction, categories, onSaved,
         <button className="modal-close" onClick={onClose} aria-label="Закрыть">✕</button>
 
         <form className="form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 800, margin: '0 0 8px', color: 'var(--ink)' }}>Редактировать операцию</h2>
+          <h2 className="modal-title">Редактировать операцию</h2>
 
           {/* Operation type toggle */}
           <div className="type-toggle-segment" style={{

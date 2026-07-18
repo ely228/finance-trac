@@ -198,17 +198,11 @@ export default function EditCategorySheet({ category, onSaved, onClose }) {
       <div
         className="modal-sheet"
         onClick={e => e.stopPropagation()}
-        style={{
-          maxHeight: '92vh',
-          overflowY: 'auto',
-          borderRadius: '28px 28px 0 0',
-          padding: '24px 20px 40px'
-        }}
       >
         <div className="modal-handle" />
         <button className="modal-close" onClick={onClose} aria-label="Закрыть">✕</button>
 
-        <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--ink)', textAlign: 'center', marginBottom: '20px' }}>
+        <h2 className="modal-title">
           Редактирование категории
         </h2>
 

@@ -439,12 +439,21 @@ button, input, select { font-family: inherit; }
   border: var(--mat-4-edge);
   width: 100%; max-width: 480px;
   border-radius: var(--r-xl) var(--r-xl) 0 0 !important;
-  padding: 24px;
-  max-height: 92vh !important;
+  padding: 24px 20px 40px !important; /* uniform internal padding */
+  max-height: 82vh !important; /* uniform vertical spacing from top of screen */
+  margin-top: auto !important;
   overflow-y: auto;
   box-shadow: 0 -8px 30px rgba(31, 29, 47, 0.08);
   animation: sheet-up var(--dur-3) var(--smooth);
   margin: 0 !important;
+}
+
+.modal-title {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  text-align: center !important;
+  margin: 12px 0 20px 0 !important; /* shifted slightly downwards, uniform spacing */
 }
 .modal-handle { width: 36px; height: 5px; border-radius: 3px; background: rgba(31, 29, 47, 0.12); margin: 0 auto 16px; }
 .modal-close {
@@ -829,9 +838,30 @@ body.context-blur-active .new-tx-btn,
 body.context-blur-active .topbar,
 body.context-blur-active .categories-card > *:not(.context-menu-unblurred),
 body.context-blur-active .recent-card > *:not(.context-menu-unblurred),
-body.context-blur-active .day-group > *:not(.context-menu-unblurred) {
+body.context-blur-active .day-group > *:not(.context-menu-unblurred),
+body.context-blur-active .recent-section,
+body.context-blur-active .home-main-col > *:not(.categories-card):not(.recent-card) {
   filter: blur(12px);
   pointer-events: none;
+}
+
+.context-blur-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  background: rgba(31, 29, 47, 0.28) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+}
+
+.categories-card, .recent-card, .card {
+  /* clear background filters / borders to avoid nested layer compositing visual issues */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .content, .nav, .cat-row, .tx-row {
