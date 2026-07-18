@@ -111,12 +111,12 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                   fontWeight: 'bold'
                 }}
               >
-                {c.icon ? c.icon : <CategoryIcon name={c.name} />}
+                <CategoryIcon name={c.icon || c.name} />
               </div>
               <div className="cat-info" style={{ flex: 1, minWidth: 0 }}>
                 <div className="cat-name" style={{ fontSize: '13.5px', fontWeight: 700 }}>{c.name}</div>
                 <div className="cat-sub" style={{ fontSize: '11px', color: 'var(--ink-soft)' }}>
-                  {c.type ? (c.type === 'expense' ? 'Расходная категория' : 'Доходная категория') : categoryMeta(c.name).description}
+                  {categoryMeta(c.name).description}
                 </div>
                 <div className="cat-progress">
                   <div className="cat-progress-fill" style={{ width: `${Math.min(100, c.pct)}%`, background: customFg }} />
