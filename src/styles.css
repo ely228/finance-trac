@@ -816,8 +816,20 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 }
 
 /* Full-Screen Blur Mode for All Elements Except Active Context */
-body.context-blur-active .content > *:not(.context-menu-unblurred),
-body.context-blur-active .nav {
+body.context-blur-active .nav,
+body.context-blur-active .home-greeting,
+body.context-blur-active .search-bar,
+body.context-blur-active .filter-pills,
+body.context-blur-active .filter-pills-row,
+body.context-blur-active .advice-card,
+body.context-blur-active .insight-card,
+body.context-blur-active .recent-header,
+body.context-blur-active .hero-card,
+body.context-blur-active .new-tx-btn,
+body.context-blur-active .topbar,
+body.context-blur-active .categories-card > *:not(.context-menu-unblurred),
+body.context-blur-active .recent-card > *:not(.context-menu-unblurred),
+body.context-blur-active .day-group > *:not(.context-menu-unblurred) {
   filter: blur(12px);
   pointer-events: none;
 }
