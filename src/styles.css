@@ -805,3 +805,7 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
   background: rgba(0, 0, 0, 0.1) !important;
   transform: scale(0.98);
 }
+
+.categories-card {
+  overflow: visible !important;
+}

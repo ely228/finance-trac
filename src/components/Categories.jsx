@@ -35,6 +35,14 @@ export default function Categories({ categories, transactions, onChanged, onNavi
 
   const rows = categories
     .filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
+    .map(c => {
+      const t = totals[c.name] || { expense: 0, income: 0 }
+      // Show appropriate amount depending on category type or fallback to expense
+      const isIncome = c.type === 'income'
+      const amount = isIncome ? t.income : t.expense
+      const pct = Math.round((t.expense / expenseDivisor) * 100)
+      return { ...c, amount, pct }
+    })
 
   async function confirmDeleteCategory() {
     if (!deletingCategory) return
@@ -72,25 +80,28 @@ export default function Categories({ categories, transactions, onChanged, onNavi
       <div className="topbar">
         <h1>Категории</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
-          {/* Add Category Button - opens full New Category page (Step 21.2) */}
+          {/* Add Category Button - matched exactly to the notification bell on home tab */}
           <button
-            className="header-icon-btn"
+            className="notification-btn"
             onClick={onNavigateToNewCategory}
             aria-label="Добавить категорию"
             style={{
-              background: 'transparent',
-              color: 'var(--ink-soft)',
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              background: '#FFFFFF',
+              border: '1px solid var(--hairline)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              border: '1px solid var(--hairline)',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              position: 'relative',
+              boxShadow: 'var(--el-1)',
+              outline: 'none',
+              padding: 0
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--ink)' }}>
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
@@ -108,7 +119,7 @@ export default function Categories({ categories, transactions, onChanged, onNavi
 
       {/* Clean, Unified categories. Expense/Income tabs deleted as requested */}
 
-      <div className="card categories-card">
+      <div className="card categories-card" style={{ overflow: 'visible' }}>
         {rows.length === 0 ? (
           <p className="muted">Ничего не найдено. Добавь категорию кнопкой «+» сверху.</p>
         ) : rows.map(c => {
@@ -163,11 +174,18 @@ export default function Categories({ categories, transactions, onChanged, onNavi
               </div>
               <div className="cat-info" style={{ flex: 1, minWidth: 0 }}>
                 <div className="cat-name" style={{ fontSize: '13.5px', fontWeight: 700 }}>{c.name}</div>
-                <div className="cat-sub" style={{ fontSize: '11px', color: 'var(--ink-soft)' }}>
+                <div className="cat-sub" style={{ fontSize: '11px', color: 'var(--ink-soft)', marginBottom: '4px' }}>
                   {categoryMeta(c.name).description}
                 </div>
+                <div className="cat-progress">
+                  <div className="cat-progress-fill" style={{ width: `${Math.min(100, c.pct || 0)}%`, background: customFg }} />
+                </div>
               </div>
-              <div className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '18px', flexShrink: 0, marginLeft: 'auto' }}>
+              <div className="cat-numbers" style={{ textAlign: 'right', flexShrink: 0, marginRight: '8px' }}>
+                <div className="cat-amount" style={{ fontSize: '13px', fontWeight: 700 }}>{formatMoney(c.amount || 0)}</div>
+                <div className="cat-pct" style={{ fontSize: '10.5px', color: 'var(--ink-faint)' }}>{c.pct || 0}%</div>
+              </div>
+              <div className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '18px', flexShrink: 0, marginLeft: '4px' }}>
                 ›
               </div>
 

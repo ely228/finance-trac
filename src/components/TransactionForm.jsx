@@ -36,38 +36,91 @@ export default function TransactionForm({ categories, onAdded }) {
     <form className="form" onSubmit={handleSubmit}>
       <h2>Новая операция</h2>
 
-      <div className="type-toggle" style={{ display: 'flex', gap: '10px' }}>
-        <button type="button" className={type === 'expense' ? 'active expense' : 'expense'} onClick={() => setType('expense')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <span style={{
-            display: 'inline-flex',
+      {/* Operation type toggle: Expense, Income, Transfer */}
+      <div className="type-toggle-segment" style={{
+        display: 'flex',
+        background: '#F5F6FA',
+        borderRadius: '14px',
+        border: '1px solid var(--hairline)',
+        overflow: 'hidden',
+        padding: '2px',
+        marginBottom: '16px'
+      }}>
+        <button
+          type="button"
+          onClick={() => setType('expense')}
+          style={{
+            flex: 1,
+            display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: 'rgba(226, 99, 122, 0.15)',
-            color: 'var(--expense)',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            flexShrink: 0
-          }}>↓</span>
-          <span>Расход</span>
+            gap: '6px',
+            border: 'none',
+            background: type === 'expense' ? '#FFFFFF' : 'transparent',
+            borderRadius: '12px',
+            padding: '10px 4px',
+            cursor: 'pointer',
+            borderRight: '1px solid var(--hairline)',
+            outline: 'none',
+            transition: 'all 0.15s ease',
+            boxShadow: type === 'expense' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EC5DA6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 5v14M19 12l-7 7-7-7" />
+          </svg>
+          <span style={{ fontSize: '12.5px', fontWeight: 700, color: type === 'expense' ? '#EC5DA6' : 'var(--ink-soft)' }}>Расход</span>
         </button>
-        <button type="button" className={type === 'income' ? 'active income' : 'income'} onClick={() => setType('income')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <span style={{
-            display: 'inline-flex',
+        <button
+          type="button"
+          onClick={() => setType('income')}
+          style={{
+            flex: 1,
+            display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: 'rgba(79, 174, 140, 0.15)',
-            color: 'var(--income)',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            flexShrink: 0
-          }}>↑</span>
-          <span>Доход</span>
+            gap: '6px',
+            border: 'none',
+            background: type === 'income' ? '#FFFFFF' : 'transparent',
+            borderRadius: '12px',
+            padding: '10px 4px',
+            cursor: 'pointer',
+            borderRight: '1px solid var(--hairline)',
+            outline: 'none',
+            transition: 'all 0.15s ease',
+            boxShadow: type === 'income' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#37B891" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 19V5M5 12l7-7 7 7" />
+          </svg>
+          <span style={{ fontSize: '12.5px', fontWeight: 700, color: type === 'income' ? '#37B891' : 'var(--ink-soft)' }}>Доход</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => alert('Переводы появятся в будущих обновлениях')}
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            border: 'none',
+            background: 'transparent',
+            borderRadius: '12px',
+            padding: '10px 4px',
+            cursor: 'pointer',
+            opacity: 0.55,
+            outline: 'none'
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--lavender-dark)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M8 3 4 7l4 4" />
+            <path d="M4 7h16" />
+            <path d="M16 21l4-4-4-4" />
+            <path d="M20 17H4" />
+          </svg>
+          <span style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--ink-soft)' }}>Перевод</span>
         </button>
       </div>
 
