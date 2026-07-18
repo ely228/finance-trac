@@ -1,12 +1,24 @@
-import { useMemo, useState } from 'react'
-import EditCategorySheet from './EditCategorySheet'
+import { useMemo, useState, useEffect } from 'react'
+import { supabase } from '../supabaseClient'
+import ConfirmDialog from './ConfirmDialog'
 import { formatMoney, categoryStyle } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
-export default function Categories({ categories, transactions, onChanged, onNavigateToNewCategory }) {
+export default function Categories({ categories, transactions, onChanged, onNavigateToNewCategory, onNavigateToEditCategory }) {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all')
-  const [editingCategory, setEditingCategory] = useState(null)
+  const [contextCategoryId, setContextCategoryId] = useState(null)
+  const [deletingCategory, setDeletingCategory] = useState(null)
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setContextCategoryId(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const totals = useMemo(() => {
     const map = {}
@@ -35,12 +47,42 @@ export default function Categories({ categories, transactions, onChanged, onNavi
       return { ...c, amount, pct }
     })
 
+  async function confirmDeleteCategory() {
+    if (!deletingCategory) return
+    const { error: err } = await supabase
+      .from('categories')
+      .delete()
+      .eq('id', deletingCategory.id)
+    if (err) {
+      alert(err.message)
+      return
+    }
+    setDeletingCategory(null)
+    onChanged()
+  }
+
   return (
     <div>
+      {/* Full viewport dim and blur backdrop for the context menu */}
+      {contextCategoryId && (
+        <div
+          className="context-blur-overlay"
+          onClick={() => setContextCategoryId(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(31, 29, 47, 0.28)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            transition: 'opacity 0.26s ease'
+          }}
+        />
+      )}
+
       <div className="topbar">
         <h1>Категории</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
-          {/* Add Category Button - opens full New Category page (Step 21.2) */}
           <button
             className="header-icon-btn"
             onClick={onNavigateToNewCategory}
@@ -87,13 +129,33 @@ export default function Categories({ categories, transactions, onChanged, onNavi
           const style = categoryStyle(c.name)
           const customBg = c.color ? `rgba(${c.color}, 0.16)` : style.bg
           const customFg = c.color ? `rgb(${c.color})` : style.fg
+          const isSelected = contextCategoryId === c.id
 
           return (
             <div
               className="cat-row category-list-row"
               key={c.id}
-              onClick={() => setEditingCategory(c)}
-              style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+              onClick={() => {
+                if (contextCategoryId === c.id) {
+                  setContextCategoryId(null)
+                } else {
+                  setContextCategoryId(c.id)
+                }
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                cursor: 'pointer',
+                position: 'relative',
+                zIndex: isSelected ? 1010 : 1,
+                transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+                background: isSelected ? '#FFFFFF' : 'transparent',
+                borderRadius: isSelected ? '16px' : '0',
+                padding: isSelected ? '16px 12px' : '16px 6px',
+                boxShadow: isSelected ? '0 10px 30px rgba(31, 29, 47, 0.12)' : 'none',
+                transition: 'all 0.24s cubic-bezier(0.22, 1, 0.36, 1)'
+              }}
             >
               <div
                 className="cat-avatar"
@@ -126,7 +188,92 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                 <div className="cat-amount" style={{ fontSize: '13px', fontWeight: 700 }}>{formatMoney(c.amount)}</div>
                 <div className="cat-pct" style={{ fontSize: '10.5px', color: 'var(--ink-faint)' }}>{c.pct}%</div>
               </div>
-              <span className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '14px', flexShrink: 0 }}>›</span>
+              <div className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '18px', flexShrink: 0 }}>
+                ›
+              </div>
+
+              {/* Native iOS-style Context Menu */}
+              {isSelected && (
+                <div
+                  className="ios-context-menu"
+                  onClick={e => e.stopPropagation()}
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 6px)',
+                    right: '12px',
+                    background: 'rgba(255, 255, 255, 0.88)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(0, 0, 0, 0.08)',
+                    borderRadius: '18px',
+                    padding: '4px',
+                    minWidth: '180px',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+                    zIndex: 1011,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transform: 'scale(1)',
+                    opacity: 1,
+                    animation: 'ios-context-appear 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
+                  }}
+                >
+                  <button
+                    className="ios-context-item"
+                    onClick={() => {
+                      setContextCategoryId(null)
+                      if (onNavigateToEditCategory) {
+                        onNavigateToEditCategory(c)
+                      }
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      padding: '12px 16px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--ink)',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      borderRadius: '14px',
+                      textAlign: 'left',
+                      transition: 'background 0.15s ease'
+                    }}
+                  >
+                    <span>Редактировать</span>
+                    <span style={{ fontSize: '16px', opacity: 0.8 }}>✏️</span>
+                  </button>
+                  <div style={{ height: '1px', background: 'rgba(0, 0, 0, 0.05)', margin: '2px 8px' }} />
+                  <button
+                    className="ios-context-item danger"
+                    onClick={() => {
+                      setContextCategoryId(null)
+                      setDeletingCategory(c)
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      padding: '12px 16px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#FF3B30', // System iOS red
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      borderRadius: '14px',
+                      textAlign: 'left',
+                      transition: 'background 0.15s ease'
+                    }}
+                  >
+                    <span>Удалить</span>
+                    <span style={{ fontSize: '16px', color: '#FF3B30' }}>🗑️</span>
+                  </button>
+                </div>
+              )}
             </div>
           )
         })}
@@ -160,16 +307,17 @@ export default function Categories({ categories, transactions, onChanged, onNavi
         <div style={{ flex: 1 }}>
           <h2 style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, textTransform: 'none', color: 'var(--ink)' }}>Совет на сегодня</h2>
           <div style={{ fontSize: '12.5px', fontWeight: 600, marginTop: '4px', lineHeight: '1.4', color: 'var(--ink-soft)' }}>
-            Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишнего стресса.
+            Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишстого стресса.
           </div>
         </div>
       </div>
 
-      {editingCategory && (
-        <EditCategorySheet
-          category={editingCategory}
-          onSaved={onChanged}
-          onClose={() => setEditingCategory(null)}
+      {deletingCategory && (
+        <ConfirmDialog
+          title="Удалить категорию?"
+          message="Это действие нельзя отменить."
+          onConfirm={confirmDeleteCategory}
+          onCancel={() => setDeletingCategory(null)}
         />
       )}
     </div>

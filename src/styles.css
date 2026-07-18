@@ -779,3 +779,23 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 /* Glass donut style neutralizer */
 .glass-donut::before { display: none !important; }
 .glass-donut::after { display: none !important; }
+
+/* ---------- iOS-style Context Menu Keyframes ---------- */
+@keyframes ios-context-appear {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ios-context-item:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.ios-context-item.danger:hover {
+  background: rgba(255, 59, 48, 0.08) !important;
+}

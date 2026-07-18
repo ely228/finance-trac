@@ -34,8 +34,9 @@ export default function App() {
   const [showAdd, setShowAdd] = useState(false)
   const [loading, setLoading] = useState(!visualTest)
 
-  // Step 21.1: subPage state for render routing inside tabs (null | 'new-category' | 'all-transactions')
+  // Sub-page state inside tabs (null | 'new-category' | 'edit-category' | 'all-transactions')
   const [subPage, setSubPage] = useState(null)
+  const [editingCategory, setEditingCategory] = useState(null)
 
   useEffect(() => {
     if (visualTest) return
@@ -77,9 +78,10 @@ export default function App() {
     Promise.all([loadCategories(), loadTransactions(), loadPrevMonthTotals()]).finally(() => setLoading(false))
   }, [loadCategories, loadTransactions, loadPrevMonthTotals, session])
 
-  // Reset subPage when switching tabs
+  // Reset subPage and editing category state when switching tabs
   useEffect(() => {
     setSubPage(null)
+    setEditingCategory(null)
   }, [tab])
 
   if (session === undefined) return null
@@ -110,6 +112,20 @@ export default function App() {
                 onAdded={() => {
                   loadCategories()
                   setSubPage(null)
+                }}
+              />
+            ) : subPage === 'edit-category' && editingCategory ? (
+              <NewCategoryPage
+                isEditing={true}
+                categoryToEdit={editingCategory}
+                onBack={() => {
+                  setSubPage(null)
+                  setEditingCategory(null)
+                }}
+                onAdded={() => {
+                  loadCategories()
+                  setSubPage(null)
+                  setEditingCategory(null)
                 }}
               />
             ) : subPage === 'all-transactions' ? (
@@ -147,6 +163,10 @@ export default function App() {
                     transactions={transactions}
                     onChanged={loadCategories}
                     onNavigateToNewCategory={() => setSubPage('new-category')}
+                    onNavigateToEditCategory={(c) => {
+                      setEditingCategory(c)
+                      setSubPage('edit-category')
+                    }}
                   />
                 )}
                 {tab === 'account' && (
