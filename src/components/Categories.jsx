@@ -35,13 +35,6 @@ export default function Categories({ categories, transactions, onChanged, onNavi
 
   const rows = categories
     .filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
-    .map(c => {
-      const t = totals[c.name] || { expense: 0, income: 0 }
-      // All Unified under standard expense or general total sum
-      const amount = t.expense
-      const pct = Math.round((t.expense / expenseDivisor) * 100)
-      return { ...c, amount, pct }
-    })
 
   async function confirmDeleteCategory() {
     if (!deletingCategory) return
@@ -173,15 +166,8 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                 <div className="cat-sub" style={{ fontSize: '11px', color: 'var(--ink-soft)' }}>
                   {categoryMeta(c.name).description}
                 </div>
-                <div className="cat-progress">
-                  <div className="cat-progress-fill" style={{ width: `${Math.min(100, c.pct)}%`, background: customFg }} />
-                </div>
               </div>
-              <div className="cat-numbers" style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div className="cat-amount" style={{ fontSize: '13px', fontWeight: 700 }}>{formatMoney(c.amount)}</div>
-                <div className="cat-pct" style={{ fontSize: '10.5px', color: 'var(--ink-faint)' }}>{c.pct}%</div>
-              </div>
-              <div className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '18px', flexShrink: 0 }}>
+              <div className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '18px', flexShrink: 0, marginLeft: 'auto' }}>
                 ›
               </div>
 
