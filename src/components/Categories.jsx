@@ -170,6 +170,8 @@ export default function Categories({ categories, transactions, onChanged, onNavi
           category={editingCategory}
           onSaved={onChanged}
           onClose={() => setEditingCategory(null)}
+          overlayClassName="categories-overlay"
+          sheetClassName="categories-sheet"
         />
       )}
     </div>

@@ -454,6 +454,45 @@ button, input, select { font-family: inherit; }
 }
 @keyframes sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
+/* Custom categories modal overlay and sheet with backdrop filter and scale/lift animation */
+.categories-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  height: 100dvh;
+  background: rgba(31, 29, 47, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.categories-sheet {
+  position: relative;
+  background: #FFFFFF;
+  border: var(--mat-4-edge);
+  width: 100%; max-width: 440px;
+  border-radius: 24px !important;
+  padding: 24px;
+  max-height: 90vh !important;
+  overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(31, 29, 47, 0.15);
+  animation: scaleLift 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin: 0 !important;
+}
+@keyframes scaleLift {
+  from {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
 /* ---------- confirm dialog ---------- */
 .confirm-overlay {
   position: fixed; inset: 0; background: rgba(31, 29, 47, 0.4);

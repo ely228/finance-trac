@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import ConfirmDialog from './ConfirmDialog'
 
-export default function EditCategorySheet({ category, onSaved, onClose }) {
+export default function EditCategorySheet({ category, onSaved, onClose, overlayClassName, sheetClassName, overlayStyle, sheetStyle }) {
   const [name, setName] = useState(category ? category.name : '')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -53,8 +53,8 @@ export default function EditCategorySheet({ category, onSaved, onClose }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-sheet" onClick={e => e.stopPropagation()}>
+    <div className={overlayClassName || "modal-overlay"} style={overlayStyle} onClick={onClose}>
+      <div className={sheetClassName || "modal-sheet"} style={sheetStyle} onClick={e => e.stopPropagation()}>
         <div className="modal-handle" />
         <button className="modal-close" onClick={onClose} aria-label="Закрыть">✕</button>
         <form className="form" onSubmit={handleSubmit}>
