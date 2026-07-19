@@ -881,29 +881,16 @@ body.context-blur-active .content {
   touch-action: none !important; /* intercept swipe gestures on overlay to lock background scroll */
 }
 
-/* Elevate the parent card containing the active element to prevent Safari iOS nested stacking context compositing bugs */
-body.context-blur-active .card:has(.context-menu-unblurred) {
-  z-index: 1010 !important;
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
+/* Ensure cards do not establish a stacking context or clip their children (like the context menu) when context menu is active */
+body.context-blur-active .card {
+  transition: none !important;
+  transform: none !important;
+  overflow: visible !important;
 }
 
-/* Ensure all other sibling items within the active card are dimmed and blurred so only the active item stands out */
-body.context-blur-active .card:has(.context-menu-unblurred) .tx-row:not(.context-menu-unblurred),
-body.context-blur-active .card:has(.context-menu-unblurred) .cat-row:not(.context-menu-unblurred),
-body.context-blur-active .card:has(.context-menu-unblurred) h2,
-body.context-blur-active .card:has(.context-menu-unblurred) .category-list-row:not(.context-menu-unblurred) {
-  opacity: 0.25 !important;
-  filter: blur(4px) !important;
-  -webkit-filter: blur(4px) !important;
-  pointer-events: none !important;
-}
-
-.categories-card, .recent-card, .card {
-  /* clear background filters / borders to avoid nested layer compositing visual issues */
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+/* Ensure both categories card and recent operations card have overflow visible so the context menu is never clipped */
+.categories-card, .recent-card {
+  overflow: visible !important;
 }
 
 .nav, .cat-row, .tx-row {
