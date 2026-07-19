@@ -72,7 +72,10 @@
   font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent !important;
+}
 html, body {
   min-height: 100%;
   min-height: 100vh;
@@ -661,6 +664,11 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 }
 .search-bar input { flex: 1; border: none; background: none; outline: none; font-size: 14px; color: var(--ink); }
 .search-bar input::placeholder { color: var(--ink-faint); }
+
+.amount-input::placeholder {
+  color: rgba(31, 29, 47, 0.25) !important;
+  opacity: 1 !important;
+}
 
 /* ---------- filter-pills ---------- */
 .filter-pills { display: flex; gap: 8px; margin-bottom: var(--sp-5); overflow-x: auto; scrollbar-width: none; }

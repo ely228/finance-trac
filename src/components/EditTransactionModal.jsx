@@ -175,6 +175,7 @@ export default function EditTransactionModal({ transaction, categories, onSaved,
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 required
+                className="amount-input"
                 style={{
                   border: 'none',
                   background: 'transparent',
@@ -183,8 +184,8 @@ export default function EditTransactionModal({ transaction, categories, onSaved,
                   color: amount ? 'var(--ink)' : 'rgba(31, 29, 47, 0.25)',
                   padding: '8px 0',
                   outline: 'none',
-                  width: amount ? `${String(amount).length * 22 + 10}px` : '90px',
-                  minWidth: '40px',
+                  width: `${(amount || '0,00').length + 0.5}ch`,
+                  minWidth: '4.5ch',
                   textAlign: 'left'
                 }}
               />
