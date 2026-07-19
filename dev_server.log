@@ -1,0 +1,10 @@
+
+> finance-tracker@1.0.0 dev
+> vite
+
+
+  VITE v5.4.21  ready in 276 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+5:26:45 AM [vite] hmr update /src/styles.css

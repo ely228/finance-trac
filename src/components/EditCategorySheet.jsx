@@ -137,6 +137,14 @@ const PALETTE_COLORS = [
 ]
 
 export default function EditCategorySheet({ category, onSaved, onClose }) {
+  // Lock body scroll and set modal-open class
+  useEffect(() => {
+    document.body.classList.add('modal-open')
+    return () => {
+      document.body.classList.remove('modal-open')
+    }
+  }, [])
+
   const [name, setName] = useState(category ? category.name : '')
   const [categoryType, setCategoryType] = useState(category && category.type ? category.type : 'expense')
   const [selectedIcon, setSelectedIcon] = useState(category && category.icon ? category.icon : EXPENSE_ICONS[0])

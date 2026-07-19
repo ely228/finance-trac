@@ -4,6 +4,14 @@ import { todayISO, categoryStyle } from '../utils'
 import CategoryIcon from './CategoryIcon'
 
 export default function AddTransactionModal({ categories, onAdded, onClose, onNavigateToNewCategory }) {
+  // Lock body scroll and set modal-open class
+  useEffect(() => {
+    document.body.classList.add('modal-open')
+    return () => {
+      document.body.classList.remove('modal-open')
+    }
+  }, [])
+
   const [date, setDate] = useState(todayISO())
   const [category, setCategory] = useState('')
   const [type, setType] = useState('expense')
