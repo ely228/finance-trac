@@ -665,6 +665,10 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 .search-bar input { flex: 1; border: none; background: none; outline: none; font-size: 14px; color: var(--ink); }
 .search-bar input::placeholder { color: var(--ink-faint); }
 
+.amount-input {
+  transition: width 0.12s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
 .amount-input::placeholder {
   color: rgba(31, 29, 47, 0.25) !important;
   opacity: 1 !important;

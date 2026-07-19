@@ -3,7 +3,34 @@ import { supabase } from '../supabaseClient'
 import { todayISO, categoryStyle } from '../utils'
 import CategoryIcon from './CategoryIcon'
 
+// Helper to format raw inputs as banking-style strings (e.g. 12 345,67)
+function formatBankingNumber(val) {
+  let clean = val.replace(/[^0-9.,]/g, '')
+  clean = clean.replace(/\./g, ',')
+  const parts = clean.split(',')
+  let integerPart = parts[0]
+  let decimalPart = parts.length > 1 ? parts.slice(1).join('') : null
+
+  // Format integer part with thousands separator (spaces)
+  integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+
+  if (decimalPart !== null) {
+    return `${integerPart},${decimalPart.slice(0, 2)}`
+  }
+  return integerPart
+}
+
+// Helper to parse banking-style formatted strings back to raw float numbers
+function parseBankingNumber(val) {
+  if (!val) return 0
+  const clean = String(val).replace(/\s/g, '').replace(/,/g, '.')
+  return Number(clean) || 0
+}
+
 export default function AddTransactionModal({ categories, onAdded, onClose, onNavigateToNewCategory }) {
+  const spanRef = useRef(null)
+  const [inputWidth, setInputWidth] = useState('90px')
+
   // Lock body scroll and set modal-open class
   useEffect(() => {
     document.body.classList.add('modal-open')
@@ -21,6 +48,42 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
   const [error, setError] = useState('')
 
   const dateInputRef = useRef(null)
+
+  // Dynamically calculate and update amount input width using a hidden span (offsetWidth)
+  useEffect(() => {
+    if (spanRef.current) {
+      const measuredWidth = spanRef.current.offsetWidth
+      setInputWidth(`${Math.max(90, measuredWidth + 4)}px`)
+    }
+  }, [amount])
+
+  // Caret preservation during typing and deleting space separators
+  const handleAmountChange = (e) => {
+    const input = e.target
+    const rawValue = input.value
+    const oldCaret = input.selectionStart
+
+    const textBeforeCaret = rawValue.substring(0, oldCaret)
+    const digitsBeforeCaret = textBeforeCaret.replace(/\s/g, '').length
+
+    const formatted = formatBankingNumber(rawValue)
+    setAmount(formatted)
+
+    setTimeout(() => {
+      let newCaret = 0
+      let nonSpaceCount = 0
+      for (let i = 0; i < formatted.length; i++) {
+        if (nonSpaceCount === digitsBeforeCaret) {
+          break
+        }
+        if (formatted[i] !== ' ') {
+          nonSpaceCount++
+        }
+        newCaret = i + 1
+      }
+      input.setSelectionRange(newCaret, newCaret)
+    }, 0)
+  }
 
   // Categories are filtered based on transaction type (expense / income)
   const filteredCategories = categories.filter(c => c.type === type)
@@ -45,14 +108,15 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
     e.preventDefault()
     setError('')
     if (!category) return setError('Выбери категорию')
-    if (!amount || Number(amount) <= 0) return setError('Укажи сумму больше нуля')
+    const parsedAmount = parseBankingNumber(amount)
+    if (parsedAmount <= 0) return setError('Укажи сумму больше нуля')
 
     setSaving(true)
     const { error: err } = await supabase.from('transactions').insert({
       date,
       category,
       type,
-      amount: Number(amount),
+      amount: parsedAmount,
       comment: comment || null,
     })
     setSaving(false)
@@ -164,15 +228,28 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
           {/* Sum input: amount and ₽ sit together, both muted until a value is entered */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Сумма</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', border: 'none', background: 'transparent', width: '100%', position: 'relative' }}>
+              <span
+                ref={spanRef}
+                style={{
+                  position: 'absolute',
+                  visibility: 'hidden',
+                  height: 0,
+                  overflow: 'hidden',
+                  whiteSpace: 'pre',
+                  fontSize: '40px',
+                  fontWeight: 800,
+                  fontFamily: 'inherit'
+                }}
+              >
+                {amount || '0,00'}
+              </span>
               <input
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="0.01"
-                min="0"
                 placeholder="0,00"
                 value={amount}
-                onChange={e => setAmount(e.target.value)}
+                onChange={handleAmountChange}
                 required
                 className="amount-input"
                 style={{
@@ -183,9 +260,9 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                   color: amount ? 'var(--ink)' : 'rgba(31, 29, 47, 0.25)',
                   padding: '8px 0',
                   outline: 'none',
-                  width: `${(amount || '0,00').length + 0.5}ch`,
-                  minWidth: '4.5ch',
-                  textAlign: 'left'
+                  width: inputWidth,
+                  textAlign: 'left',
+                  transition: 'width 0.08s ease'
                 }}
               />
               <span style={{ fontSize: '40px', fontWeight: 800, color: amount ? 'var(--ink)' : 'rgba(31, 29, 47, 0.25)', display: 'inline-block', transform: 'translateY(-2px)' }}>₽</span>
