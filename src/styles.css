@@ -128,7 +128,7 @@ button, input, select { font-family: inherit; }
    ================================================================ */
 .nav {
   position: fixed;
-  z-index: 100; /* High z-index to stay above everything */
+  z-index: 1005; /* High z-index to stay above everything, including context-blur-overlay */
   display: flex;
   background: var(--mat-2-bg);
   border: var(--mat-2-edge);
@@ -174,6 +174,7 @@ button, input, select { font-family: inherit; }
     border: none !important;
     border-top: 1px solid var(--hairline) !important;
     box-shadow: 0 -4px 20px rgba(31, 29, 47, 0.05) !important;
+    z-index: 1005 !important;
   }
   .nav-track { justify-content: space-between; }
   .nav button { flex: 1; flex-direction: column; justify-content: center; font-size: 11px; gap: 4px; border-radius: 0 !important; }
@@ -423,37 +424,50 @@ button, input, select { font-family: inherit; }
 
 /* ---------- modal / bottom sheet (pure white, no gradient) ---------- */
 .modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  height: 100dvh;
-  background: rgba(31, 29, 47, 0.4);
-  z-index: 1000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  position: fixed !important;
+  top: 0 !important; left: 0 !important;
+  width: 100vw !important; height: 100vh !important;
+  height: 100dvh !important;
+  background: rgba(31, 29, 47, 0.4) !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  overflow: hidden !important; /* Lock scrolling completely outside of the modal */
+  touch-action: none !important;
 }
 .modal-sheet {
-  position: relative;
-  background: #FFFFFF;
-  border: var(--mat-4-edge);
-  width: 100%; max-width: 480px;
+  position: relative !important;
+  background: #FFFFFF !important;
+  border: var(--mat-4-edge) !important;
+  width: 100% !important; max-width: 480px !important;
   border-radius: 28px 28px 0 0 !important; /* premium larger rounded top corners */
   padding: 24px 20px 56px !important; /* uniform internal padding with bottom offset space */
   max-height: 85vh !important; /* uniform vertical spacing from top of screen */
   margin-top: auto !important;
-  overflow-y: auto;
-  box-shadow: 0 -8px 30px rgba(31, 29, 47, 0.08);
-  animation: sheet-up var(--dur-3) var(--smooth);
+  overflow-y: auto !important; /* Allow scroll inside modal-sheet if content is tall */
+  box-shadow: 0 -8px 30px rgba(31, 29, 47, 0.08) !important;
+  animation: sheet-up var(--dur-3) var(--smooth) !important;
   margin: 0 !important;
   margin-bottom: 0 !important;
+  touch-action: pan-y !important; /* Allow swipe up/down inside the sheet */
+}
+
+/* Scroll lock when modal is open on the body */
+body.modal-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+  position: fixed !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
 }
 
 /* Hide the bottom navigation bar and float overlay when any modal overlay is active */
-body:has(.modal-overlay) .nav {
+body.modal-open .nav, body:has(.modal-overlay) .nav {
   display: none !important;
 }
-body:has(.modal-overlay) .nav-sphere {
+body.modal-open .nav-sphere, body:has(.modal-overlay) .nav-sphere {
   display: none !important;
 }
 
@@ -834,10 +848,23 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 }
 
 /* Full-Screen Blur Mode for All Elements Except Active Context */
-/* Simplified to avoid complex selective child selectors which caused rendering visual bugs */
 body.context-blur-active {
-  /* prevent scrolling under context menu */
+  /* prevent scrolling under context menu on mobile and desktop without using position: fixed to avoid layout jumping on Safari iOS */
   overflow: hidden !important;
+  touch-action: none !important;
+}
+
+/* Apply styling to disable user interactions with blurred background, but do NOT blur the parent .content container */
+body.context-blur-active .content {
+  pointer-events: none !important;
+}
+
+.context-menu-unblurred {
+  position: relative !important;
+  z-index: 1010 !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 10px 30px rgba(31, 29, 47, 0.12) !important;
+  pointer-events: auto !important; /* Allow clicking/interactions on the active context item/menu */
 }
 
 .context-blur-overlay {
@@ -846,20 +873,27 @@ body.context-blur-active {
   width: 100vw !important;
   height: 100vh !important;
   height: 100dvh !important;
-  background: rgba(230, 226, 243, 0.45) !important; /* premium translucent backdrop */
-  backdrop-filter: blur(6px) !important; /* lower, softer blur as requested (6px instead of 12px) */
-  -webkit-backdrop-filter: blur(6px) !important;
+  background: rgba(230, 226, 243, 0.7) !important; /* premium translucent backdrop */
+  backdrop-filter: blur(12px) !important; /* higher blur so text is not easily readable */
+  -webkit-backdrop-filter: blur(12px) !important;
   z-index: 1000 !important;
   pointer-events: auto !important;
+  touch-action: none !important; /* intercept swipe gestures on overlay to lock background scroll */
 }
 
-.categories-card, .recent-card, .card {
-  /* clear background filters / borders to avoid nested layer compositing visual issues */
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+/* Ensure cards do not establish a stacking context or clip their children (like the context menu) when context menu is active */
+body.context-blur-active .card {
+  transition: none !important;
+  transform: none !important;
+  overflow: visible !important;
 }
 
-.content, .nav, .cat-row, .tx-row {
+/* Ensure both categories card and recent operations card have overflow visible so the context menu is never clipped */
+.categories-card, .recent-card {
+  overflow: visible !important;
+}
+
+.nav, .cat-row, .tx-row {
   transition: filter 0.28s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: filter, transform;
 }

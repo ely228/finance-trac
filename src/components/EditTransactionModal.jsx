@@ -4,6 +4,14 @@ import { categoryStyle } from '../utils'
 import CategoryIcon from './CategoryIcon'
 
 export default function EditTransactionModal({ transaction, categories, onSaved, onClose, onNavigateToNewCategory }) {
+  // Lock body scroll and set modal-open class
+  useEffect(() => {
+    document.body.classList.add('modal-open')
+    return () => {
+      document.body.classList.remove('modal-open')
+    }
+  }, [])
+
   const [date, setDate] = useState(transaction.date)
   const [category, setCategory] = useState(transaction.category)
   const [type, setType] = useState(transaction.type)

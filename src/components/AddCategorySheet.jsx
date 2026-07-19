@@ -1,9 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 
-import { useEffect } from 'react'
-
 export default function AddCategorySheet({ onAdded, onClose }) {
+  // Lock body scroll and set modal-open class
+  useEffect(() => {
+    document.body.classList.add('modal-open')
+    return () => {
+      document.body.classList.remove('modal-open')
+    }
+  }, [])
+
   const [name, setName] = useState('')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
