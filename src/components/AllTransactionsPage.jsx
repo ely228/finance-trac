@@ -38,7 +38,12 @@ export default function AllTransactionsPage({ transactions = [], categories = []
     .sort((a, b) => {
       const dateComp = b.date.localeCompare(a.date)
       if (dateComp !== 0) return dateComp
-      return (b.id || '').localeCompare(a.id || '')
+      const aIdNum = Number(a.id)
+      const bIdNum = Number(b.id)
+      if (!isNaN(aIdNum) && !isNaN(bIdNum)) {
+        return bIdNum - aIdNum
+      }
+      return String(b.id || '').localeCompare(String(a.id || ''))
     })
 
   const totalFilteredCount = filtered.length

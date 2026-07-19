@@ -208,10 +208,6 @@ export default function EditCategorySheet({ category, onSaved, onClose }) {
         onClick={e => e.stopPropagation()}
       >
         <div className="modal-handle" />
-        
-        <h2 className="modal-title">
-          Редактирование категории
-        </h2>
 
         <form className="form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           

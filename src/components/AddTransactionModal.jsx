@@ -73,8 +73,6 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
         <div className="modal-handle" />
 
         <form className="form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h2 className="modal-title">Новая операция</h2>
-
           {/* Operation type toggle: Expense, Income, Transfer */}
           <div className="type-toggle-segment" style={{
             display: 'flex',
@@ -166,7 +164,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
           {/* Sum input: amount and ₽ sit together, both muted until a value is entered */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-faint)' }}>Сумма</span>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', border: 'none', background: 'transparent', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', border: 'none', background: 'transparent', width: '100%' }}>
               <input
                 type="number"
                 inputMode="decimal"
@@ -181,14 +179,15 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                   background: 'transparent',
                   fontSize: '40px',
                   fontWeight: 800,
-                  color: amount ? 'var(--ink)' : 'var(--ink-faint)',
+                  color: amount ? 'var(--ink)' : 'rgba(31, 29, 47, 0.25)',
                   padding: '8px 0',
                   outline: 'none',
-                  width: `${Math.max(4, String(amount || '0,00').length + 1)}ch`,
+                  width: amount ? `${amount.length * 22 + 10}px` : '90px',
+                  minWidth: '40px',
                   textAlign: 'left'
                 }}
               />
-              <span style={{ fontSize: '32px', fontWeight: 800, color: amount ? 'var(--ink)' : 'var(--ink-faint)' }}>₽</span>
+              <span style={{ fontSize: '40px', fontWeight: 800, color: amount ? 'var(--ink)' : 'rgba(31, 29, 47, 0.25)', display: 'inline-block', transform: 'translateY(-2px)' }}>₽</span>
             </div>
             <div style={{ height: '1px', background: 'var(--hairline)', width: '100%', marginTop: '4px', marginBottom: '8px' }} />
           </div>

@@ -67,10 +67,12 @@ export default function Home({ transactions, categories = [], email, onChanged, 
   const recent = [...transactions].sort((a, b) => {
     const dateComp = b.date.localeCompare(a.date)
     if (dateComp !== 0) return dateComp
-    // Secure safe secondary ordering checks
-    const aId = String(a.id || '')
-    const bId = String(b.id || '')
-    return bId.localeCompare(aId)
+    const aIdNum = Number(a.id)
+    const bIdNum = Number(b.id)
+    if (!isNaN(aIdNum) && !isNaN(bIdNum)) {
+      return bIdNum - aIdNum
+    }
+    return String(b.id || '').localeCompare(String(a.id || ''))
   }).slice(0, 4)
 
   const activeMonthKey = monthKey || currentMonthKey()
@@ -159,7 +161,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
               </div>
             </div>
           </div>
-          <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '160px', height: 'auto', position: 'absolute', right: '-10px', top: '50%', transform: 'translateY(-50%)', opacity: 0.85, zIndex: 0, pointerEvents: 'none' }} />
+          <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '185px', height: 'auto', position: 'absolute', right: '-10px', top: '44%', transform: 'translateY(-50%)', opacity: 0.85, zIndex: 0, pointerEvents: 'none' }} />
         </div>
 
         <button

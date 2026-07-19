@@ -114,7 +114,7 @@ button, input, select { font-family: inherit; }
 .app { min-height: 100vh; min-height: 100dvh; position: relative; z-index: 1; }
 
 .content {
-  padding: calc(var(--sp-6) + var(--safe-t)) var(--sp-6) 124px; /* 24px outer screen padding */
+  padding: calc(var(--sp-6) + var(--safe-t)) var(--sp-6) 175px; /* Increased bottom padding to 175px for fully visible context menus */
   max-width: 1360px;
   margin: 0 auto;
   position: relative;
@@ -278,16 +278,19 @@ button, input, select { font-family: inherit; }
 .hero-balance-row { position: relative; min-height: 84px; display: flex; align-items: center; margin: var(--sp-3) 0 var(--sp-5); }
 .hero-balance { font-size: 48px; font-weight: 900; color: var(--ink); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
 .hero-wallet {
-  position: absolute; right: -8px; top: 50%; transform: translateY(-50%);
-  width: 140px; height: auto; pointer-events: none;
+  position: absolute; right: -8px; top: 44% !important; transform: translateY(-50%) !important;
+  width: 185px !important; height: auto; pointer-events: none;
   opacity: 0.85;
 }
 
 .hero-duo { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-bottom: var(--sp-4); }
 .hero-duo-item {
   display: flex; align-items: center; gap: 12px;
-  background: var(--mat-1-bg); border-radius: var(--r-lg); padding: 14px var(--sp-4);
-  border: 1px solid var(--hairline);
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: var(--r-lg); padding: 14px var(--sp-4);
 }
 .hero-duo-item .hdi-icon {
   width: 34px; height: 34px; border-radius: var(--r-full); flex-shrink: 0;
@@ -765,7 +768,7 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 .categories-card { padding-top: 12px; padding-bottom: 12px; }
 
 @media (max-width: 767px) {
-  .content { padding: calc(12px + var(--safe-t)) 18px 116px; }
+  .content { padding: calc(12px + var(--safe-t)) 18px 175px; }
   .card { border-radius: var(--r-lg); padding: 20px; margin-bottom: 18px; }
   .card h2 { color: var(--ink); text-transform: none; letter-spacing: -.02em; font-size: 14px; }
   .hero-card { padding: 22px; border-radius: var(--r-lg); }
