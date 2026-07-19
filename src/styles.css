@@ -128,7 +128,7 @@ button, input, select { font-family: inherit; }
    ================================================================ */
 .nav {
   position: fixed;
-  z-index: 100; /* High z-index to stay above everything */
+  z-index: 1005; /* High z-index to stay above everything, including context-blur-overlay */
   display: flex;
   background: var(--mat-2-bg);
   border: var(--mat-2-edge);
@@ -174,6 +174,7 @@ button, input, select { font-family: inherit; }
     border: none !important;
     border-top: 1px solid var(--hairline) !important;
     box-shadow: 0 -4px 20px rgba(31, 29, 47, 0.05) !important;
+    z-index: 1005 !important;
   }
   .nav-track { justify-content: space-between; }
   .nav button { flex: 1; flex-direction: column; justify-content: center; font-size: 11px; gap: 4px; border-radius: 0 !important; }
@@ -858,11 +859,17 @@ body.context-blur-active {
   height: 100dvh !important;
 }
 
-/* Apply actual filter blur to the main layout content wrapper, but NOT the nav or active context elements */
+/* Apply styling to disable user interactions with blurred background, but do NOT blur the parent .content container */
 body.context-blur-active .content {
-  filter: blur(12px) !important;
-  -webkit-filter: blur(12px) !important;
   pointer-events: none !important;
+}
+
+.context-menu-unblurred {
+  position: relative !important;
+  z-index: 1010 !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 10px 30px rgba(31, 29, 47, 0.12) !important;
+  pointer-events: auto !important; /* Allow clicking/interactions on the active context item/menu */
 }
 
 .context-blur-overlay {
