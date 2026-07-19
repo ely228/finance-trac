@@ -5,40 +5,10 @@ import ConfirmDialog from './ConfirmDialog'
 import { formatMoney, categoryStyle } from '../utils'
 import CategoryIcon, { categoryMeta } from './CategoryIcon'
 
-export default function Categories({ categories, transactions, onChanged, onNavigateToNewCategory }) {
+export default function Categories({ categories, transactions, onChanged, onNavigateToNewCategory, activeContext, onTriggerContext }) {
   const [search, setSearch] = useState('')
   const [editingCategory, setEditingCategory] = useState(null)
-  const [contextCategoryId, setContextCategoryId] = useState(null)
   const [deletingCategory, setDeletingCategory] = useState(null)
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        setContextCategoryId(null)
-      }
-    }
-    const handleOutsideClick = () => {
-      setContextCategoryId(null)
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    window.addEventListener('click', handleOutsideClick)
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-      window.removeEventListener('click', handleOutsideClick)
-    }
-  }, [])
-
-  // Toggle body class to trigger full-screen blur when context menu is open
-  useEffect(() => {
-    if (contextCategoryId) {
-      document.body.classList.add('context-blur-active')
-    } else {
-      document.body.classList.remove('context-blur-active')
-    }
-    return () => {
-      document.body.classList.remove('context-blur-active')
-    }
-  }, [contextCategoryId])
 
   const totals = useMemo(() => {
     const map = {}
@@ -104,14 +74,6 @@ export default function Categories({ categories, transactions, onChanged, onNavi
 
   return (
     <div className="home-grid">
-      {/* Full viewport dim and blur backdrop for the context menu */}
-      {contextCategoryId && (
-        <div
-          className="context-blur-overlay"
-          onClick={() => setContextCategoryId(null)}
-        />
-      )}
-
       <div className="home-main-col">
         <div className="home-greeting" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
           <h1 style={{ margin: 0, fontSize: '30px', fontWeight: 800, color: 'var(--ink)' }}>Категории</h1>
@@ -159,19 +121,22 @@ export default function Categories({ categories, transactions, onChanged, onNavi
             const style = categoryStyle(c.name)
             const customBg = c.color ? `rgba(${c.color}, 0.16)` : style.bg
             const customFg = c.color ? `rgb(${c.color})` : style.fg
-            const isSelected = contextCategoryId === c.id
+            const isHidden = activeContext && activeContext.type === 'category' && activeContext.data.id === c.id
 
             return (
               <div
-                className={`cat-row category-list-row ${isSelected ? 'context-menu-unblurred' : ''}`}
+                className="cat-row category-list-row"
                 key={c.id}
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (contextCategoryId === c.id) {
-                    setContextCategoryId(null)
-                  } else {
-                    setContextCategoryId(c.id)
-                  }
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  onTriggerContext({
+                    type: 'category',
+                    data: c,
+                    rect,
+                    onEdit: () => setEditingCategory(c),
+                    onDelete: () => setDeletingCategory(c)
+                  });
                 }}
                 style={{
                   display: 'flex',
@@ -179,13 +144,11 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                   gap: '12px',
                   cursor: 'pointer',
                   position: 'relative',
-                  zIndex: isSelected ? 1010 : 1,
-                  transform: isSelected ? 'scale(1.02)' : 'scale(1)',
-                  background: isSelected ? '#FFFFFF' : 'transparent',
-                  borderRadius: isSelected ? '16px' : '16px', // constant 16px to prevent layout changes
-                  padding: isSelected ? '16px 12px' : '16px 12px', // constant padding prevents stutter
-                  boxShadow: isSelected ? '0 10px 30px rgba(31, 29, 47, 0.12)' : 'none',
-                  transition: 'all 0.24s cubic-bezier(0.22, 1, 0.36, 1)'
+                  background: 'transparent',
+                  borderRadius: '16px',
+                  padding: '16px 12px',
+                  visibility: isHidden ? 'hidden' : 'visible',
+                  transition: 'background 0.24s cubic-bezier(0.22, 1, 0.36, 1)'
                 }}
               >
                 <div
@@ -222,92 +185,6 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                 <div className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '18px', flexShrink: 0, marginLeft: '4px' }}>
                   ›
                 </div>
-
-                {/* Native iOS-style Context Menu with SF Symbols / SVG style outline icons */}
-                {isSelected && (
-                  <div
-                    className="ios-context-menu"
-                    onClick={e => e.stopPropagation()}
-                    style={{
-                      position: 'absolute',
-                      top: 'calc(100% + 6px)',
-                      right: '12px',
-                      background: 'rgba(255, 255, 255, 0.88)',
-                      backdropFilter: 'blur(20px)',
-                      WebkitBackdropFilter: 'blur(20px)',
-                      border: '1px solid rgba(0, 0, 0, 0.08)',
-                      borderRadius: '18px',
-                      padding: '4px',
-                      minWidth: '180px',
-                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-                      zIndex: 1011,
-                      display: 'flex',
-                      flexDirection: 'column'
-                    }}
-                  >
-                    <button
-                      className="ios-context-item"
-                      onClick={() => {
-                        setContextCategoryId(null)
-                        setEditingCategory(c)
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--ink)',
-                        fontSize: '14px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        borderRadius: '14px',
-                        textAlign: 'left',
-                        transition: 'background 0.15s ease'
-                      }}
-                    >
-                      <span>Редактировать</span>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}>
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                    </button>
-                    <div style={{ height: '1px', background: 'rgba(0, 0, 0, 0.05)', margin: '2px 8px' }} />
-                    <button
-                      className="ios-context-item danger"
-                      onClick={() => {
-                        setContextCategoryId(null)
-                        setDeletingCategory(c)
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: 'transparent',
-                        border: 'none',
-                        color: '#FF3B30', // System iOS red
-                        fontSize: '14px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        borderRadius: '14px',
-                        textAlign: 'left',
-                        transition: 'background 0.15s ease'
-                      }}
-                    >
-                      <span>Удалить</span>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#FF3B30' }}>
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
               </div>
             )
           })}
