@@ -485,7 +485,7 @@ export default function NewCategoryPage({ onBack, onAdded }) {
               height: '52px',
               borderRadius: '16px',
               border: 'none',
-              background: 'linear-gradient(90deg, #6D5BF0 0%, #C062E8 100%)',
+              background: '#8865E8',
               color: '#FFFFFF',
               fontSize: '16px',
               fontWeight: 700,
@@ -496,7 +496,7 @@ export default function NewCategoryPage({ onBack, onAdded }) {
               marginTop: '12px',
               opacity: saving || !name.trim() ? 0.5 : 1,
               pointerEvents: saving || !name.trim() ? 'none' : 'auto',
-              boxShadow: '0 6px 16px rgba(140, 80, 220, 0.25)',
+              boxShadow: '0 6px 16px rgba(136, 101, 232, 0.25)',
               transition: 'all 0.2s ease'
             }}
           >

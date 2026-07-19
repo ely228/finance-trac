@@ -67,10 +67,12 @@ export default function Home({ transactions, categories = [], email, onChanged, 
   const recent = [...transactions].sort((a, b) => {
     const dateComp = b.date.localeCompare(a.date)
     if (dateComp !== 0) return dateComp
-    // Secure safe secondary ordering checks
-    const aId = String(a.id || '')
-    const bId = String(b.id || '')
-    return bId.localeCompare(aId)
+    const aIdNum = Number(a.id)
+    const bIdNum = Number(b.id)
+    if (!isNaN(aIdNum) && !isNaN(bIdNum)) {
+      return bIdNum - aIdNum
+    }
+    return String(b.id || '').localeCompare(String(a.id || ''))
   }).slice(0, 4)
 
   const activeMonthKey = monthKey || currentMonthKey()
@@ -114,7 +116,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
       {/* Grouping header/balance/insight on the left, recent transactions on the right for widescreen/PC */}
       <div className="home-main-col">
         <header className="home-greeting" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
-          <button className="notification-btn" aria-label="Уведомления" style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', boxShadow: 'var(--el-1)' }}>
+          <button className="notification-btn" aria-label="Уведомления" style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', boxShadow: 'var(--el-1)' }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '22px', height: '22px', color: 'var(--ink)' }}>
               <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
             </svg>
@@ -122,13 +124,13 @@ export default function Home({ transactions, categories = [], email, onChanged, 
           </button>
         </header>
 
-        <div className="card hero-card g-balance" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '0', boxShadow: 'var(--el-1)', position: 'relative' }}>
+        <div className="card hero-card g-balance" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '0', boxShadow: 'var(--el-1)', marginTop: '-12px', position: 'relative' }}>
           <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span className="hero-label" style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
               <div className="hero-date" style={{ fontSize: '11px', color: 'var(--ink-faint)', marginTop: '4px' }}>{formattedCurrentMonth}</div>
             </div>
-            <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс" style={{ width: '34px', height: '34px', border: 'none', background: '#F5F6FA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс" style={{ width: '34px', height: '34px', border: 'none', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
               <EyeIcon off={hidden} />
             </button>
           </div>
@@ -139,8 +141,8 @@ export default function Home({ transactions, categories = [], email, onChanged, 
             </div>
           </div>
 
-          <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', position: 'relative', zIndex: 1 }}>
-            <div className="hero-duo-item income" style={{ padding: '8px 10px', borderRadius: '16px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+          <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', position: 'relative', zIndex: 1, marginTop: '10px' }}>
+            <div className="hero-duo-item income" style={{ padding: '8px 10px', borderRadius: '16px', background: 'rgba(255, 255, 255, 0.45)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255, 255, 255, 0.4)', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
               <span className="hdi-icon" style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ArrowUpIcon />
               </span>
@@ -149,7 +151,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
                 <div className="hdi-value" style={{ fontSize: getDuoFontSize(income), fontWeight: 800, color: '#37B891', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{money(income)}</div>
               </div>
             </div>
-            <div className="hero-duo-item expense" style={{ padding: '8px 10px', borderRadius: '16px', background: '#F5F6FA', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+            <div className="hero-duo-item expense" style={{ padding: '8px 10px', borderRadius: '16px', background: 'rgba(255, 255, 255, 0.45)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255, 255, 255, 0.4)', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
               <span className="hdi-icon" style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ArrowDownIcon />
               </span>
@@ -159,15 +161,15 @@ export default function Home({ transactions, categories = [], email, onChanged, 
               </div>
             </div>
           </div>
-          <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '160px', height: 'auto', position: 'absolute', right: '-10px', top: '50%', transform: 'translateY(-50%)', opacity: 0.85, zIndex: 0, pointerEvents: 'none' }} />
+          <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '185px', height: 'auto', position: 'absolute', right: '-10px', top: '44%', transform: 'translateY(-50%)', opacity: 0.85, zIndex: 0, pointerEvents: 'none' }} />
         </div>
 
         <button
           className="new-tx-btn"
           onClick={onAdd}
           style={{
-            padding: '16px',
-            fontSize: '15px',
+            padding: '14px',
+            fontSize: '14px',
             fontWeight: 700,
             borderRadius: '18px',
             background: '#FFFFFF',
@@ -177,13 +179,13 @@ export default function Home({ transactions, categories = [], email, onChanged, 
             cursor: 'pointer',
             textAlign: 'center',
             width: '100%',
-            marginTop: '8px'
+            marginTop: '-8px'
           }}
         >
           + Новая операция
         </button>
 
-        <div className="card insight-card" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0', marginTop: '8px', boxShadow: 'var(--el-1)' }}>
+        <div className="card insight-card" style={{ padding: '14px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0', marginTop: '-2px', boxShadow: 'var(--el-1)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: 'linear-gradient(135deg, #F3EFFE 0%, #E2DAFC 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: '#8865E8' }}>

@@ -12,8 +12,20 @@ export default function AllTransactionsPage({ transactions = [], categories = []
   const [filter, setFilter] = useState('all') // 'all' | 'expense' | 'income'
   const [limit, setLimit] = useState(15) // spacious default limit
   const [pending, setPending] = useState(null)
-  const [showFilters, setShowFilters] = useState(false) // filters hidden by default, revealed on tap
+  const [showFiltersDropdown, setShowFiltersDropdown] = useState(false) // toggle dropdown inside AllTransactionsPage
   const [editingTransaction, setEditingTransaction] = useState(null)
+
+  // Outside click logic for dropdown
+  useEffect(() => {
+    if (!showFiltersDropdown) return;
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest('.filter-dropdown-container')) {
+        setShowFiltersDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showFiltersDropdown]);
 
   async function confirmDelete() {
     if (!pending) return
@@ -38,7 +50,12 @@ export default function AllTransactionsPage({ transactions = [], categories = []
     .sort((a, b) => {
       const dateComp = b.date.localeCompare(a.date)
       if (dateComp !== 0) return dateComp
-      return (b.id || '').localeCompare(a.id || '')
+      const aIdNum = Number(a.id)
+      const bIdNum = Number(b.id)
+      if (!isNaN(aIdNum) && !isNaN(bIdNum)) {
+        return bIdNum - aIdNum
+      }
+      return String(b.id || '').localeCompare(String(a.id || ''))
     })
 
   const totalFilteredCount = filtered.length
@@ -60,7 +77,7 @@ export default function AllTransactionsPage({ transactions = [], categories = []
 
   return (
     <div className="all-transactions-page" style={{ position: 'relative', zIndex: 10, margin: '0 auto' }}>
-      {/* Back button plain, filter toggle subtle (no circle) */}
+      {/* Back button plain, filter toggle is now in the search bar line */}
       <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
@@ -83,145 +100,123 @@ export default function AllTransactionsPage({ transactions = [], categories = []
           </button>
           <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: 'var(--ink)' }}>Все операции</h1>
         </div>
-
-        <button
-          onClick={() => setShowFilters(f => !f)}
-          aria-label="Фильтры"
-          style={{
-            background: 'none',
-            border: 'none',
-            color: showFilters ? 'var(--lavender-dark)' : 'var(--ink-soft)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '38px',
-            height: '38px',
-            padding: 0,
-            cursor: 'pointer',
-            outline: 'none'
-          }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="4" y1="7" x2="20" y2="7" />
-            <circle cx="9" cy="7" r="2" fill="#FFFFFF" />
-            <line x1="4" y1="12" x2="20" y2="12" />
-            <circle cx="15" cy="12" r="2" fill="#FFFFFF" />
-            <line x1="4" y1="17" x2="20" y2="17" />
-            <circle cx="11" cy="17" r="2" fill="#FFFFFF" />
-          </svg>
-        </button>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        {/* Search Input */}
-        <div className="search-bar" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--hairline)', background: '#F5F6FA' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }}>
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            placeholder="Поиск по категории или описанию…"
-            value={search}
-            onChange={e => {
-              setSearch(e.target.value)
-              setLimit(15) // reset pagination on search
-            }}
-            style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '14px', width: '100%', color: 'var(--ink)' }}
-          />
-        </div>
+        {/* Search Input and Filter Button on the same row with height 48px */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', marginBottom: '16px', position: 'relative' }}>
+          <div className="search-bar" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '12px', padding: '0 16px', borderRadius: '16px', border: '1px solid var(--hairline)', background: '#F5F6FA', height: '48px', margin: 0 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }}>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              placeholder="Поиск по названию…"
+              value={search}
+              onChange={e => {
+                setSearch(e.target.value)
+                setLimit(15) // reset pagination on search
+              }}
+              style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '14px', width: '100%', color: 'var(--ink)' }}
+            />
+          </div>
 
-        {/* Toggleable Filter Pills + calendar, aligned on one row */}
-        {showFilters && (
-          <div className="filter-pills-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', margin: '4px 0 16px', height: '42px' }}>
-            <div className="filter-pills" style={{ display: 'flex', alignItems: 'center', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none', height: '42px' }}>
-              <button
-                className={filter === 'all' ? 'active' : ''}
-                onClick={() => { setFilter('all'); setLimit(15); }}
-                style={{
-                  height: '42px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '0 18px',
-                  borderRadius: '999px',
-                  border: '1px solid var(--hairline)',
-                  background: filter === 'all' ? 'var(--gradient-btn)' : '#FFFFFF',
-                  color: filter === 'all' ? '#FFFFFF' : 'var(--ink-soft)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
-              >
-                Все
-              </button>
-              <button
-                className={filter === 'expense' ? 'active' : ''}
-                onClick={() => { setFilter('expense'); setLimit(15); }}
-                style={{
-                  height: '42px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '0 18px',
-                  borderRadius: '999px',
-                  border: '1px solid var(--hairline)',
-                  background: filter === 'expense' ? 'var(--gradient-btn)' : '#FFFFFF',
-                  color: filter === 'expense' ? '#FFFFFF' : 'var(--ink-soft)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
-              >
-                Расходы
-              </button>
-              <button
-                className={filter === 'income' ? 'active' : ''}
-                onClick={() => { setFilter('income'); setLimit(15); }}
-                style={{
-                  height: '42px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '0 18px',
-                  borderRadius: '999px',
-                  border: '1px solid var(--hairline)',
-                  background: filter === 'income' ? 'var(--gradient-btn)' : '#FFFFFF',
-                  color: filter === 'income' ? '#FFFFFF' : 'var(--ink-soft)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
-              >
-                Доходы
-              </button>
-            </div>
-
-            {/* Calendar icon button, same height as pills for exact alignment */}
+          {/* Filter button, white monolith style, height 48px */}
+          <div className="filter-dropdown-container" style={{ position: 'relative', display: 'inline-block', flexShrink: 0 }}>
             <button
+              onClick={() => setShowFiltersDropdown(f => !f)}
+              aria-label="Фильтры"
               style={{
-                width: '42px',
-                height: '42px',
-                borderRadius: '12px',
+                background: '#F5F6FA',
                 border: '1px solid var(--hairline)',
-                background: '#FFFFFF',
+                borderRadius: '16px',
+                color: showFiltersDropdown ? 'var(--lavender-dark)' : 'var(--ink-soft)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                width: '48px',
+                height: '48px',
+                padding: 0,
                 cursor: 'pointer',
                 outline: 'none',
-                flexShrink: 0
+                boxShadow: 'var(--el-1)',
+                transition: 'all 0.2s ease'
               }}
-              onClick={() => alert('Фильтр по календарю появится в будущих обновлениях')}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--ink-soft)' }}>
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="4" y1="7" x2="20" y2="7" />
+                <circle cx="9" cy="7" r="2" fill="#FFFFFF" />
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <circle cx="15" cy="12" r="2" fill="#FFFFFF" />
+                <line x1="4" y1="17" x2="20" y2="17" />
+                <circle cx="11" cy="17" r="2" fill="#FFFFFF" />
               </svg>
             </button>
+
+            {/* iOS-Style Dropdown Menu with Slide/Fade animation */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '56px',
+                right: 0,
+                background: '#FFFFFF',
+                borderRadius: '14px',
+                border: '1px solid var(--hairline)',
+                boxShadow: '0 10px 30px rgba(31, 29, 47, 0.12)',
+                zIndex: 100,
+                minWidth: '150px',
+                padding: '6px',
+                pointerEvents: showFiltersDropdown ? 'auto' : 'none',
+                opacity: showFiltersDropdown ? 1 : 0,
+                transform: showFiltersDropdown ? 'translateY(0) scale(1)' : 'translateY(-10px) scale(0.95)',
+                transition: 'opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1), transform 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
+                transformOrigin: 'top right'
+              }}
+            >
+              {[
+                { key: 'all', label: 'Все' },
+                { key: 'expense', label: 'Расходы' },
+                { key: 'income', label: 'Доходы' }
+              ].map(opt => {
+                const isActive = filter === opt.key
+                return (
+                  <button
+                    key={opt.key}
+                    onClick={() => {
+                      setFilter(opt.key)
+                      setLimit(15)
+                      setShowFiltersDropdown(false)
+                    }}
+                    style={{
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '10px 12px',
+                      borderRadius: '8px',
+                      background: isActive ? 'rgba(136, 101, 232, 0.08)' : 'transparent',
+                      border: 'none',
+                      color: isActive ? 'var(--lavender-dark)' : 'var(--ink)',
+                      fontSize: '13.5px',
+                      fontWeight: isActive ? 700 : 500,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      outline: 'none',
+                      transition: 'background 0.15s ease'
+                    }}
+                  >
+                    <span>{opt.label}</span>
+                    {isActive && (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--lavender-dark)' }}>
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
           </div>
-        )}
+        </div>
 
         {/* Transactions List with clean visual, no white elevated box */}
         <div style={{ minHeight: '300px', display: 'flex', flexDirection: 'column' }}>
@@ -296,7 +291,7 @@ export default function AllTransactionsPage({ transactions = [], categories = []
                         </span>
                       </div>
                       <div className="tx-right" style={{ textAlign: 'right', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '2px', marginRight: '4px' }}>
-                        <span className="tx-amount" style={{ fontSize: '14px', fontWeight: 800, color: t.type === 'expense' ? 'var(--ink)' : 'var(--income)' }}>
+                        <span className="tx-amount" style={{ fontSize: '14px', fontWeight: 800, color: t.type === 'expense' ? 'var(--expense)' : 'var(--income)' }}>
                           {t.type === 'expense' ? '−' : '+'}{formatMoney(t.amount)}
                         </span>
                         <span className="tx-date" style={{ fontSize: '11px', color: 'var(--ink-faint)' }}>

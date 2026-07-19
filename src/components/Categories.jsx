@@ -146,9 +146,10 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                   position: 'relative',
                   background: 'transparent',
                   borderRadius: '16px',
-                  padding: '16px 12px',
+                  padding: '12px 12px',
                   visibility: isHidden ? 'hidden' : 'visible',
-                  transition: 'background 0.24s cubic-bezier(0.22, 1, 0.36, 1)'
+                  transition: 'background 0.24s cubic-bezier(0.22, 1, 0.36, 1)',
+                  borderBottom: '1px solid rgba(0, 0, 0, 0.025)'
                 }}
               >
                 <div
@@ -156,33 +157,30 @@ export default function Categories({ categories, transactions, onChanged, onNavi
                   style={{
                     background: customBg,
                     color: customFg,
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '12px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    fontSize: '16px',
-                    fontWeight: 'bold'
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    border: '1px solid rgba(0,0,0,0.03)'
                   }}
                 >
                   <CategoryIcon name={c.icon || c.name} />
                 </div>
-                <div className="cat-info" style={{ flex: 1, minWidth: 0 }}>
-                  <div className="cat-name" style={{ fontSize: '13.5px', fontWeight: 700 }}>{c.name}</div>
-                  <div className="cat-sub" style={{ fontSize: '11px', color: 'var(--ink-soft)', marginBottom: '4px' }}>
+                <div className="cat-info" style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <div className="cat-name" style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ink)' }}>{c.name}</div>
+                  <div className="cat-sub" style={{ fontSize: '12px', color: 'var(--ink-faint)' }}>
                     {categoryMeta(c.name).description}
                   </div>
-                  <div className="cat-progress">
-                    <div className="cat-progress-fill" style={{ width: `${Math.min(100, c.pct || 0)}%`, background: customFg }} />
-                  </div>
                 </div>
-                <div className="cat-numbers" style={{ textAlign: 'right', flexShrink: 0, marginRight: '8px' }}>
-                  <div className="cat-amount" style={{ fontSize: '13px', fontWeight: 700 }}>{formatMoney(c.amount || 0)}</div>
-                  <div className="cat-pct" style={{ fontSize: '10.5px', color: 'var(--ink-faint)' }}>{c.pct || 0}%</div>
+                <div className="cat-numbers" style={{ textAlign: 'right', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '2px', marginRight: '4px' }}>
+                  <div className="cat-amount" style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ink)' }}>{formatMoney(c.amount || 0)}</div>
                 </div>
-                <div className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '18px', flexShrink: 0, marginLeft: '4px' }}>
+                <div className="cat-chevron" style={{ color: 'var(--ink-faint)', fontSize: '18px', flexShrink: 0 }}>
                   ›
                 </div>
               </div>
