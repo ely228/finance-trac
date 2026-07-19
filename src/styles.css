@@ -848,15 +848,10 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 }
 
 /* Full-Screen Blur Mode for All Elements Except Active Context */
-/* Simplified to avoid complex selective child selectors which caused rendering visual bugs */
 body.context-blur-active {
-  /* prevent scrolling under context menu on mobile and desktop */
+  /* prevent scrolling under context menu on mobile and desktop without using position: fixed to avoid layout jumping on Safari iOS */
   overflow: hidden !important;
   touch-action: none !important;
-  position: fixed !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
 }
 
 /* Apply styling to disable user interactions with blurred background, but do NOT blur the parent .content container */
@@ -883,6 +878,26 @@ body.context-blur-active .content {
   -webkit-backdrop-filter: blur(12px) !important;
   z-index: 1000 !important;
   pointer-events: auto !important;
+  touch-action: none !important; /* intercept swipe gestures on overlay to lock background scroll */
+}
+
+/* Elevate the parent card containing the active element to prevent Safari iOS nested stacking context compositing bugs */
+body.context-blur-active .card:has(.context-menu-unblurred) {
+  z-index: 1010 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Ensure all other sibling items within the active card are dimmed and blurred so only the active item stands out */
+body.context-blur-active .card:has(.context-menu-unblurred) .tx-row:not(.context-menu-unblurred),
+body.context-blur-active .card:has(.context-menu-unblurred) .cat-row:not(.context-menu-unblurred),
+body.context-blur-active .card:has(.context-menu-unblurred) h2,
+body.context-blur-active .card:has(.context-menu-unblurred) .category-list-row:not(.context-menu-unblurred) {
+  opacity: 0.25 !important;
+  filter: blur(4px) !important;
+  -webkit-filter: blur(4px) !important;
+  pointer-events: none !important;
 }
 
 .categories-card, .recent-card, .card {
