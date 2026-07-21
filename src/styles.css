@@ -621,9 +621,32 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
   stroke-width: 1.6px !important;
 }
 
+/* Hide scrollbars for Chrome, Safari, Opera, Firefox, and IE/Edge across custom lists and dropdowns */
+.dropdown-menu::-webkit-scrollbar,
+.zoom-blur-overlay *::-webkit-scrollbar {
+  display: none !important;
+}
+
+.dropdown-menu,
+.zoom-blur-overlay * {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 /* ---------- entrance transitions ---------- */
 @keyframes rise-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .content > * { animation: rise-in 240ms var(--smooth) backwards; }
+
+@keyframes zoom-block-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
 
 .home-main-col { display: flex; flex-direction: column; gap: 16px; }
 

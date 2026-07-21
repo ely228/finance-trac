@@ -115,16 +115,8 @@ export default function Home({ transactions, categories = [], email, onChanged, 
     <div className="home-grid">
       {/* Grouping header/balance/insight on the left, recent transactions on the right for widescreen/PC */}
       <div className="home-main-col">
-        <header className="home-greeting" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
-          <button className="notification-btn" aria-label="Уведомления" style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--hairline)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', boxShadow: 'var(--el-1)' }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: '22px', height: '22px', color: 'var(--ink)' }}>
-              <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
-            </svg>
-            <i style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ff3d6d', position: 'absolute', top: '10px', right: '11px', border: '1px solid #fff' }} />
-          </button>
-        </header>
-
-        <div className="card hero-card g-balance" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '0', boxShadow: 'var(--el-1)', marginTop: '-12px', position: 'relative' }}>
+        {/* Adjusted top offset card to match original spacing of notification bell visually */}
+        <div className="card hero-card g-balance" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '0', boxShadow: 'var(--el-1)', marginTop: '0px', position: 'relative' }}>
           <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span className="hero-label" style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
