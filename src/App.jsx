@@ -42,24 +42,33 @@ export default function App() {
   const [isDragging, setIsDragging] = useState(false)
   const dragStart = useRef({ x: 0, y: 0 })
   const toastTimeout = useRef(null)
+  const [dismissing, setDismissing] = useState(null)
+  const dragDirection = useRef(null) // 'x' | 'y' | null
 
   const showToast = useCallback((message) => {
     if (toastTimeout.current) clearTimeout(toastTimeout.current)
     setToastOffset({ x: 0, y: 0 })
     setIsDragging(false)
+    setDismissing(null)
+    dragDirection.current = null
     const id = Date.now()
     setToast({ message, id })
     
     toastTimeout.current = setTimeout(() => {
-      setToast(prev => prev && prev.id === id ? null : prev)
+      setDismissing('up')
+      setTimeout(() => {
+        setToast(prev => prev && prev.id === id ? null : prev)
+        setDismissing(null)
+      }, 400)
     }, 5000)
   }, [])
 
   const handleDragStart = (e) => {
     setIsDragging(true)
+    dragDirection.current = null
     const clientX = e.touches ? e.touches[0].clientX : e.clientX
     const clientY = e.touches ? e.touches[0].clientY : e.clientY
-    dragStart.current = { x: clientX - toastOffset.x, y: clientY - toastOffset.y }
+    dragStart.current = { x: clientX, y: clientY, startX: toastOffset.x, startY: toastOffset.y }
     if (toastTimeout.current) clearTimeout(toastTimeout.current)
   }
 
@@ -67,30 +76,71 @@ export default function App() {
     if (!isDragging) return
     const clientX = e.touches ? e.touches[0].clientX : e.clientX
     const clientY = e.touches ? e.touches[0].clientY : e.clientY
-    const offsetX = clientX - dragStart.current.x
-    const offsetY = clientY - dragStart.current.y
-    // Apply iOS-like elastic resistance on dragging down (offsetY > 0)
-    const finalY = offsetY > 0 ? Math.pow(offsetY, 0.65) : offsetY
-    setToastOffset({ x: offsetX, y: finalY })
+
+    const diffX = clientX - dragStart.current.x
+    const diffY = clientY - dragStart.current.y
+
+    // Strict Axis Lock: determine primary movement axis once moving more than 5 pixels
+    if (!dragDirection.current && Math.max(Math.abs(diffX), Math.abs(diffY)) > 5) {
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        dragDirection.current = 'x'
+      } else {
+        dragDirection.current = 'y'
+      }
+    }
+
+    if (dragDirection.current === 'x') {
+      // Horizontal swipe locked
+      const targetX = dragStart.current.startX + diffX
+      setToastOffset({ x: targetX, y: 0 })
+    } else if (dragDirection.current === 'y') {
+      // Vertical swipe locked
+      const targetY = dragStart.current.startY + diffY
+      // Apply iOS-like elastic resistance on dragging down (targetY > 0)
+      const finalY = targetY > 0 ? Math.pow(targetY, 0.65) : targetY
+      setToastOffset({ x: 0, y: finalY })
+    }
   }
 
   const handleDragEnd = () => {
     if (!isDragging) return
     setIsDragging(false)
 
-    const swipedUp = toastOffset.y < -40
-    const swipedLeftOrRight = Math.abs(toastOffset.x) > 60
+    const swipedUp = dragDirection.current === 'y' && toastOffset.y < -35
+    const swipedLeft = dragDirection.current === 'x' && toastOffset.x < -45
+    const swipedRight = dragDirection.current === 'x' && toastOffset.x > 45
 
-    // Only dismiss if swiped UP, LEFT, or RIGHT (iOS-style, not down)
-    if (swipedUp || swipedLeftOrRight) {
-      setToast(null)
+    if (swipedUp) {
+      setDismissing('up')
+      setTimeout(() => {
+        setToast(null)
+        setDismissing(null)
+      }, 350)
+    } else if (swipedLeft) {
+      setDismissing('left')
+      setTimeout(() => {
+        setToast(null)
+        setDismissing(null)
+      }, 350)
+    } else if (swipedRight) {
+      setDismissing('right')
+      setTimeout(() => {
+        setToast(null)
+        setDismissing(null)
+      }, 350)
     } else {
+      // Reset position gracefully
       setToastOffset({ x: 0, y: 0 })
       if (toastTimeout.current) clearTimeout(toastTimeout.current)
       toastTimeout.current = setTimeout(() => {
-        setToast(null)
+        setDismissing('up')
+        setTimeout(() => {
+          setToast(null)
+          setDismissing(null)
+        }, 350)
       }, 5000)
     }
+    dragDirection.current = null
   }
 
   // Step 21.1: subPage state for render routing inside tabs (null | 'new-category' | 'all-transactions')
@@ -526,14 +576,13 @@ export default function App() {
 
       {toast && (
         <div
-          className="premium-toast"
+          className={`premium-toast ${dismissing ? `dismissing-${dismissing}` : ''}`}
           style={{
             transform: isDragging 
               ? `translate(calc(-50% + ${toastOffset.x}px), ${toastOffset.y}px)` 
-              : 'translate(-50%, 0)',
-            transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s',
-            animation: toastOffset.x === 0 && toastOffset.y === 0 ? 'toast-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1)' : 'none',
-            opacity: isDragging ? Math.max(0.3, 1 - Math.sqrt(toastOffset.x*toastOffset.x + toastOffset.y*toastOffset.y)/200) : 1
+              : undefined,
+            transition: isDragging ? 'none' : undefined,
+            opacity: isDragging ? Math.max(0.3, 1 - Math.max(Math.abs(toastOffset.x), Math.abs(toastOffset.y))/180) : undefined
           }}
           onTouchStart={handleDragStart}
           onTouchMove={handleDragMove}

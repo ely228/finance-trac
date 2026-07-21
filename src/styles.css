@@ -1028,6 +1028,7 @@ body.context-blur-active .card {
   position: fixed;
   top: 24px;
   left: 50%;
+  transform: translate(-50%, 0);
   width: calc(100% - 40px);
   max-width: 380px;
   background: rgba(255, 255, 255, 0.92);
@@ -1045,9 +1046,23 @@ body.context-blur-active .card {
   user-select: none;
   touch-action: none;
   box-sizing: border-box;
+  animation: toast-slide-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .premium-toast:active {
   cursor: grabbing;
+}
+.premium-toast.dismissing-up {
+  transform: translate(-50%, -120px) scale(0.85) !important;
+  opacity: 0 !important;
+}
+.premium-toast.dismissing-left {
+  transform: translate(-150%, 0) rotate(-8deg) !important;
+  opacity: 0 !important;
+}
+.premium-toast.dismissing-right {
+  transform: translate(50%, 0) rotate(8deg) !important;
+  opacity: 0 !important;
 }
 .toast-icon-wrap {
   width: 28px;
@@ -1067,17 +1082,9 @@ body.context-blur-active .card {
   line-height: 1.4;
   flex: 1;
 }
-.toast-close-hint {
-  font-size: 10px;
-  color: var(--ink-faint);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.6;
-}
 @keyframes toast-slide-in {
   0% {
-    transform: translate(-50%, -40px) scale(0.9);
+    transform: translate(-50%, -80px) scale(0.88);
     opacity: 0;
   }
   100% {
