@@ -65,6 +65,18 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
     fetchAll()
   }, [transactions])
 
+  // Prevent page scroll when zoomed overlay modal is open
+  useEffect(() => {
+    if (zoomedBlock) {
+      document.body.classList.add('modal-open')
+    } else {
+      document.body.classList.remove('modal-open')
+    }
+    return () => {
+      document.body.classList.remove('modal-open')
+    }
+  }, [zoomedBlock])
+
   // Handle click outside to close dropdowns
   useEffect(() => {
     if (!showMonthDropdown && !showModeDropdown) return
@@ -522,9 +534,19 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
                       setActiveIndex(i)
                     }}
                   >
-                    {pieData.map((item, i) => (
-                      <Cell key={item.name} fill={item.color} stroke="none" />
-                    ))}
+                    {pieData.map((item, i) => {
+                      const isActive = activeIndex === i
+                      return (
+                        <Cell
+                          key={item.name}
+                          fill={item.color}
+                          stroke={isActive ? '#FFFFFF' : 'none'}
+                          strokeWidth={isActive ? 1.5 : 0}
+                          opacity={isActive ? 1.0 : 0.55}
+                          style={{ outline: 'none' }}
+                        />
+                      )
+                    })}
                   </Pie>
                 </PieChart>
               </div>
@@ -633,32 +655,6 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
               pointerEvents: 'auto'
             }}
           >
-            {/* Close Button */}
-            <button
-              onClick={() => setZoomedBlock(null)}
-              aria-label="Закрыть"
-              style={{
-                position: 'absolute',
-                top: '20px',
-                right: '20px',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'rgba(31, 29, 47, 0.05)',
-                border: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: 'var(--ink)'
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
             {zoomedBlock === 'donut' ? (
               <div>
                 <h2 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 20px 0', color: 'var(--ink)' }}>Расходы по категориям</h2>
@@ -681,9 +677,19 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
                             setActiveIndex(i)
                           }}
                         >
-                          {pieData.map((item, i) => (
-                            <Cell key={item.name} fill={item.color} stroke="none" />
-                          ))}
+                          {pieData.map((item, i) => {
+                            const isActive = activeIndex === i
+                            return (
+                              <Cell
+                                key={item.name}
+                                fill={item.color}
+                                stroke={isActive ? '#FFFFFF' : 'none'}
+                                strokeWidth={isActive ? 2 : 0}
+                                opacity={isActive ? 1.0 : 0.45}
+                                style={{ outline: 'none' }}
+                              />
+                            )
+                          })}
                         </Pie>
                       </PieChart>
                       {/* Interactive text in center of donut chart */}
@@ -764,16 +770,16 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
                           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ink)' }}>{item.name}</span>
-                              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink-soft)' }}>
-                                {Math.round(item.value / totalExpense * 100)}%
+                              <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ink)', whiteSpace: 'nowrap' }}>
+                                {formatMoney(item.value)}
                               </span>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
                               <div style={{ flex: 1, height: '6px', background: 'rgba(31, 29, 47, 0.04)', borderRadius: '3px', overflow: 'hidden' }}>
                                 <div style={{ height: '100%', background: item.color, width: `${item.value / totalExpense * 100}%`, borderRadius: '3px' }} />
                               </div>
-                              <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ink)', whiteSpace: 'nowrap' }}>
-                                {formatMoney(item.value)}
+                              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink-soft)' }}>
+                                {Math.round(item.value / totalExpense * 100)}%
                               </span>
                             </div>
                           </div>
