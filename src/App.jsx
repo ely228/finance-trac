@@ -69,14 +69,20 @@ export default function App() {
     const clientY = e.touches ? e.touches[0].clientY : e.clientY
     const offsetX = clientX - dragStart.current.x
     const offsetY = clientY - dragStart.current.y
-    setToastOffset({ x: offsetX, y: offsetY })
+    // Apply iOS-like elastic resistance on dragging down (offsetY > 0)
+    const finalY = offsetY > 0 ? Math.pow(offsetY, 0.65) : offsetY
+    setToastOffset({ x: offsetX, y: finalY })
   }
 
   const handleDragEnd = () => {
     if (!isDragging) return
     setIsDragging(false)
-    const dist = Math.sqrt(toastOffset.x * toastOffset.x + toastOffset.y * toastOffset.y)
-    if (dist > 60) {
+
+    const swipedUp = toastOffset.y < -40
+    const swipedLeftOrRight = Math.abs(toastOffset.x) > 60
+
+    // Only dismiss if swiped UP, LEFT, or RIGHT (iOS-style, not down)
+    if (swipedUp || swipedLeftOrRight) {
       setToast(null)
     } else {
       setToastOffset({ x: 0, y: 0 })
@@ -241,9 +247,9 @@ export default function App() {
                         title="Уведомления"
                         onClick={() => setSubPage('notifications')}
                       >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        <svg width="22" height="22" viewBox="0 0 24 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 3a6 6 0 0 0-6 6v4a2 2 0 0 1-.6 1.4l-1 1A1 1 0 0 0 5.1 17h13.8a1 1 0 0 0 .7-1.6l-1-1a2 2 0 0 1-.6-1.4V9a6 6 0 0 0-6-6z" />
+                          <path d="M10.2 17a1.8 1.8 0 0 0 3.6 0" />
                         </svg>
                       </button>
                     )}
@@ -545,7 +551,6 @@ export default function App() {
             </svg>
           </div>
           <span className="toast-msg">{toast.message}</span>
-          <span className="toast-close-hint">Свайп</span>
         </div>
       )}
 
