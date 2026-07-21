@@ -206,42 +206,76 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
     years: 'По годам'
   }
 
+  const cleanMonthLabel = (mKey) => {
+    const rawLabel = monthLabel(mKey)
+    const cleanLabel = rawLabel.replace(/\s*г\s*\.?\s*$/i, '')
+    return cleanLabel.charAt(0).toUpperCase() + cleanLabel.slice(1)
+  }
+
   return (
     <div className="dashboard-page" style={{ position: 'relative' }}>
-      <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      {/* topbar layout matching .home-greeting for exact top offset alignment */}
+      <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 4px 12px', marginBottom: '4px', marginTop: '0' }}>
         {/* Beautiful Custom Dropdown for Month Selection */}
         <div className="month-dropdown-container" style={{ position: 'relative', display: 'inline-block' }}>
-          <h1
+          {/* Pill-shaped month selector button matching image.png */}
+          <div
             onClick={() => setShowMonthDropdown(p => !p)}
             style={{
-              textTransform: 'capitalize',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              margin: 0,
-              fontSize: '20px',
-              fontWeight: 800,
-              color: 'var(--ink)'
+              gap: '12px',
+              background: '#FFFFFF',
+              border: '1px solid var(--hairline)',
+              borderRadius: '999px',
+              padding: '10px 20px',
+              boxShadow: 'var(--el-1)',
+              transition: 'background 0.2s ease, transform 0.1s ease',
+              userSelect: 'none'
             }}
+            className="month-pill-btn"
           >
-            {monthLabel(monthKey)}
-            <span className="chev" style={{ fontSize: '15px', color: 'var(--ink-soft)', display: 'inline-block', transform: showMonthDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}>⌄</span>
-          </h1>
+            {/* Calendar Icon in SF Symbols style with downward chevron check */}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8865E8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <rect x="3" y="4" width="18" height="18" rx="4" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+              <path d="m9 14 3 3 3-3" />
+            </svg>
+
+            {/* Month and Year Text without " г." */}
+            <span
+              style={{
+                fontSize: '16px',
+                fontWeight: 700,
+                color: 'var(--ink)',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {cleanMonthLabel(monthKey)}
+            </span>
+
+            {/* Downward chevron icon in SF Symbols style */}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8865E8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transform: showMonthDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}>
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
 
           {showMonthDropdown && (
             <div
               className="dropdown-menu"
               style={{
                 position: 'absolute',
-                top: '32px',
+                top: 'calc(100% + 8px)',
                 left: 0,
                 background: '#FFFFFF',
                 borderRadius: '14px',
                 border: '1px solid var(--hairline)',
                 boxShadow: '0 10px 30px rgba(31, 29, 47, 0.12)',
                 zIndex: 100,
-                minWidth: '180px',
+                minWidth: '200px',
                 maxHeight: '250px',
                 overflowY: 'auto',
                 padding: '6px',
@@ -277,7 +311,7 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
                       transition: 'background 0.15s ease'
                     }}
                   >
-                    <span style={{ textTransform: 'capitalize' }}>{monthLabel(m)}</span>
+                    <span>{cleanMonthLabel(m)}</span>
                     {isActive && (
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--lavender-dark)' }}>
                         <polyline points="20 6 9 17 4 12" />
