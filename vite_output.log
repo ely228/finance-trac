@@ -1,0 +1,17 @@
+
+> finance-tracker@1.0.0 dev
+> vite
+
+
+  VITE v5.4.21  ready in 289 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+5:29:14 AM [vite] hmr update /src/components/Dashboard.jsx
+5:29:47 AM [vite] hmr update /src/components/Dashboard.jsx
+5:30:16 AM [vite] hmr update /src/components/Dashboard.jsx
+5:30:26 AM [vite] hmr update /src/components/Dashboard.jsx
+5:31:22 AM [vite] hmr update /src/components/Dashboard.jsx
+5:32:37 AM [vite] hmr update /src/components/Dashboard.jsx
+5:33:20 AM [vite] hmr update /src/components/Dashboard.jsx
+5:33:31 AM [vite] hmr update /src/components/Dashboard.jsx

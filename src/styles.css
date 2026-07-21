@@ -625,6 +625,17 @@ svg.lucide, .settings-row svg, .kpi-icon svg, .nav button svg, .topbar svg, .hea
 @keyframes rise-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .content > * { animation: rise-in 240ms var(--smooth) backwards; }
 
+@keyframes zoom-block-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 .home-main-col { display: flex; flex-direction: column; gap: 16px; }
 
 @media (min-width: 768px) {
