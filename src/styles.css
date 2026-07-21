@@ -65,7 +65,7 @@
 
   --gradient-hero: linear-gradient(135deg, var(--lavender) 0%, var(--rose) 55%, var(--peach) 100%);
   --gradient-btn: #8865E8;
-  --gradient-app-bg: linear-gradient(160deg, #F9EEF7 0%, #E7DCF9 42%, #DDF1FC 100%);
+  --gradient-app-bg: linear-gradient(160deg, #FBF8FA 0%, #F8F5FD 42%, #F5FAFE 100%);
   --sidebar-w: 88px;
   --safe-t: env(safe-area-inset-top, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);
@@ -934,4 +934,60 @@ body.context-blur-active .card {
 .nav, .cat-row, .tx-row {
   transition: filter 0.28s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: filter, transform;
+}
+
+/* ---------- UNIFIED ADAPTIVE HEADER ---------- */
+.unified-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 56px;
+  margin-bottom: 24px;
+  padding: 0 4px;
+  position: relative;
+  z-index: 10;
+}
+.uh-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.uh-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.uh-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--ink);
+  transition: background var(--dur-1) ease, transform var(--dur-1) ease;
+  padding: 0;
+}
+.uh-btn:active {
+  transform: scale(0.95);
+}
+.uh-btn.bell-btn {
+  color: var(--ink);
+}
+.uh-btn.avatar-btn {
+  border: 1.8px solid var(--ink);
+  color: var(--ink);
+}
+.uh-btn.purple-plus-btn {
+  background: #8865E8;
+  color: #FFFFFF;
+}
+.uh-btn.settings-btn {
+  color: var(--ink);
 }

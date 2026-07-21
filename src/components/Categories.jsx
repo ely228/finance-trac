@@ -117,7 +117,7 @@ export default function Categories({ categories, transactions, onChanged, onNavi
           </div>
         </div>
 
-        {/* Step 3: Section header "Мои категории" + Interactive "+ Добавить категорию" */}
+        {/* Step 3: Section header "Мои категории" */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -129,47 +129,6 @@ export default function Categories({ categories, transactions, onChanged, onNavi
           <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--ink)' }}>
             Мои категории
           </span>
-          <div
-            onClick={onNavigateToNewCategory}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              cursor: 'pointer',
-              userSelect: 'none',
-              transition: 'opacity 0.2s ease, transform 0.1s ease'
-            }}
-            className="add-category-interactive"
-            onMouseEnter={e => e.currentTarget.style.opacity = 0.85}
-            onMouseLeave={e => e.currentTarget.style.opacity = 1}
-            onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
-            onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            {/* Round violet badge with a white "+" */}
-            <div style={{
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              background: '#8865E8',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-            </div>
-            {/* Text "Добавить категорию" in violet */}
-            <span style={{
-              fontSize: '13.5px',
-              fontWeight: 700,
-              color: '#8865E8'
-            }}>
-              Добавить категорию
-            </span>
-          </div>
         </div>
 
         {/* Categories List Card */}

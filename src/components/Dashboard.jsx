@@ -215,7 +215,7 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
   return (
     <div className="dashboard-page" style={{ position: 'relative' }}>
       {/* topbar layout aligning perfectly with other top elements */}
-      <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '0 4px', marginBottom: '16px', marginTop: '0' }}>
+      <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginBottom: '16px', marginTop: '0' }}>
         {/* Beautiful Custom Dropdown for Month Selection */}
         <div className="month-dropdown-container" style={{ position: 'relative', display: 'inline-block' }}>
           {/* Pill-shaped month selector button - smaller and compact */}
@@ -322,6 +322,95 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
             </div>
           )}
         </div>
+
+        {/* Custom Dropdown for Timeframe selection (days/months/years) relocated to the right of month-dropdown in the sub-header row */}
+        <div className="mode-dropdown-container" style={{ position: 'relative', display: 'inline-block' }}>
+          <div
+            onClick={() => setShowModeDropdown(p => !p)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: '#FFFFFF',
+              border: '1px solid var(--hairline)',
+              borderRadius: '999px',
+              padding: '6px 14px',
+              boxShadow: 'var(--el-1)',
+              fontSize: '13px',
+              fontWeight: 700,
+              color: 'var(--ink)',
+              cursor: 'pointer',
+              userSelect: 'none'
+            }}
+          >
+            <span>{modeLabels[chartMode]}</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8865E8" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transform: showModeDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}>
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
+
+          {showModeDropdown && (
+            <div
+              className="dropdown-menu"
+              style={{
+                position: 'absolute',
+                top: 'calc(100% + 8px)',
+                right: 0,
+                background: '#FFFFFF',
+                borderRadius: '14px',
+                border: '1px solid var(--hairline)',
+                boxShadow: '0 10px 30px rgba(31, 29, 47, 0.12)',
+                zIndex: 100,
+                minWidth: '130px',
+                padding: '6px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '2px',
+                animation: 'rise-in 0.15s ease'
+              }}
+            >
+              {[
+                { key: 'days', label: 'По дням' },
+                { key: 'months', label: 'По месяцам' },
+                { key: 'years', label: 'По годам' }
+              ].map(opt => {
+                const isActive = chartMode === opt.key
+                return (
+                  <button
+                    key={opt.key}
+                    onClick={() => {
+                      setChartMode(opt.key)
+                      setShowModeDropdown(false)
+                    }}
+                    style={{
+                      textAlign: 'left',
+                      padding: '8px 10px',
+                      borderRadius: '8px',
+                      background: isActive ? 'rgba(136, 101, 232, 0.08)' : 'transparent',
+                      border: 'none',
+                      color: isActive ? 'var(--lavender-dark)' : 'var(--ink)',
+                      fontSize: '12.5px',
+                      fontWeight: isActive ? 700 : 500,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      outline: 'none',
+                      transition: 'background 0.15s ease'
+                    }}
+                  >
+                    <span>{opt.label}</span>
+                    {isActive && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--lavender-dark)' }}>
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* KPI Stats Blocks */}
@@ -381,91 +470,6 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
       <section className="card chart-card dashboard-trend" style={{ marginTop: '12px', padding: '14px' }}>
         <div className="trend-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <h2 style={{ fontSize: '14px', fontWeight: 700, margin: 0, color: 'var(--ink)' }}>Динамика доходов и расходов</h2>
-
-          {/* Custom Dropdown for Timeframe selection (days/months/years) */}
-          <div className="mode-dropdown-container" style={{ position: 'relative', display: 'inline-block' }}>
-            <div
-              onClick={() => setShowModeDropdown(p => !p)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                background: 'rgba(255,255,255,0.5)',
-                padding: '4px 10px',
-                borderRadius: 'var(--r-sm)',
-                fontSize: '12px',
-                fontWeight: 700,
-                color: 'var(--ink)',
-                cursor: 'pointer',
-                border: '1px solid var(--hairline)'
-              }}
-            >
-              <span>{modeLabels[chartMode]}</span>
-              <span style={{ fontSize: '10px', opacity: 0.7, transform: showModeDropdown ? 'rotate(180deg)' : 'none', display: 'inline-block', transition: 'transform 0.2s ease' }}>⌄</span>
-            </div>
-
-            {showModeDropdown && (
-              <div
-                className="dropdown-menu"
-                style={{
-                  position: 'absolute',
-                  top: '28px',
-                  right: 0,
-                  background: '#FFFFFF',
-                  borderRadius: '14px',
-                  border: '1px solid var(--hairline)',
-                  boxShadow: '0 10px 30px rgba(31, 29, 47, 0.12)',
-                  zIndex: 100,
-                  minWidth: '130px',
-                  padding: '6px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '2px',
-                  animation: 'rise-in 0.15s ease'
-                }}
-              >
-                {[
-                  { key: 'days', label: 'По дням' },
-                  { key: 'months', label: 'По месяцам' },
-                  { key: 'years', label: 'По годам' }
-                ].map(opt => {
-                  const isActive = chartMode === opt.key
-                  return (
-                    <button
-                      key={opt.key}
-                      onClick={() => {
-                        setChartMode(opt.key)
-                        setShowModeDropdown(false)
-                      }}
-                      style={{
-                        textAlign: 'left',
-                        padding: '8px 10px',
-                        borderRadius: '8px',
-                        background: isActive ? 'rgba(136, 101, 232, 0.08)' : 'transparent',
-                        border: 'none',
-                        color: isActive ? 'var(--lavender-dark)' : 'var(--ink)',
-                        fontSize: '12.5px',
-                        fontWeight: isActive ? 700 : 500,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        outline: 'none',
-                        transition: 'background 0.15s ease'
-                      }}
-                    >
-                      <span>{opt.label}</span>
-                      {isActive && (
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--lavender-dark)' }}>
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
         </div>
         
         <ResponsiveContainer width="100%" height={115}>
