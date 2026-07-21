@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from './supabaseClient'
 import Nav from './components/Nav'
 import Home from './components/Home'
@@ -9,6 +9,7 @@ import AddTransactionModal from './components/AddTransactionModal'
 import Auth from './components/Auth'
 import NewCategoryPage from './components/NewCategoryPage'
 import AllTransactionsPage from './components/AllTransactionsPage'
+import NotificationsPage from './components/NotificationsPage'
 import { currentMonthKey, monthLabel, shiftMonth, formatMoney, categoryStyle, formatRelativeDate } from './utils'
 import CategoryIcon, { categoryMeta } from './components/CategoryIcon'
 
@@ -34,6 +35,57 @@ export default function App() {
   const [prevTotals, setPrevTotals] = useState(visualTest ? { income: 4450, expense: 4100 } : null)
   const [showAdd, setShowAdd] = useState(false)
   const [loading, setLoading] = useState(!visualTest)
+
+  // Toast Notification state & drag gesture handlers
+  const [toast, setToast] = useState(null)
+  const [toastOffset, setToastOffset] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStart = useRef({ x: 0, y: 0 })
+  const toastTimeout = useRef(null)
+
+  const showToast = useCallback((message) => {
+    if (toastTimeout.current) clearTimeout(toastTimeout.current)
+    setToastOffset({ x: 0, y: 0 })
+    setIsDragging(false)
+    const id = Date.now()
+    setToast({ message, id })
+    
+    toastTimeout.current = setTimeout(() => {
+      setToast(prev => prev && prev.id === id ? null : prev)
+    }, 5000)
+  }, [])
+
+  const handleDragStart = (e) => {
+    setIsDragging(true)
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    dragStart.current = { x: clientX - toastOffset.x, y: clientY - toastOffset.y }
+    if (toastTimeout.current) clearTimeout(toastTimeout.current)
+  }
+
+  const handleDragMove = (e) => {
+    if (!isDragging) return
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    const offsetX = clientX - dragStart.current.x
+    const offsetY = clientY - dragStart.current.y
+    setToastOffset({ x: offsetX, y: offsetY })
+  }
+
+  const handleDragEnd = () => {
+    if (!isDragging) return
+    setIsDragging(false)
+    const dist = Math.sqrt(toastOffset.x * toastOffset.x + toastOffset.y * toastOffset.y)
+    if (dist > 60) {
+      setToast(null)
+    } else {
+      setToastOffset({ x: 0, y: 0 })
+      if (toastTimeout.current) clearTimeout(toastTimeout.current)
+      toastTimeout.current = setTimeout(() => {
+        setToast(null)
+      }, 5000)
+    }
+  }
 
   // Step 21.1: subPage state for render routing inside tabs (null | 'new-category' | 'all-transactions')
   const [subPage, setSubPage] = useState(null)
@@ -148,9 +200,70 @@ export default function App() {
                 onNavigateToNewCategory={() => setSubPage('new-category')}
                 activeContext={activeContext}
                 onTriggerContext={setActiveContext}
+                showToast={showToast}
+              />
+            ) : subPage === 'notifications' ? (
+              <NotificationsPage
+                onBack={() => setSubPage(null)}
               />
             ) : (
               <>
+                {/* Unified, Adaptive Premium Header across main views */}
+                <header className="unified-header">
+                  <h1 className="uh-title">
+                    {tab === 'home' && "Главная"}
+                    {tab === 'dashboard' && "Дашборд"}
+                    {tab === 'categories' && "Категории"}
+                    {tab === 'account' && "Аккаунт"}
+                  </h1>
+                  <div className="uh-actions">
+                    {/* Inner Action Slot (Bell): Visible on home, dashboard, categories */}
+                    {(tab === 'home' || tab === 'dashboard' || tab === 'categories') && (
+                      <button 
+                        className="uh-btn bell-btn" 
+                        title="Уведомления"
+                        onClick={() => setSubPage('notifications')}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 3a6 6 0 0 0-6 6v4a2 2 0 0 1-.6 1.4l-1 1A1 1 0 0 0 5.1 17h13.8a1 1 0 0 0 .7-1.6l-1-1a2 2 0 0 1-.6-1.4V9a6 6 0 0 0-6-6z" />
+                          <path d="M10.2 17a1.8 1.8 0 0 0 3.6 0" />
+                        </svg>
+                      </button>
+                    )}
+
+                    {/* Outer Action Slot (Adaptive): Ruble Currency icon on home/dashboard; Purple Plus on categories */}
+                    {(tab === 'home' || tab === 'dashboard') && (
+                      <button 
+                        className="uh-btn currency-btn" 
+                        title="Выбор валюты"
+                        onClick={() => showToast('Смена валюты будет доступна в будущем обновлении')}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="9.3" />
+                          <path d="M10.3 7.77v8.45" />
+                          <path d="M10.3 7.77c3.05 0 5.36 1.05 5.36 2.4c0 1.35 -2.31 2.4 -5.36 2.4" />
+                          <path d="M8.9 14.82h5.07" />
+                        </svg>
+                      </button>
+                    )}
+
+                    {tab === 'categories' && (
+                      <button 
+                        className="uh-btn purple-plus-btn" 
+                        title="Добавить категорию"
+                        onClick={() => setSubPage('new-category')}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                          <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 5a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7z" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                </header>
+
                 {tab === 'home' && (
                   <Home
                     transactions={transactions}
@@ -165,6 +278,7 @@ export default function App() {
                     onNavigateToNewCategory={() => setSubPage('new-category')}
                     activeContext={activeContext}
                     onTriggerContext={setActiveContext}
+                    showToast={showToast}
                   />
                 )}
                 {tab === 'dashboard' && (
@@ -183,10 +297,11 @@ export default function App() {
                     onNavigateToNewCategory={() => setSubPage('new-category')}
                     activeContext={activeContext}
                     onTriggerContext={setActiveContext}
+                    showToast={showToast}
                   />
                 )}
                 {tab === 'account' && (
-                  <Account email={session.user.email} transactions={transactions} monthLabelText={monthLabelText} />
+                  <Account email={session.user.email} transactions={transactions} monthLabelText={monthLabelText} showToast={showToast} />
                 )}
               </>
             )}
@@ -200,6 +315,7 @@ export default function App() {
           onAdded={loadTransactions}
           onClose={() => setShowAdd(false)}
           onNavigateToNewCategory={() => setSubPage('new-category')}
+          showToast={showToast}
         />
       )}
 
@@ -413,6 +529,37 @@ export default function App() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {toast && (
+        <div
+          className="premium-toast"
+          style={{
+            transform: isDragging 
+              ? `translate(calc(-50% + ${toastOffset.x}px), ${toastOffset.y}px)` 
+              : 'translate(-50%, 0)',
+            transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s',
+            animation: toastOffset.x === 0 && toastOffset.y === 0 ? 'toast-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1)' : 'none',
+            opacity: isDragging ? Math.max(0.3, 1 - Math.sqrt(toastOffset.x*toastOffset.x + toastOffset.y*toastOffset.y)/200) : 1
+          }}
+          onTouchStart={handleDragStart}
+          onTouchMove={handleDragMove}
+          onTouchEnd={handleDragEnd}
+          onMouseDown={handleDragStart}
+          onMouseMove={handleDragMove}
+          onMouseUp={handleDragEnd}
+          onMouseLeave={handleDragEnd}
+        >
+          <div className="toast-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </div>
+          <span className="toast-msg">{toast.message}</span>
+          <span className="toast-close-hint">Свайп</span>
         </div>
       )}
 

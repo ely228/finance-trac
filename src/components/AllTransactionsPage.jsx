@@ -7,7 +7,7 @@ import CategoryIcon, { categoryMeta } from './CategoryIcon'
 import { useEffect } from 'react'
 import EditTransactionModal from './EditTransactionModal'
 
-export default function AllTransactionsPage({ transactions = [], categories = [], onBack, onChanged, onNavigateToNewCategory, activeContext, onTriggerContext }) {
+export default function AllTransactionsPage({ transactions = [], categories = [], onBack, onChanged, onNavigateToNewCategory, activeContext, onTriggerContext, showToast }) {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all') // 'all' | 'expense' | 'income'
   const [limit, setLimit] = useState(15) // spacious default limit
@@ -341,6 +341,7 @@ export default function AllTransactionsPage({ transactions = [], categories = []
             onSaved={onChanged}
             onClose={() => setEditingTransaction(null)}
             onNavigateToNewCategory={onNavigateToNewCategory}
+            showToast={showToast}
           />
         )}
       </div>

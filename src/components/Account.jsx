@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import { formatMoney } from '../utils'
 import { exportCSV, exportXLSX } from '../utils/export'
 
-export default function Account({ email, transactions = [], monthLabelText }) {
+export default function Account({ email, transactions = [], monthLabelText, showToast }) {
   const userName = (email || '').split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Алексей'
   const initial = (userName || '?').trim().charAt(0).toUpperCase()
   
@@ -142,7 +142,10 @@ export default function Account({ email, transactions = [], monthLabelText }) {
 
       {/* Interactive Settings Block */}
       <div className="card" style={{ padding: '8px 20px', cursor: 'default' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 0', borderBottom: '1px solid var(--hairline)' }}>
+        <div
+          onClick={() => showToast ? showToast('Настройки профиля будут доступны в будущем обновлении') : null}
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 0', borderBottom: '1px solid var(--hairline)', cursor: 'pointer' }}
+        >
           <span style={monoIconStyle}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -230,7 +233,10 @@ export default function Account({ email, transactions = [], monthLabelText }) {
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 0', borderBottom: '1px solid var(--hairline)' }}>
+        <div
+          onClick={() => showToast ? showToast('Помощь и поддержка будут доступны в будущем обновлении') : null}
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 0', borderBottom: '1px solid var(--hairline)', cursor: 'pointer' }}
+        >
           <span style={monoIconStyle}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
@@ -241,7 +247,10 @@ export default function Account({ email, transactions = [], monthLabelText }) {
           <span style={{ color: 'var(--ink-faint)', fontSize: '14px' }}>›</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 0', borderBottom: '1px solid var(--hairline)' }}>
+        <div
+          onClick={() => showToast ? showToast('Информация о приложении будет доступна в будущем обновлении') : null}
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 0', borderBottom: '1px solid var(--hairline)', cursor: 'pointer' }}
+        >
           <span style={monoIconStyle}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />

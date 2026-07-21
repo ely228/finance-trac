@@ -27,7 +27,7 @@ function parseBankingNumber(val) {
   return Number(clean) || 0
 }
 
-export default function EditTransactionModal({ transaction, categories, onSaved, onClose, onNavigateToNewCategory }) {
+export default function EditTransactionModal({ transaction, categories, onSaved, onClose, onNavigateToNewCategory, showToast }) {
   const spanRef = useRef(null)
   const [inputWidth, setInputWidth] = useState('90px')
 
@@ -200,7 +200,7 @@ export default function EditTransactionModal({ transaction, categories, onSaved,
             </button>
             <button
               type="button"
-              onClick={() => alert('Переводы появятся в будущих обновлениях')}
+              onClick={() => showToast ? showToast('Переводы появятся в будущих обновлениях') : null}
               style={{
                 flex: 1,
                 display: 'flex',

@@ -27,7 +27,7 @@ function parseBankingNumber(val) {
   return Number(clean) || 0
 }
 
-export default function AddTransactionModal({ categories, onAdded, onClose, onNavigateToNewCategory }) {
+export default function AddTransactionModal({ categories, onAdded, onClose, onNavigateToNewCategory, showToast }) {
   const spanRef = useRef(null)
   const [inputWidth, setInputWidth] = useState('90px')
 
@@ -199,7 +199,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
             </button>
             <button
               type="button"
-              onClick={() => alert('Переводы появятся в будущих обновлениях')}
+              onClick={() => showToast ? showToast('Переводы появятся в будущих обновлениях') : null}
               style={{
                 flex: 1,
                 display: 'flex',
@@ -474,7 +474,7 @@ export default function AddTransactionModal({ categories, onAdded, onClose, onNa
                 background: '#FFFFFF',
                 cursor: 'pointer'
               }}
-              onClick={() => alert('Управление тегами появится в будущих обновлениях')}
+              onClick={() => showToast ? showToast('Управление тегами появится в будущих обновлениях') : null}
             >
               <span style={{ fontSize: '14px', color: 'var(--ink-faint)' }}>Добавить тег</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--ink-faint)' }}>

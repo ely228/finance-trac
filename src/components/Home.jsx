@@ -36,7 +36,7 @@ const ArrowDownIcon = () => (
 import { useEffect } from 'react'
 import EditTransactionModal from './EditTransactionModal'
 
-export default function Home({ transactions, categories = [], email, onChanged, onOpenDashboard, onAdd, onViewAllTransactions, prevTotals, monthKey, onNavigateToNewCategory, activeContext, onTriggerContext }) {
+export default function Home({ transactions, categories = [], email, onChanged, onOpenDashboard, onAdd, onViewAllTransactions, prevTotals, monthKey, onNavigateToNewCategory, activeContext, onTriggerContext, showToast }) {
   const [hidden, setHidden] = useState(false)
   const [pending, setPending] = useState(null)
   const [editingTransaction, setEditingTransaction] = useState(null)
@@ -300,6 +300,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
           onSaved={onChanged}
           onClose={() => setEditingTransaction(null)}
           onNavigateToNewCategory={onNavigateToNewCategory}
+          showToast={showToast}
         />
       )}
     </div>
