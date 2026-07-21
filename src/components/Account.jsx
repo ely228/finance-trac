@@ -1,7 +1,8 @@
 import { supabase } from '../supabaseClient'
 import { formatMoney } from '../utils'
+import ExportMenu from './ExportMenu'
 
-export default function Account({ email, transactions = [] }) {
+export default function Account({ email, transactions = [], monthLabelText }) {
   const userName = (email || '').split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Алексей'
   const initial = (userName || '?').trim().charAt(0).toUpperCase()
 
@@ -138,14 +139,16 @@ export default function Account({ email, transactions = [] }) {
           <span style={{ color: 'var(--ink-faint)', fontSize: '14px' }}>›</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 0', borderBottom: '1px solid var(--hairline)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 0', borderBottom: '1px solid var(--hairline)', position: 'relative' }}>
           <span style={monoIconStyle}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
             </svg>
           </span>
           <span style={{ flex: 1, fontSize: '13px', fontWeight: 700, color: 'var(--ink-soft)' }}>Экспорт данных</span>
-          <span style={{ color: 'var(--ink-faint)', fontSize: '14px' }}>›</span>
+          <div style={{ transform: 'scale(0.85)', transformOrigin: 'right center' }}>
+            <ExportMenu transactions={transactions} monthLabelText={monthLabelText} />
+          </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 0', borderBottom: '1px solid var(--hairline)' }}>
