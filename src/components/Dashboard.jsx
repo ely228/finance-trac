@@ -214,41 +214,40 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
 
   return (
     <div className="dashboard-page" style={{ position: 'relative' }}>
-      {/* topbar layout matching .home-greeting for exact top offset alignment */}
-      <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 4px 12px', marginBottom: '4px', marginTop: '0' }}>
+      {/* topbar layout aligning perfectly with other top elements */}
+      <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '0 4px', marginBottom: '16px', marginTop: '0' }}>
         {/* Beautiful Custom Dropdown for Month Selection */}
         <div className="month-dropdown-container" style={{ position: 'relative', display: 'inline-block' }}>
-          {/* Pill-shaped month selector button matching image.png */}
+          {/* Pill-shaped month selector button - smaller and compact */}
           <div
             onClick={() => setShowMonthDropdown(p => !p)}
             style={{
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '8px',
               background: '#FFFFFF',
               border: '1px solid var(--hairline)',
               borderRadius: '999px',
-              padding: '10px 20px',
+              padding: '6px 14px',
               boxShadow: 'var(--el-1)',
               transition: 'background 0.2s ease, transform 0.1s ease',
               userSelect: 'none'
             }}
             className="month-pill-btn"
           >
-            {/* Calendar Icon in SF Symbols style with downward chevron check */}
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8865E8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            {/* Calendar Icon in SF Symbols style */}
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8865E8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
               <rect x="3" y="4" width="18" height="18" rx="4" />
               <line x1="16" y1="2" x2="16" y2="6" />
               <line x1="8" y1="2" x2="8" y2="6" />
               <line x1="3" y1="10" x2="21" y2="10" />
-              <path d="m9 14 3 3 3-3" />
             </svg>
 
-            {/* Month and Year Text without " г." */}
+            {/* Month and Year Text */}
             <span
               style={{
-                fontSize: '16px',
+                fontSize: '13px',
                 fontWeight: 700,
                 color: 'var(--ink)',
                 whiteSpace: 'nowrap'
@@ -257,8 +256,8 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
               {cleanMonthLabel(monthKey)}
             </span>
 
-            {/* Downward chevron icon in SF Symbols style */}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8865E8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transform: showMonthDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}>
+            {/* Downward chevron icon */}
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8865E8" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, transform: showMonthDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}>
               <path d="m6 9 6 6 6-6" />
             </svg>
           </div>
