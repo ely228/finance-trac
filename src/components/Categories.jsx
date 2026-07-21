@@ -74,37 +74,9 @@ export default function Categories({ categories, transactions, onChanged, onNavi
 
   return (
     <div className="home-grid">
-      <div className="home-main-col">
-        <div className="home-greeting" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px', marginBottom: '8px' }}>
-          <h1 style={{ margin: 0, fontSize: '30px', fontWeight: 800, color: 'var(--ink)' }}>Категории</h1>
-          <button
-            className="notification-btn"
-            onClick={onNavigateToNewCategory}
-            aria-label="Добавить категорию"
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '12px',
-              background: '#FFFFFF',
-              border: '1px solid var(--hairline)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              position: 'relative',
-              boxShadow: 'var(--el-1)',
-              outline: 'none',
-              padding: 0
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--ink)' }}>
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="search-bar" style={{ marginBottom: '16px' }}>
+      <div className="home-main-col" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* Step 1: Search Bar at the very top with zeroed top margin */}
+        <div className="search-bar" style={{ marginTop: '0px', marginBottom: '0px' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }}>
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -112,11 +84,98 @@ export default function Categories({ categories, transactions, onChanged, onNavi
           <input placeholder="Поиск категорий" value={search} onChange={e => setSearch(e.target.value)} />
         </div>
 
-        {/* Clean, Unified categories. Expense/Income tabs deleted as requested */}
+        {/* Step 2: "Совет на сегодня" Card right below Search Bar */}
+        <div className="card advice-card" style={{
+          display: 'flex',
+          gap: '12px',
+          alignItems: 'center',
+          background: 'linear-gradient(135deg, #E6E2F3 0%, #DFE8F0 100%)',
+          border: '1px solid rgba(42, 39, 64, 0.08)',
+          marginBottom: '0px'
+        }}>
+          <div className="advice-icon" style={{
+            background: 'rgba(184, 154, 244, 0.15)',
+            color: '#8865E8',
+            width: '38px',
+            height: '38px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5.5 5.5 0 0 0 12.5 2.5a5.5 5.5 0 0 0-5.5 5.5c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5" />
+              <path d="M9 18h6M10 22h4" />
+            </svg>
+          </div>
+          <div style={{ flex: 1 }}>
+            <h2 style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, textTransform: 'none', color: 'var(--ink)' }}>Совет на сегодня</h2>
+            <div style={{ fontSize: '12.5px', fontWeight: 600, marginTop: '4px', lineHeight: '1.4', color: 'var(--ink-soft)' }}>
+              Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишнего стресса.
+            </div>
+          </div>
+        </div>
 
-        <div className="card categories-card" style={{ overflow: 'visible', marginBottom: 0 }}>
+        {/* Step 3: Section header "Мои категории" + Interactive "+ Добавить категорию" */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '0 4px',
+          marginTop: '4px',
+          marginBottom: '0px'
+        }}>
+          <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--ink)' }}>
+            Мои категории
+          </span>
+          <div
+            onClick={onNavigateToNewCategory}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer',
+              userSelect: 'none',
+              transition: 'opacity 0.2s ease, transform 0.1s ease'
+            }}
+            className="add-category-interactive"
+            onMouseEnter={e => e.currentTarget.style.opacity = 0.85}
+            onMouseLeave={e => e.currentTarget.style.opacity = 1}
+            onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
+            onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            {/* Round violet badge with a white "+" */}
+            <div style={{
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
+              background: '#8865E8',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            {/* Text "Добавить категорию" in violet */}
+            <span style={{
+              fontSize: '13.5px',
+              fontWeight: 700,
+              color: '#8865E8'
+            }}>
+              Добавить категорию
+            </span>
+          </div>
+        </div>
+
+        {/* Categories List Card */}
+        <div className="card categories-card" style={{ overflow: 'visible', marginBottom: 0, marginTop: '0px' }}>
           {rows.length === 0 ? (
-            <p className="muted">Ничего не найдено. Добавь категорию кнопкой «+» сверху.</p>
+            <p className="muted" style={{ margin: 0, padding: '12px', textAlign: 'center' }}>Ничего не найдено.</p>
           ) : rows.map(c => {
             const style = categoryStyle(c.name)
             const customBg = c.color ? `rgba(${c.color}, 0.16)` : style.bg
@@ -186,41 +245,6 @@ export default function Categories({ categories, transactions, onChanged, onNavi
               </div>
             )
           })}
-        </div>
-      </div>
-
-      <div className="recent-section">
-        {/* "Совет на сегодня" Card */}
-        <div className="card advice-card" style={{
-          display: 'flex',
-          gap: '12px',
-          alignItems: 'center',
-          background: 'linear-gradient(135deg, #E6E2F3 0%, #DFE8F0 100%)',
-          border: '1px solid rgba(42, 39, 64, 0.08)',
-          marginBottom: 0
-        }}>
-          <div className="advice-icon" style={{
-            background: 'rgba(184, 154, 244, 0.15)',
-            color: '#8865E8',
-            width: '38px',
-            height: '38px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0
-          }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5.5 5.5 0 0 0 12.5 2.5a5.5 5.5 0 0 0-5.5 5.5c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5" />
-              <path d="M9 18h6M10 22h4" />
-            </svg>
-          </div>
-          <div style={{ flex: 1 }}>
-            <h2 style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, textTransform: 'none', color: 'var(--ink)' }}>Совет на сегодня</h2>
-            <div style={{ fontSize: '12.5px', fontWeight: 600, marginTop: '4px', lineHeight: '1.4', color: 'var(--ink-soft)' }}>
-              Откладывайте 10% от каждого дохода прямо в день его получения. Это сформирует вашу подушку безопасности без лишнего стресса.
-            </div>
-          </div>
         </div>
       </div>
 
