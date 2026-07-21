@@ -175,7 +175,10 @@ export default function App() {
       <div className="grain" />
 
       {/* Nav is locked/fixed at bottom, visible even when viewing subPage based on Step 23.2 */}
-      <Nav tab={tab} setTab={setTab} />
+      <Nav tab={tab} setTab={(newTab) => {
+        setTab(newTab)
+        setSubPage(null)
+      }} />
 
       <main className="content">
         {loading ? (
@@ -217,47 +220,30 @@ export default function App() {
                     {tab === 'account' && "Аккаунт"}
                   </h1>
                   <div className="uh-actions">
-                    {/* Inner Action Slot (Bell): Visible on home, dashboard, categories */}
-                    {(tab === 'home' || tab === 'dashboard' || tab === 'categories') && (
-                      <button 
-                        className="uh-btn bell-btn" 
-                        title="Уведомления"
-                        onClick={() => setSubPage('notifications')}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M12 3a6 6 0 0 0-6 6v4a2 2 0 0 1-.6 1.4l-1 1A1 1 0 0 0 5.1 17h13.8a1 1 0 0 0 .7-1.6l-1-1a2 2 0 0 1-.6-1.4V9a6 6 0 0 0-6-6z" />
-                          <path d="M10.2 17a1.8 1.8 0 0 0 3.6 0" />
-                        </svg>
-                      </button>
-                    )}
-
-                    {/* Outer Action Slot (Adaptive): Ruble Currency icon on home/dashboard; Purple Plus on categories */}
-                    {(tab === 'home' || tab === 'dashboard') && (
-                      <button 
-                        className="uh-btn currency-btn" 
-                        title="Выбор валюты"
-                        onClick={() => showToast('Смена валюты будет доступна в будущем обновлении')}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="9.3" />
-                          <path d="M10.3 7.77v8.45" />
-                          <path d="M10.3 7.77c3.05 0 5.36 1.05 5.36 2.4c0 1.35 -2.31 2.4 -5.36 2.4" />
-                          <path d="M8.9 14.82h5.07" />
-                        </svg>
-                      </button>
-                    )}
-
+                    {/* On the Categories tab, show the white-square plus button to the left of the bell */}
                     {tab === 'categories' && (
                       <button 
-                        className="uh-btn purple-plus-btn" 
+                        className="uh-btn-square plus-btn"
                         title="Добавить категорию"
                         onClick={() => setSubPage('new-category')}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-                          <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 5a1 1 0 1 0-2 0v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7z" />
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </button>
+                    )}
+
+                    {/* Notification bell button: Visible on Home, Dashboard, and Categories */}
+                    {(tab === 'home' || tab === 'dashboard' || tab === 'categories') && (
+                      <button 
+                        className="uh-btn-square bell-btn"
+                        title="Уведомления"
+                        onClick={() => setSubPage('notifications')}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                         </svg>
                       </button>
                     )}

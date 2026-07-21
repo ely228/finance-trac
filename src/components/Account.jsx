@@ -47,11 +47,11 @@ export default function Account({ email, transactions = [], monthLabelText, show
   return (
     <div>
       {/* Profile Header - Mounted at the very top of Account view */}
-      <div className="card" style={{ padding: '24px', marginBottom: '22px', marginTop: '0px' }}>
-        <div className="account-hero" style={{ padding: '12px 0' }}>
-          <div className="account-avatar-lg" style={{ width: '64px', height: '64px', fontSize: '24px', marginBottom: '8px' }}>{initial}</div>
-          <div className="account-email-lg" style={{ fontSize: '18px', fontWeight: 800, marginTop: '4px', color: 'var(--ink)' }}>{userName}</div>
-          <div className="account-sub" style={{ fontSize: '12px', color: 'var(--ink-soft)', marginTop: '2px' }}>{email}</div>
+      <div className="card" style={{ padding: '16px 20px', marginBottom: '22px', marginTop: '0px' }}>
+        <div className="account-hero" style={{ padding: '4px 0' }}>
+          <div className="account-avatar-lg" style={{ width: '56px', height: '56px', fontSize: '20px', marginBottom: '4px', background: 'var(--gradient-btn)' }}>{initial}</div>
+          <div className="account-email-lg" style={{ fontSize: '16px', fontWeight: 800, marginTop: '2px', color: 'var(--ink)' }}>{userName}</div>
+          <div className="account-sub" style={{ fontSize: '12px', color: 'var(--ink-soft)', marginTop: '0px' }}>{email}</div>
         </div>
       </div>
 

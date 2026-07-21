@@ -1,0 +1,11 @@
+
+> finance-tracker@1.0.0 dev
+> vite
+
+
+  VITE v5.4.21  ready in 275 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+4:24:24 PM [vite] .env changed, restarting server...
+4:24:24 PM [vite] server restarted.
