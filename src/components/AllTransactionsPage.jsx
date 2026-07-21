@@ -77,29 +77,38 @@ export default function AllTransactionsPage({ transactions = [], categories = []
 
   return (
     <div className="all-transactions-page" style={{ position: 'relative', zIndex: 10, margin: '0 auto' }}>
-      {/* Back button plain, filter toggle is now in the search bar line */}
-      <div className="topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button
-            onClick={onBack}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--ink)',
-              fontSize: '28px',
-              cursor: 'pointer',
-              padding: '0',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              outline: 'none'
-            }}
-            aria-label="Назад"
-          >
-            ←
-          </button>
-          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: 'var(--ink)' }}>Все операции</h1>
-        </div>
+      {/* Back button plain, centered header matching Notifications view */}
+      <div className="topbar" style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '44px',
+        marginBottom: '24px'
+      }}>
+        <button
+          onClick={onBack}
+          style={{
+            position: 'absolute',
+            left: '0px',
+            background: 'none',
+            border: 'none',
+            color: 'var(--ink)',
+            cursor: 'pointer',
+            padding: '4px 8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            outline: 'none'
+          }}
+          aria-label="Назад"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+        </button>
+        <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--ink)', textAlign: 'center' }}>Все операции</h1>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>

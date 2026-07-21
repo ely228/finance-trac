@@ -955,7 +955,7 @@ body.context-blur-active .card {
   width: 100%;
   height: 56px;
   margin-bottom: 24px;
-  padding: 0 4px;
+  padding: 0;
   position: relative;
   z-index: 10;
 }
@@ -1003,11 +1003,32 @@ body.context-blur-active .card {
   color: var(--ink);
 }
 
+.uh-btn-square {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid var(--hairline);
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--ink);
+  box-shadow: 0px 2px 8px rgba(124, 110, 230, 0.06);
+  transition: background var(--dur-1) ease, transform var(--dur-1) ease, box-shadow var(--dur-1) ease;
+  padding: 0;
+}
+.uh-btn-square:active {
+  transform: scale(0.95);
+  background: #F5F6FA;
+}
+
 /* Premium Toast Notification */
 .premium-toast {
   position: fixed;
   top: 24px;
   left: 50%;
+  transform: translate(-50%, 0);
   width: calc(100% - 40px);
   max-width: 380px;
   background: rgba(255, 255, 255, 0.92);
@@ -1025,9 +1046,23 @@ body.context-blur-active .card {
   user-select: none;
   touch-action: none;
   box-sizing: border-box;
+  animation: toast-slide-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .premium-toast:active {
   cursor: grabbing;
+}
+.premium-toast.dismissing-up {
+  transform: translate(-50%, -120px) scale(0.85) !important;
+  opacity: 0 !important;
+}
+.premium-toast.dismissing-left {
+  transform: translate(-150%, 0) rotate(-8deg) !important;
+  opacity: 0 !important;
+}
+.premium-toast.dismissing-right {
+  transform: translate(50%, 0) rotate(8deg) !important;
+  opacity: 0 !important;
 }
 .toast-icon-wrap {
   width: 28px;
@@ -1047,17 +1082,9 @@ body.context-blur-active .card {
   line-height: 1.4;
   flex: 1;
 }
-.toast-close-hint {
-  font-size: 10px;
-  color: var(--ink-faint);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.6;
-}
 @keyframes toast-slide-in {
   0% {
-    transform: translate(-50%, -40px) scale(0.9);
+    transform: translate(-50%, -80px) scale(0.88);
     opacity: 0;
   }
   100% {
