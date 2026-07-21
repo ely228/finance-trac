@@ -65,7 +65,7 @@
 
   --gradient-hero: linear-gradient(135deg, var(--lavender) 0%, var(--rose) 55%, var(--peach) 100%);
   --gradient-btn: #8865E8;
-  --gradient-app-bg: linear-gradient(160deg, #FBF8FA 0%, #F8F5FD 42%, #F5FAFE 100%);
+  --gradient-app-bg: linear-gradient(165deg, #FDF4F7 0%, #FAF0F6 30%, #F5EFF9 65%, #EFF4FA 100%);
   --sidebar-w: 88px;
   --safe-t: env(safe-area-inset-top, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);
@@ -961,8 +961,8 @@ body.context-blur-active .card {
   gap: 12px;
 }
 .uh-btn {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: none;
   background: transparent;
@@ -981,7 +981,7 @@ body.context-blur-active .card {
   color: var(--ink);
 }
 .uh-btn.avatar-btn {
-  border: 1.8px solid var(--ink);
+  border: none;
   color: var(--ink);
 }
 .uh-btn.purple-plus-btn {
