@@ -231,6 +231,7 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
               borderRadius: '999px',
               padding: '6px 14px',
               boxShadow: 'var(--el-1)',
+              marginLeft: '-6px',          
               transition: 'background 0.2s ease, transform 0.1s ease',
               userSelect: 'none'
             }}
@@ -279,6 +280,7 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
                 overflowY: 'auto',
                 padding: '6px',
                 display: 'flex',
+                marginLeft: '-6px',
                 flexDirection: 'column',
                 gap: '2px',
                 animation: 'rise-in 0.15s ease'
@@ -340,6 +342,7 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
               fontWeight: 700,
               color: 'var(--ink)',
               cursor: 'pointer',
+              marginRight: '-6px',
               userSelect: 'none'
             }}
           >
@@ -364,6 +367,7 @@ export default function Dashboard({ transactions = [], monthKey, onMonthChange, 
                 minWidth: '130px',
                 padding: '6px',
                 display: 'flex',
+                marginRight: '-6px',
                 flexDirection: 'column',
                 gap: '2px',
                 animation: 'rise-in 0.15s ease'

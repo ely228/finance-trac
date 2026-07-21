@@ -119,8 +119,8 @@ export default function Home({ transactions, categories = [], email, onChanged, 
         <div className="card hero-card g-balance" style={{ padding: '16px', background: '#FFFFFF', border: '1px solid var(--hairline)', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '0', boxShadow: 'var(--el-1)', marginTop: '0px', position: 'relative' }}>
           <div className="hero-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span className="hero-label" style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-soft)' }}>Баланс</span>
-              <div className="hero-date" style={{ fontSize: '11px', color: 'var(--ink-faint)', marginTop: '4px' }}>{formattedCurrentMonth}</div>
+              <span className="hero-label" style={{ fontSize: '13px', color: 'var(--ink-soft)' }}>Баланс</span>
+              <div className="hero-date" style={{ fontSize: '11px', color: 'var(--ink-faint)', marginTop: '2px' }}>{formattedCurrentMonth}</div>
             </div>
             <button className="hero-eye" onClick={() => setHidden(h => !h)} aria-label="Скрыть баланс" style={{ width: '34px', height: '34px', border: 'none', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
               <EyeIcon off={hidden} />
