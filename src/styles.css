@@ -912,3 +912,10 @@ body.context-blur-active .card {
   transition: filter 0.28s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: filter, transform;
 }
+
+/* Custom Override: Stop chevron animations/transitions, keeping them strictly static */
+.cat-chevron, .settings-chevron, .chev {
+  transition: none !important;
+  transform: none !important;
+  animation: none !important;
+}
