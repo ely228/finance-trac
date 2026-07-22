@@ -9,3 +9,5 @@
 домашний экран телефона и открывается как отдельное приложение.
 
 **React + Supabase + Vercel + GitHub**
+
+https://finance-trac.vercel.app/
