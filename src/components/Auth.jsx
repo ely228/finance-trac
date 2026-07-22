@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 
 export default function Auth() {
-  const [mode, setMode] = useState('signin') // 'signin' | 'signup'
+  const [mode, setMode] = useState('welcome') // 'welcome' | 'signin' | 'signup'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -34,10 +34,40 @@ export default function Auth() {
     setLoading(false)
   }
 
+  if (mode === 'welcome') {
+    return (
+      <div className="auth-wrap welcome-mode">
+        <div className="card auth-card welcome-card">
+          <div className="auth-welcome-hero">
+            <img src="/images/wallet.png" alt="Fin Trac Wallet" className="auth-welcome-wallet" />
+            <h1 className="auth-welcome-title">Fin Trac</h1>
+            <p className="auth-welcome-subtitle">Личный трекер доходов и расходов с премиальным мобильным интерфейсом</p>
+          </div>
+
+          <div className="auth-welcome-buttons">
+            <button className="auth-welcome-btn primary" onClick={() => setMode('signin')}>
+              Войти
+            </button>
+            <button className="auth-welcome-btn secondary" onClick={() => setMode('signup')}>
+              Зарегистрироваться
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="auth-wrap">
       <div className="card auth-card">
-        <div className="brand-mark" />
+        <button className="auth-back-btn" onClick={() => { setMode('welcome'); setError(''); setInfo(''); }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          <span>Назад</span>
+        </button>
+
+        <div className="brand-mark" style={{ display: 'none' }} />
         <h1>{mode === 'signin' ? 'Вход в Fin Trac' : 'Создать аккаунт'}</h1>
         <p className="sub muted">Личный доступ к твоим финансам с любого устройства</p>
 
