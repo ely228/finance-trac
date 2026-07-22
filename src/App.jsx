@@ -309,10 +309,59 @@ export default function App() {
     setSubPage(null)
   }, [tab])
 
-  if (session === undefined) return null
-  if (!session) return <Auth />
-
   const monthLabelText = monthLabel(monthKey)
+
+  if (session === undefined) {
+    return (
+      <div className="splash-loader-wrap">
+        <div className="splash-loader-content">
+          <img src="/images/wallet.png" alt="Fin Trac" className="splash-logo" />
+          <div className="splash-title">Fin Trac</div>
+          <div className="splash-spinner-ring" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <>
+        <Auth showToast={showToast} />
+        {toast && (
+          <div
+            className={`premium-toast ${dismissClass}`}
+            style={{
+              top: isPWA ? '56px' : '24px',
+              transform: isDragging
+                ? `translate(calc(-50% + ${toastOffset.x}px), ${toastOffset.y}px)`
+                : dismissClass
+                  ? undefined
+                  : 'translate(-50%, 0)',
+              transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s',
+              animation: toastOffset.x === 0 && toastOffset.y === 0 && !dismissClass ? 'toast-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1)' : 'none',
+              opacity: isDragging ? Math.max(0.3, 1 - Math.sqrt(toastOffset.x*toastOffset.x + toastOffset.y*toastOffset.y)/200) : 1
+            }}
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
+            onMouseDown={handleDragStart}
+            onMouseMove={handleDragMove}
+            onMouseUp={handleDragEnd}
+            onMouseLeave={handleDragEnd}
+          >
+            <div className="toast-icon-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+            </div>
+            <span className="toast-msg">{toast.message}</span>
+          </div>
+        )}
+      </>
+    )
+  }
 
   return (
     <div className="app">
@@ -330,7 +379,12 @@ export default function App() {
 
       <main className="content">
         {loading ? (
-          <p className="muted">Загрузка…</p>
+          <div className="splash-loader-wrap" style={{ position: 'absolute', background: 'transparent', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', zIndex: 999 }}>
+            <div className="splash-loader-content">
+              <img src="/images/wallet.png" alt="Fin Trac" className="splash-logo" />
+              <div className="splash-spinner-ring" />
+            </div>
+          </div>
         ) : (
           <>
             {/* Sub-pages logic (renders instead of tab content if active) */}
