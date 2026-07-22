@@ -129,7 +129,7 @@ export default function App() {
   const [showPWAPrompt, setShowPWAPrompt] = useState(false)
 
   useEffect(() => {
-    const dismissed = localStorage.getItem('pwa_prompt_dismissed')
+    const dismissed = sessionStorage.getItem('pwa_prompt_dismissed')
     const mobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     if (mobile && !isPWA && !dismissed) {
       const timer = setTimeout(() => {
@@ -140,7 +140,7 @@ export default function App() {
   }, [isPWA])
 
   const handleDismissPWAPrompt = () => {
-    localStorage.setItem('pwa_prompt_dismissed', 'true')
+    sessionStorage.setItem('pwa_prompt_dismissed', 'true')
     setShowPWAPrompt(false)
   }
 
@@ -317,7 +317,6 @@ export default function App() {
         <div className="splash-loader-content">
           <img src="/images/wallet.png" alt="Fin Trac" className="splash-logo" />
           <div className="splash-title">Fin Trac</div>
-          <div className="splash-spinner-ring" />
         </div>
       </div>
     )
@@ -382,7 +381,6 @@ export default function App() {
           <div className="splash-loader-wrap" style={{ position: 'absolute', background: 'transparent', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', zIndex: 999 }}>
             <div className="splash-loader-content">
               <img src="/images/wallet.png" alt="Fin Trac" className="splash-logo" />
-              <div className="splash-spinner-ring" />
             </div>
           </div>
         ) : (

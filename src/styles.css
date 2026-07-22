@@ -570,7 +570,7 @@ body.modal-open .nav-sphere, body:has(.modal-overlay) .nav-sphere {
 .account-row { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: 6px; }
 .account-avatar { width: 42px; height: 42px; border-radius: var(--r-full); background: var(--gradient-btn); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; flex-shrink: 0; }
 .account-email { font-size: 14px; font-weight: 700; word-break: break-all; }
-.logout-btn { margin-top: var(--sp-5); width: 100%; padding: 14px; border-radius: var(--r-lg); border: 1px solid var(--hairline); background: var(--mat-1-bg); font-weight: 700; font-size: 14px; color: var(--expense); cursor: pointer; }
+.logout-btn { margin-top: var(--sp-5); width: 100%; padding: 14px; border-radius: var(--r-lg); border: solid 1px var(--hairline); background: var(--mat-1-bg); font-weight: 700; font-size: 14px; color: var(--expense); cursor: pointer; }
 
 /* ---------- export menu ---------- */
 .export-wrap { position: relative; }
@@ -1564,14 +1564,17 @@ body.context-blur-active .card {
 @keyframes splash-pulse {
   0% {
     transform: scale(1);
+    opacity: 0.8;
     filter: drop-shadow(0 0 0px rgba(136, 101, 232, 0));
   }
   50% {
-    transform: scale(1.08);
-    filter: drop-shadow(0 8px 24px rgba(136, 101, 232, 0.35));
+    transform: scale(1.12);
+    opacity: 1;
+    filter: drop-shadow(0 8px 24px rgba(136, 101, 232, 0.4));
   }
   100% {
     transform: scale(1);
+    opacity: 0.8;
     filter: drop-shadow(0 0 0px rgba(136, 101, 232, 0));
   }
 }
@@ -1585,13 +1588,7 @@ body.context-blur-active .card {
 }
 
 .splash-spinner-ring {
-  width: 32px;
-  height: 32px;
-  border: 3px solid rgba(136, 101, 232, 0.12);
-  border-top-color: var(--lavender);
-  border-radius: 50%;
-  animation: splash-spin 1s infinite linear;
-  margin-top: 24px;
+  display: none !important; /* Replaced with pulsing wallet logo */
 }
 
 @keyframes splash-spin {
@@ -1699,6 +1696,53 @@ body.context-blur-active .card {
 .welcome-screen .auth-text-section {
   text-align: center;
   margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  height: 130px; /* fixed height constraints for Apple-style slide transitions */
+}
+
+.auth-slider-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.auth-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.auth-slide.slide-active {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.auth-slide.slide-left {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.auth-slide.slide-right {
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.auth-slide.slide-inactive {
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .welcome-screen .auth-main-title {
@@ -1708,6 +1752,7 @@ body.context-blur-active .card {
   color: #161618;
   letter-spacing: -0.025em;
   margin: 0 0 14px 0;
+  text-align: center;
 }
 
 .welcome-screen .auth-main-subtitle {
@@ -1717,6 +1762,7 @@ body.context-blur-active .card {
   color: #7E7E8E;
   margin: 0;
   padding: 0 16px;
+  text-align: center;
 }
 
 /* 4 Page Dots */
@@ -1734,6 +1780,7 @@ body.context-blur-active .card {
   border-radius: 50%;
   background: #E4E3EC;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .auth-dot.auth-dot-pill {
@@ -1807,8 +1854,17 @@ body.context-blur-active .card {
 }
 
 /* ---------------- Form screen (Login / Register) ---------------- */
+.form-screen {
+  padding: calc(24px + var(--safe-t)) 24px 24px !important;
+  align-items: flex-start !important; /* aligns input forms elegantly up */
+}
+
+.form-screen .auth-container {
+  margin-top: 0;
+}
+
 .form-screen .auth-top-header {
-  height: 48px;
+  height: 56px;
   display: flex;
   align-items: center;
   margin-bottom: 24px;
@@ -1819,7 +1875,7 @@ body.context-blur-active .card {
   height: 44px;
   border-radius: 50%;
   background: #FFFFFF;
-  border: none;
+  border: 1px solid var(--hairline);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
   display: flex;
   align-items: center;
@@ -1836,7 +1892,7 @@ body.context-blur-active .card {
 
 .auth-form-titles {
   text-align: left;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .auth-form-title {
@@ -1858,7 +1914,7 @@ body.context-blur-active .card {
 .auth-form-fields {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   width: 100%;
 }
 
@@ -1880,12 +1936,12 @@ body.context-blur-active .card {
 .auth-custom-input {
   width: 100%;
   box-sizing: border-box;
-  padding: 16px 16px 16px 48px;
+  padding: 15px 16px 15px 48px;
   font-size: 14px;
   font-weight: 600;
   color: #161618;
   background: #FFFFFF;
-  border: none;
+  border: 1px solid var(--hairline);
   border-radius: 16px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
   transition: all 0.24s ease;
@@ -1895,6 +1951,7 @@ body.context-blur-active .card {
   outline: none;
   box-shadow: 0 4px 12px rgba(117, 89, 240, 0.08);
   background: #FFFFFF;
+  border-color: #7559F0;
 }
 
 .auth-custom-input::placeholder {
@@ -1945,7 +2002,7 @@ body.context-blur-active .card {
 /* Form Action Buttons */
 .auth-form-submit-btn {
   width: 100%;
-  padding: 16px;
+  padding: 15px;
   font-size: 15px;
   font-weight: 800;
   border-radius: 16px;
@@ -1954,7 +2011,7 @@ body.context-blur-active .card {
   border: none;
   cursor: pointer;
   box-shadow: 0 8px 16px rgba(117, 89, 240, 0.25);
-  margin-top: 10px;
+  margin-top: 6px;
   transition: all 0.24s ease;
 }
 
@@ -1989,7 +2046,7 @@ body.context-blur-active .card {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 28px 0;
+  margin: 20px 0;
   width: 100%;
 }
 
@@ -2010,20 +2067,20 @@ body.context-blur-active .card {
 .auth-social-buttons-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .auth-social-btn {
   width: 100%;
-  padding: 15px;
+  padding: 14px;
   font-size: 14px;
   font-weight: 700;
   border-radius: 16px;
   background: #FFFFFF;
   color: #161618;
-  border: none;
+  border: 1px solid var(--hairline);
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
   display: flex;
@@ -2048,7 +2105,7 @@ body.context-blur-active .card {
   font-size: 14px;
   font-weight: 600;
   color: #8C8C9E;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .auth-switcher-link {

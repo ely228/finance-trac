@@ -1,5 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../supabaseClient'
+
+const SLIDES = [
+  {
+    title: <>Ваши финансы<br />под контролем</>,
+    subtitle: "Удобный учет доходов и расходов для достижения ваших целей"
+  },
+  {
+    title: <>Умная аналитика<br />и графики</>,
+    subtitle: "Наглядное распределение ваших трат и доходов по категориям"
+  },
+  {
+    title: <>Быстрый экспорт<br />в один клик</>,
+    subtitle: "Скачивайте подробные отчеты в CSV или Excel прямо на смартфон"
+  },
+  {
+    title: <>Абсолютная<br />безопасность</>,
+    subtitle: "Ваши данные под надежной защитой современного облака"
+  }
+]
 
 export default function Auth({ showToast }) {
   const [mode, setMode] = useState('welcome') // 'welcome' | 'signin' | 'signup'
@@ -9,6 +28,64 @@ export default function Auth({ showToast }) {
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Apple-style Benefit Slider state
+  const [activeSlide, setActiveSlide] = useState(0)
+  const touchStartX = useRef(0)
+  const touchEndX = useRef(0)
+  const autoSlideTimer = useRef(null)
+
+  // Auto-slide effect (every 2 seconds)
+  useEffect(() => {
+    if (mode !== 'welcome') return
+
+    const startAutoSlide = () => {
+      autoSlideTimer.current = setInterval(() => {
+        setActiveSlide(prev => (prev + 1) % SLIDES.length)
+      }, 2000)
+    }
+
+    startAutoSlide()
+
+    return () => {
+      if (autoSlideTimer.current) clearInterval(autoSlideTimer.current)
+    }
+  }, [mode])
+
+  const resetAutoSlide = () => {
+    if (autoSlideTimer.current) {
+      clearInterval(autoSlideTimer.current)
+    }
+    autoSlideTimer.current = setInterval(() => {
+      setActiveSlide(prev => (prev + 1) % SLIDES.length)
+    }, 2000)
+  }
+
+  // Touch Swipe handlers
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX
+    touchEndX.current = e.touches[0].clientX
+  }
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current
+    const swipeThreshold = 50 // px
+
+    if (Math.abs(diff) > swipeThreshold) {
+      if (diff > 0) {
+        // Swiped left -> next slide
+        setActiveSlide(prev => (prev + 1) % SLIDES.length)
+      } else {
+        // Swiped right -> prev slide
+        setActiveSlide(prev => (prev - 1 + SLIDES.length) % SLIDES.length)
+      }
+      resetAutoSlide()
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -58,20 +135,46 @@ export default function Auth({ showToast }) {
             <img src="/images/wallet.png" alt="Wallet" className="auth-hero-wallet" />
           </div>
 
-          {/* Title & Description */}
-          <div className="auth-text-section">
-            <h1 className="auth-main-title">Ваши финансы<br />под контролем</h1>
-            <p className="auth-main-subtitle">
-              Удобный учет доходов и расходов для достижения ваших целей
-            </p>
+          {/* Swipeable Title & Description */}
+          <div
+            className="auth-text-section"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="auth-slider-viewport">
+              {SLIDES.map((slide, idx) => {
+                let positionClass = 'slide-inactive'
+                if (idx === activeSlide) {
+                  positionClass = 'slide-active'
+                } else if (idx === (activeSlide - 1 + SLIDES.length) % SLIDES.length) {
+                  positionClass = 'slide-left'
+                } else if (idx === (activeSlide + 1) % SLIDES.length) {
+                  positionClass = 'slide-right'
+                }
+
+                return (
+                  <div key={idx} className={`auth-slide ${positionClass}`}>
+                    <h1 className="auth-main-title">{slide.title}</h1>
+                    <p className="auth-main-subtitle">{slide.subtitle}</p>
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
           {/* Page Dots Indicator */}
           <div className="auth-dots-container">
-            <span className="auth-dot auth-dot-pill"></span>
-            <span className="auth-dot"></span>
-            <span className="auth-dot"></span>
-            <span className="auth-dot"></span>
+            {SLIDES.map((_, idx) => (
+              <span
+                key={idx}
+                className={`auth-dot ${idx === activeSlide ? 'auth-dot-pill' : ''}`}
+                onClick={() => {
+                  setActiveSlide(idx)
+                  resetAutoSlide()
+                }}
+              />
+            ))}
           </div>
 
           {/* Action Buttons */}
