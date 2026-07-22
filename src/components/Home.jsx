@@ -134,7 +134,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
           </div>
 
           <div className="hero-duo" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', position: 'relative', zIndex: 1, marginTop: '10px' }}>
-            <div className="hero-duo-item income" style={{ padding: '8px 10px', borderRadius: '16px', background: 'rgba(255, 255, 255, 0.45)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255, 255, 255, 0.4)', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+            <div className="hero-duo-item income" style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, padding: '8px 10px', borderRadius: '16px' }}>
               <span className="hdi-icon" style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(55, 184, 145, 0.12)', color: '#37B891', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ArrowUpIcon />
               </span>
@@ -143,7 +143,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
                 <div className="hdi-value" style={{ fontSize: getDuoFontSize(income), fontWeight: 800, color: '#37B891', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{money(income)}</div>
               </div>
             </div>
-            <div className="hero-duo-item expense" style={{ padding: '8px 10px', borderRadius: '16px', background: 'rgba(255, 255, 255, 0.45)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255, 255, 255, 0.4)', display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+            <div className="hero-duo-item expense" style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, padding: '8px 10px', borderRadius: '16px' }}>
               <span className="hdi-icon" style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(236, 93, 166, 0.12)', color: '#EC5DA6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ArrowDownIcon />
               </span>
@@ -153,7 +153,7 @@ export default function Home({ transactions, categories = [], email, onChanged, 
               </div>
             </div>
           </div>
-          <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '185px', height: 'auto', position: 'absolute', right: '-10px', top: '44%', transform: 'translateY(-50%)', opacity: 0.85, zIndex: 0, pointerEvents: 'none' }} />
+          <img className="hero-wallet" src="/images/wallet.png" alt="" onError={e => { e.target.style.display = 'none' }} style={{ width: '240px', height: 'auto', position: 'absolute', right: '4px', marginTop: '-12px', top: '24%', transform: 'translateY(-90%)', opacity: 0.85, zIndex: 0, pointerEvents: 'none' }} />
         </div>
 
         <button

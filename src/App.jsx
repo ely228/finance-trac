@@ -13,6 +13,28 @@ import NotificationsPage from './components/NotificationsPage'
 import { currentMonthKey, monthLabel, shiftMonth, formatMoney, categoryStyle, formatRelativeDate } from './utils'
 import CategoryIcon, { categoryMeta } from './components/CategoryIcon'
 
+function DesktopStub() {
+  return (
+    <div className="desktop-stub-wrap">
+      <div className="bg-scene">
+        <div className="bg-blob b1" /><div className="bg-blob b2" /><div className="bg-blob b3" />
+        <div className="bg-blob b4" /><div className="bg-blob b5" />
+      </div>
+      <div className="grain" />
+      
+      <div className="desktop-stub-card">
+        <div className="desktop-stub-hero">
+          <img src="/images/wallet.png" alt="Wallet Logo" className="desktop-stub-wallet" />
+        </div>
+        
+        <p className="desktop-stub-desc">
+          Fin Trac разработан и оптимизирован исключительно для мобильных устройств в формате PWA (Progressive Web App). На версиях для Windows/MacOS интерфейс недоступен, чтобы сохранить премиальное мобильное качество. Попробуйте позже или используйте IOS/Safari
+        </p>
+      </div>
+    </div>
+  )
+}
+
 const visualTest = import.meta.env.DEV && new URLSearchParams(window.location.search).get('visual-test') === '1'
 const visualTab = new URLSearchParams(window.location.search).get('tab') || 'home'
 const visualCategories = [
@@ -27,6 +49,14 @@ const visualTransactions = [
 ]
 
 export default function App() {
+  const isDesktop = !/iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+    && !window.location.search.includes('bypass_desktop')
+    && !window.navigator.userAgent.toLowerCase().includes('playwright');
+
+  if (isDesktop) {
+    return <DesktopStub />
+  }
+
   const [session, setSession] = useState(visualTest ? { user: { email: 'test@fintrac.local' } } : undefined)
   const [tab, setTab] = useState(visualTest ? visualTab : 'home')
   const [monthKey, setMonthKey] = useState(currentMonthKey())
@@ -42,11 +72,39 @@ export default function App() {
   const [isDragging, setIsDragging] = useState(false)
   const dragStart = useRef({ x: 0, y: 0 })
   const toastTimeout = useRef(null)
+  const [isPWA, setIsPWA] = useState(false)
+  const touchStart = useRef({ x: 0, y: 0 })
+  const dragDirection = useRef(null) // null | 'x' | 'y'
+  const [dismissClass, setDismissClass] = useState('')
+
+  useEffect(() => {
+    const checkPWA = !!(window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches);
+    setIsPWA(checkPWA);
+  }, [])
+
+  const [showPWAPrompt, setShowPWAPrompt] = useState(false)
+
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem('pwa_prompt_dismissed')
+    const mobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    if (mobile && !isPWA && !dismissed) {
+      const timer = setTimeout(() => {
+        setShowPWAPrompt(true)
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [isPWA])
+
+  const handleDismissPWAPrompt = () => {
+    sessionStorage.setItem('pwa_prompt_dismissed', 'true')
+    setShowPWAPrompt(false)
+  }
 
   const showToast = useCallback((message) => {
     if (toastTimeout.current) clearTimeout(toastTimeout.current)
     setToastOffset({ x: 0, y: 0 })
     setIsDragging(false)
+    setDismissClass('')
     const id = Date.now()
     setToast({ message, id })
     
@@ -57,9 +115,13 @@ export default function App() {
 
   const handleDragStart = (e) => {
     setIsDragging(true)
+    setDismissClass('')
     const clientX = e.touches ? e.touches[0].clientX : e.clientX
     const clientY = e.touches ? e.touches[0].clientY : e.clientY
-    dragStart.current = { x: clientX - toastOffset.x, y: clientY - toastOffset.y }
+    touchStart.current = { x: clientX, y: clientY }
+    dragStart.current = { x: clientX, y: clientY }
+    dragDirection.current = null
+    setToastOffset({ x: 0, y: 0 })
     if (toastTimeout.current) clearTimeout(toastTimeout.current)
   }
 
@@ -67,23 +129,58 @@ export default function App() {
     if (!isDragging) return
     const clientX = e.touches ? e.touches[0].clientX : e.clientX
     const clientY = e.touches ? e.touches[0].clientY : e.clientY
-    const offsetX = clientX - dragStart.current.x
-    const offsetY = clientY - dragStart.current.y
-    // Apply iOS-like elastic resistance on dragging down (offsetY > 0)
-    const finalY = offsetY > 0 ? Math.pow(offsetY, 0.65) : offsetY
-    setToastOffset({ x: offsetX, y: finalY })
+    
+    const deltaX = clientX - touchStart.current.x
+    const deltaY = clientY - touchStart.current.y
+    
+    if (dragDirection.current === null) {
+      if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
+        if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+          dragDirection.current = 'x'
+        } else {
+          dragDirection.current = 'y'
+        }
+      }
+    }
+    
+    if (dragDirection.current === 'x') {
+      // Swiping strictly on horizontal axis
+      setToastOffset({ x: deltaX, y: 0 })
+    } else if (dragDirection.current === 'y') {
+      // Swiping strictly on vertical axis (upwards only)
+      const finalY = deltaY < 0 ? deltaY : 0
+      setToastOffset({ x: 0, y: finalY })
+    } else {
+      setToastOffset({ x: 0, y: 0 })
+    }
   }
 
   const handleDragEnd = () => {
     if (!isDragging) return
     setIsDragging(false)
     
-    const swipedUp = toastOffset.y < -40
-    const swipedLeftOrRight = Math.abs(toastOffset.x) > 60
+    const swipedUp = dragDirection.current === 'y' && toastOffset.y < -40
+    const swipedLeft = dragDirection.current === 'x' && toastOffset.x < -60
+    const swipedRight = dragDirection.current === 'x' && toastOffset.x > 60
     
-    // Only dismiss if swiped UP, LEFT, or RIGHT (iOS-style, not down)
-    if (swipedUp || swipedLeftOrRight) {
-      setToast(null)
+    if (swipedUp) {
+      setDismissClass('dismissing-up')
+      setTimeout(() => {
+        setToast(null)
+        setDismissClass('')
+      }, 250)
+    } else if (swipedLeft) {
+      setDismissClass('dismissing-left')
+      setTimeout(() => {
+        setToast(null)
+        setDismissClass('')
+      }, 250)
+    } else if (swipedRight) {
+      setDismissClass('dismissing-right')
+      setTimeout(() => {
+        setToast(null)
+        setDismissClass('')
+      }, 250)
     } else {
       setToastOffset({ x: 0, y: 0 })
       if (toastTimeout.current) clearTimeout(toastTimeout.current)
@@ -91,6 +188,7 @@ export default function App() {
         setToast(null)
       }, 5000)
     }
+    dragDirection.current = null
   }
 
   // Step 21.1: subPage state for render routing inside tabs (null | 'new-category' | 'all-transactions')
@@ -167,10 +265,58 @@ export default function App() {
     setSubPage(null)
   }, [tab])
 
-  if (session === undefined) return null
-  if (!session) return <Auth />
-
   const monthLabelText = monthLabel(monthKey)
+
+  if (session === undefined) {
+    return (
+      <div className="splash-loader-wrap">
+        <div className="splash-loader-content">
+          <img src="/images/wallet.png" alt="Fin Trac" className="splash-logo" />
+          <div className="splash-title">Fin Trac</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <>
+        <Auth showToast={showToast} />
+        {toast && (
+          <div
+            className={`premium-toast ${dismissClass}`}
+            style={{
+              top: isPWA ? '56px' : '24px',
+              transform: isDragging 
+                ? `translate(calc(-50% + ${toastOffset.x}px), ${toastOffset.y}px)` 
+                : dismissClass 
+                  ? undefined 
+                  : 'translate(-50%, 0)',
+              transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s',
+              animation: toastOffset.x === 0 && toastOffset.y === 0 && !dismissClass ? 'toast-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1)' : 'none',
+              opacity: isDragging ? Math.max(0.3, 1 - Math.sqrt(toastOffset.x*toastOffset.x + toastOffset.y*toastOffset.y)/200) : 1
+            }}
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
+            onMouseDown={handleDragStart}
+            onMouseMove={handleDragMove}
+            onMouseUp={handleDragEnd}
+            onMouseLeave={handleDragEnd}
+          >
+            <div className="toast-icon-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+            </div>
+            <span className="toast-msg">{toast.message}</span>
+          </div>
+        )}
+      </>
+    )
+  }
 
   return (
     <div className="app">
@@ -188,7 +334,11 @@ export default function App() {
 
       <main className="content">
         {loading ? (
-          <p className="muted">Загрузка…</p>
+          <div className="splash-loader-wrap" style={{ position: 'absolute', background: 'transparent', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', zIndex: 999 }}>
+            <div className="splash-loader-content">
+              <img src="/images/wallet.png" alt="Fin Trac" className="splash-logo" />
+            </div>
+          </div>
         ) : (
           <>
             {/* Sub-pages logic (renders instead of tab content if active) */}
@@ -526,13 +676,16 @@ export default function App() {
 
       {toast && (
         <div
-          className="premium-toast"
+          className={`premium-toast ${dismissClass}`}
           style={{
+            top: isPWA ? '56px' : '24px',
             transform: isDragging 
               ? `translate(calc(-50% + ${toastOffset.x}px), ${toastOffset.y}px)` 
-              : 'translate(-50%, 0)',
+              : dismissClass 
+                ? undefined 
+                : 'translate(-50%, 0)',
             transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s',
-            animation: toastOffset.x === 0 && toastOffset.y === 0 ? 'toast-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1)' : 'none',
+            animation: toastOffset.x === 0 && toastOffset.y === 0 && !dismissClass ? 'toast-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1)' : 'none',
             opacity: isDragging ? Math.max(0.3, 1 - Math.sqrt(toastOffset.x*toastOffset.x + toastOffset.y*toastOffset.y)/200) : 1
           }}
           onTouchStart={handleDragStart}
@@ -551,6 +704,67 @@ export default function App() {
             </svg>
           </div>
           <span className="toast-msg">{toast.message}</span>
+        </div>
+      )}
+
+      {showPWAPrompt && (
+        <div className="pwa-prompt-overlay" onClick={handleDismissPWAPrompt}>
+          <div className="pwa-prompt-sheet" onClick={e => e.stopPropagation()}>
+            <div className="pwa-prompt-handle" />
+            
+            <div className="pwa-prompt-header">
+              <img src="/images/wallet.png" alt="Fin Trac" className="pwa-prompt-logo" />
+              <div className="pwa-prompt-header-text">
+                <h3>Установите Fin Trac</h3>
+                <p>Как полноценное приложение</p>
+              </div>
+            </div>
+            
+            <p className="pwa-prompt-desc">
+              Приложение оптимизировано под формат PWA. Установите его на главный экран, чтобы убрать рамки браузера, включить оптимизацию и быстрый запуск в стиле банковских приложений.
+            </p>
+            
+            <div className="pwa-prompt-divider" />
+            
+            <div className="pwa-prompt-steps">
+              <h4 className="pwa-steps-title">Инструкция для установки (Safari / iOS):</h4>
+              
+              <div className="pwa-step-item">
+                <span className="pwa-step-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#b9b9b9' }}>
+                    <rect x="5" y="9" width="14" height="12" rx="2" />
+                    <path d="M12 2v10M9 5l3-3 3 3" />
+                  </svg>
+                </span>
+                <span className="pwa-step-text">Нажмите на иконку <strong>«Поделиться»</strong> на панели Safari</span>
+              </div>
+              
+              <div className="pwa-step-item">
+                <span className="pwa-step-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#b9b9b9' }}>
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                  </svg>
+                </span>
+                <span className="pwa-step-text">Выберите пункт <strong>«На экран Домой»</strong></span>
+              </div>
+              
+              <div className="pwa-step-item">
+                <span className="pwa-step-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#b9b9b9' }}>
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                </span>
+                <span className="pwa-step-text">Нажмите <strong>«Добавить»</strong> в правом верхнем углу.</span>
+              </div>
+            </div>
+
+            <button className="pwa-prompt-btn-primary" onClick={handleDismissPWAPrompt}>
+              Продолжить в браузере
+            </button>
+          </div>
         </div>
       )}
 
